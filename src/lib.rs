@@ -21,6 +21,20 @@ impl<T> Optional<T> {
             Optional::Absent => def,
         }
     }
+
+    pub fn as_mut<'r>(&'r mut self) -> Optional<&'r mut T> {
+        match *self {
+            Optional::Value(ref mut x) => Optional::Value(x),
+            Optional::Absent => Optional::Absent
+        }
+    }
+
+    pub fn as_ref<'r>(&'r self) -> Optional<&'r T> {
+        match *self {
+            Optional::Value(ref x) => Optional::Value(x),
+            Optional::Absent => Optional::Absent
+        }
+    }
 }
 
 pub struct Location {
