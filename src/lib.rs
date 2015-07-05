@@ -8,6 +8,7 @@ use rustc_serialize::json::{Json, ToJson};
 /// An Optional value can contain Optional::Some<T> or Optional::Absent.
 /// It is similar to an Option, but Optional::Absent means it will be
 /// omitted when serialized.
+#[derive(Debug, Copy, Clone)]
 pub enum Optional<T> {
     Value(T),
     Absent,
