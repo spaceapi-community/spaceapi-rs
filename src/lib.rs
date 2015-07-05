@@ -13,6 +13,15 @@ pub enum Optional<T> {
     Absent,
 }
 
+impl<T> Optional<T> {
+    pub fn map_or<U, F: FnOnce(T) -> U>(self, def: U, f: F) -> U {
+        match self {
+            Optional::Value(v) => f(v),
+            Optional::Absent => def,
+        }
+    }
+}
+
 pub struct Location {
     pub address: Optional<String>,
     pub lat: f64,
