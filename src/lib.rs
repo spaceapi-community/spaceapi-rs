@@ -195,42 +195,18 @@ impl ToJson for Status {
         d.insert("location".to_string(), self.location.to_json());
         d.insert("contact".to_string(), self.contact.to_json());
 
-        match self.spacefed {
-            Optional::Value(ref spacefed) => { d.insert("spacefed".to_string(), spacefed.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.projects {
-            Optional::Value(ref projects) => { d.insert("projects".to_string(), projects.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.cam {
-            Optional::Value(ref cam) => { d.insert("cam".to_string(), cam.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.feeds {
-            Optional::Value(ref feeds) => { d.insert("feeds".to_string(), feeds.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.events {
-            Optional::Value(ref events) => { d.insert("events".to_string(), events.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.radio_show {
-            Optional::Value(ref radio_show) => { d.insert("radio_show".to_string(), radio_show.to_json()); },
-            Optional::Absent => (),
-        };
+        self.spacefed.as_ref().map_or((), |v| { d.insert("spacefed".to_string(), v.to_json()); } );
+        self.projects.as_ref().map_or((), |v| { d.insert("projects".to_string(), v.to_json()); });
+        self.cam.as_ref().map_or((), |v| { d.insert("cam".to_string(), v.to_json()); });
+        self.feeds.as_ref().map_or((), |v| { d.insert("feeds".to_string(), v.to_json()); });
+        self.events.as_ref().map_or((), |v| { d.insert("events".to_string(), v.to_json()); });
+        self.radio_show.as_ref().map_or((), |v| { d.insert("radio_show".to_string(), v.to_json()); });
 
-        match self.cache {
-            Optional::Value(ref cache) => { d.insert("cache".to_string(), cache.to_json()); },
-            Optional::Absent => (),
-        };
+        self.cache.as_ref().map_or((), |v| { d.insert("cache".to_string(), v.to_json()); });
         d.insert("issue_report_channels".to_string(), self.issue_report_channels.to_json());
 
         d.insert("state".to_string(), self.state.to_json());
-        match self.sensors {
-            Optional::Value(ref sensors) => { d.insert("sensors".to_string(), sensors.to_json()); },
-            Optional::Absent => (),
-        };
+        self.sensors.as_ref().map_or((), |v| { d.insert("sensors".to_string(), v.to_json()); });
 
         Json::Object(d)
     }
@@ -243,7 +219,7 @@ impl ToJson for Location {
         d.insert("lon".to_string(), self.lon.to_json());
         match self.address {
             Optional::Value(ref address) => {
-                d.insert("address".to_string(), address.to_json()); 
+                d.insert("address".to_string(), address.to_json());
             },
             Optional::Absent => (),
         };
@@ -274,22 +250,10 @@ impl ToJson for State {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
         d.insert("open".to_string(), self.open.to_json());
-        match self.lastchange {
-            Optional::Value(ref lastchange) => { d.insert("lastchange".to_string(), lastchange.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.trigger_person {
-            Optional::Value(ref trigger_person) => { d.insert("trigger_person".to_string(), trigger_person.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.message {
-            Optional::Value(ref message) => { d.insert("message".to_string(), message.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.icon {
-            Optional::Value(ref icon) => { d.insert("icon".to_string(), icon.to_json()); },
-            Optional::Absent => (),
-        };
+        self.lastchange.as_ref().map_or((), |v| { d.insert("lastchange".to_string(), v.to_json()); });
+        self.trigger_person.as_ref().map_or((), |v| { d.insert("trigger_person".to_string(), v.to_json()); });
+        self.message.as_ref().map_or((), |v| { d.insert("message".to_string(), v.to_json()); });
+        self.icon.as_ref().map_or((), |v| { d.insert("icon".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -300,10 +264,7 @@ impl ToJson for Event {
         d.insert("name".to_string(), self.name.to_json());
         d.insert("type".to_string(), self._type.to_json());
         d.insert("timestamp".to_string(), self.timestamp.to_json());
-        match self.extra {
-            Optional::Value(ref extra) => { d.insert("extra".to_string(), extra.to_json()); },
-            Optional::Absent => (),
-        };
+        self.extra.as_ref().map_or((), |v| { d.insert("extra".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -311,22 +272,10 @@ impl ToJson for Event {
 impl ToJson for Contact {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        match self.irc {
-            Optional::Value(ref irc) => { d.insert("irc".to_string(), irc.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.twitter {
-            Optional::Value(ref twitter) => { d.insert("twitter".to_string(), twitter.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.foursquare {
-            Optional::Value(ref foursquare) => { d.insert("foursquare".to_string(), foursquare.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.email {
-            Optional::Value(ref email) => { d.insert("email".to_string(), email.to_json()); },
-            Optional::Absent => (),
-        };
+        self.irc.as_ref().map_or((), |v| { d.insert("irc".to_string(), v.to_json()); });
+        self.twitter.as_ref().map_or((), |v| { d.insert("twitter".to_string(), v.to_json()); });
+        self.foursquare.as_ref().map_or((), |v| { d.insert("foursquare".to_string(), v.to_json()); });
+        self.email.as_ref().map_or((), |v| { d.insert("email".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -335,10 +284,7 @@ impl ToJson for Feed {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
         d.insert("url".to_string(), self.url.to_json());
-        match self._type {
-            Optional::Value(ref _type) => { d.insert("type".to_string(), _type.to_json()); },
-            Optional::Absent => (),
-        };
+        self._type.as_ref().map_or((), |v| { d.insert("type".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -346,22 +292,10 @@ impl ToJson for Feed {
 impl ToJson for Feeds {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        match self.blog {
-            Optional::Value(ref blog) => { d.insert("blog".to_string(), blog.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.wiki {
-            Optional::Value(ref wiki) => { d.insert("wiki".to_string(), wiki.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.calendar {
-            Optional::Value(ref calendar) => { d.insert("calendar".to_string(), calendar.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.flickr {
-            Optional::Value(ref flickr) => { d.insert("flickr".to_string(), flickr.to_json()); },
-            Optional::Absent => (),
-        };
+        self.blog.as_ref().map_or((), |v| { d.insert("blog".to_string(), v.to_json()); });
+        self.wiki.as_ref().map_or((), |v| { d.insert("wiki".to_string(), v.to_json()); });
+        self.calendar.as_ref().map_or((), |v| { d.insert("calendar".to_string(), v.to_json()); });
+        self.flickr.as_ref().map_or((), |v| { d.insert("flickr".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -369,14 +303,8 @@ impl ToJson for Feeds {
 impl ToJson for Sensors {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        match self.people_now_present {
-            Optional::Value(ref people_now_present) => { d.insert("people_now_present".to_string(), people_now_present.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.temperature {
-            Optional::Value(ref temperature) => { d.insert("temperature".to_string(), temperature.to_json()); },
-            Optional::Absent => (),
-        };
+        self.people_now_present.as_ref().map_or((), |v| { d.insert("people_now_present".to_string(), v.to_json()); });
+        self.temperature.as_ref().map_or((), |v| { d.insert("temperature".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -385,22 +313,10 @@ impl ToJson for PeopleNowPresentSensor {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
         d.insert("value".to_string(), self.value.to_json());
-        match self.location {
-            Optional::Value(ref location) => { d.insert("location".to_string(), location.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.name {
-            Optional::Value(ref name) => { d.insert("name".to_string(), name.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.names {
-            Optional::Value(ref names) => { d.insert("names".to_string(), names.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.description {
-            Optional::Value(ref description) => { d.insert("description".to_string(), description.to_json()); },
-            Optional::Absent => (),
-        };
+        self.location.as_ref().map_or((), |v| { d.insert("location".to_string(), v.to_json()); });
+        self.name.as_ref().map_or((), |v| { d.insert("name".to_string(), v.to_json()); });
+        self.names.as_ref().map_or((), |v| { d.insert("names".to_string(), v.to_json()); });
+        self.description.as_ref().map_or((), |v| { d.insert("description".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -411,14 +327,8 @@ impl ToJson for TemperatureSensor {
         d.insert("value".to_string(), self.value.to_json());
         d.insert("unit".to_string(), self.unit.to_json());
         d.insert("location".to_string(), self.location.to_json());
-        match self.name {
-            Optional::Value(ref name) => { d.insert("name".to_string(), name.to_json()); },
-            Optional::Absent => (),
-        };
-        match self.description {
-            Optional::Value(ref description) => { d.insert("description".to_string(), description.to_json()); },
-            Optional::Absent => (),
-        };
+        self.name.as_ref().map_or((), |v| { d.insert("name".to_string(), v.to_json()); });
+        self.description.as_ref().map_or((), |v| { d.insert("description".to_string(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -437,8 +347,7 @@ impl ToJson for RadioShow {
         d.insert("name".to_string(), self.name.to_json());
         d.insert("url".to_string(), self.url.to_json());
         d.insert("type".to_string(), self._type.to_json());
-        d.insert("start".to_string(), self.start.to_json());
-        d.insert("end".to_string(), self.end.to_json());
+        d.insert("start".to_string(), self.start.to_json()); d.insert("end".to_string(), self.end.to_json());
         Json::Object(d)
     }
 }
