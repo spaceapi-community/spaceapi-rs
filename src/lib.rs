@@ -4,7 +4,6 @@ use std::collections::BTreeMap;
 
 use rustc_serialize::json::{Json, ToJson};
 
-
 /// An Optional value can contain Optional::Some<T> or Optional::Absent.
 /// It is similar to an Option, but Optional::Absent means it will be
 /// omitted when serialized.
@@ -15,6 +14,9 @@ pub enum Optional<T> {
 }
 
 impl<T> Optional<T> {
+
+    /// Applies a function to the contained value or returns a default.  see
+    /// [`std::option::Option<T>::map_or`](http://doc.rust-lang.org/std/option/enum.Option.html#method.map_or)
     pub fn map_or<U, F: FnOnce(T) -> U>(self, def: U, f: F) -> U {
         match self {
             Optional::Value(v) => f(v),
