@@ -84,23 +84,27 @@ impl<T> Optional<T> {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Location {
     pub address: Optional<String>,
     pub lat: f64,
     pub lon: f64,
 }
 
+#[derive(Debug, Clone)]
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
     pub spacephone: bool,
 }
 
+#[derive(Debug, Clone)]
 pub struct Icon {
     pub open: String,
     pub close: String,
 }
 
+#[derive(Debug, Clone)]
 pub struct State {
     pub open: Option<bool>,
     pub lastchange: Optional<u64>,
@@ -109,6 +113,7 @@ pub struct State {
     pub icon: Optional<Icon>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Event {
     pub name: String,
     pub _type: String,
@@ -116,6 +121,7 @@ pub struct Event {
     pub extra: Optional<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Contact {
     pub irc: Optional<String>,
     pub twitter: Optional<String>,
@@ -123,11 +129,13 @@ pub struct Contact {
     pub email: Optional<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Feed {
     pub _type: Optional<String>,
     pub url: String,
 }
 
+#[derive(Debug, Clone)]
 pub struct Feeds {
     pub blog: Optional<Feed>,
     pub wiki: Optional<Feed>,
@@ -135,11 +143,13 @@ pub struct Feeds {
     pub flickr: Optional<Feed>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Sensors {
     pub people_now_present: Optional<Vec<PeopleNowPresentSensor>>,
     pub temperature: Optional<Vec<TemperatureSensor>>,
 }
 
+#[derive(Debug, Clone)]
 pub struct PeopleNowPresentSensor {
     pub value: u32,
     pub location: Optional<String>,
@@ -148,6 +158,7 @@ pub struct PeopleNowPresentSensor {
     pub description: Optional<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct TemperatureSensor {
     pub value: f32,
     pub unit: String,
@@ -156,10 +167,12 @@ pub struct TemperatureSensor {
     pub description: Optional<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Cache {
     pub schedule: String,
 }
 
+#[derive(Debug, Clone)]
 pub struct RadioShow {
     pub name: String,
     pub url: String,
@@ -169,6 +182,7 @@ pub struct RadioShow {
 }
 
 /// The main Space API status object.
+#[derive(Debug, Clone)]
 pub struct Status {
 
     // Hackerspace properties
