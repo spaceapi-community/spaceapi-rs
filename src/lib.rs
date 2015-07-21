@@ -1,12 +1,52 @@
+//! Space API definitions and serialization.
+//!
+//! This crate contains all data-related definitions that are present in the Space API
+//! (http://spaceapi.net/). It also handles serializing that data to JSON by implementing the
+//! [`ToJson`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/trait.ToJson.html)
+//! trait for all structs.
+//!
+//! # Examples
+//!
+//! You can create a new ``Status`` instance by using the ``new`` constructor method:
+//!
+//!     let status = Status::new(
+//!         "coredump".to_string(),
+//!         "https://www.coredump.ch/logo.png".to_string(),
+//!         "https://www.coredump.ch/".to_string(),
+//!         Location {
+//!             address: Optional::Value("Spinnereistrasse 2, 8640 Rapperswil, Switzerland".to_string()),
+//!             lat: 47.22936,
+//!             lon: 8.82949,
+//!         },
+//!         Contact {
+//!             irc: Optional::Value("irc://freenode.net/#coredump".to_string()),
+//!             twitter: Optional::Value("@coredump_ch".to_string()),
+//!             foursquare: Optional::Value("525c20e5498e875d8231b1e5".to_string()),
+//!             email: Optional::Value("danilo@coredump.ch".to_string()),
+//!         },
+//!         vec![
+//!             "email".to_string(),
+//!             "twitter".to_string(),
+//!         ],
+//!     );
+//!
+//! To serialize this to `Json`, use the ``ToJson`` trait implementation:
+//!
+//!     let jsonstatus = status.to_json();
+//!
+//! You can then create a string from the JSON object:
+//!
+//!     let stringstatus = jsonstatus.to_string();
+
 extern crate rustc_serialize;
 
 use std::collections::BTreeMap;
 
 use rustc_serialize::json::{Json, ToJson};
 
-/// An Optional value can contain Optional::Some<T> or Optional::Absent.
-/// It is similar to an Option, but Optional::Absent means it will be
-/// omitted when serialized.
+/// An ``Optional`` can contain ``Optional::Value<T>`` or ``Optional::Absent``.
+/// It is similar to an ``Option``, but ``Optional::Absent`` means it will be
+/// omitted when serialized, while ``None`` will be serialized to ``null``.
 #[derive(Debug, Copy, Clone)]
 pub enum Optional<T> {
     Value(T),
@@ -123,6 +163,7 @@ pub struct RadioShow {
     pub end: String,
 }
 
+/// The main Space API status object.
 pub struct Status {
 
     // Hackerspace properties
@@ -153,7 +194,7 @@ pub struct Status {
 
 impl Status {
 
-    /// Create a new Status object with only the minimum amount of fields
+    /// Create a new Status object with only the minimum amount of fields.
     pub fn new(space: String, logo: String, url: String, location: Location, contact: Contact, issue_report_channels: Vec<String>) -> Status {
         Status {
             api: "0.13".to_string(),
