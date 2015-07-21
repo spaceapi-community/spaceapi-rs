@@ -84,6 +84,22 @@ impl<T> Optional<T> {
     }
 }
 
+/// An enum of all possible sensor templates.
+pub enum SensorTemplate {
+    PeopleNowPresentSensorTemplate {
+        location: Optional<String>,
+        name: Optional<String>,
+        names: Optional<Vec<String>>,
+        description: Optional<String>,
+    },
+    TemperatureSensorTemplate {
+        unit: String,
+        location: String,
+        name: Optional<String>,
+        description: Optional<String>,
+    },
+}
+
 #[derive(Debug, Clone)]
 pub struct Location {
     pub address: Optional<String>,
