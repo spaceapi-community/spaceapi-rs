@@ -7,8 +7,17 @@
 //!
 //! # Examples
 //!
-//! You can create a new ``Status`` instance by using the ``new`` constructor method:
+//! You can create a new ``Status`` instance by using the ``new()`` constructor method. To serialize
+//! this to [``Json``](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/enum.Json.html), use
+//! the [`ToJson`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/trait.ToJson.html)
+//! trait implementation. You can then create a string from the resulting object.
 //!
+//!     # extern crate rustc_serialize;
+//!     # extern crate spaceapi;
+//!     # use spaceapi::{Status, Location, Contact, Optional};
+//!     use rustc_serialize::json::ToJson;
+//!
+//!     # fn main() {
 //!     let status = Status::new(
 //!         "coredump".to_string(),
 //!         "https://www.coredump.ch/logo.png".to_string(),
@@ -30,13 +39,9 @@
 //!         ],
 //!     );
 //!
-//! To serialize this to `Json`, use the ``ToJson`` trait implementation:
-//!
 //!     let jsonstatus = status.to_json();
-//!
-//! You can then create a string from the JSON object:
-//!
 //!     let stringstatus = jsonstatus.to_string();
+//!     # }
 
 extern crate rustc_serialize;
 
