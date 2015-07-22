@@ -82,9 +82,11 @@ impl<T> Optional<T> {
             Optional::Absent => Optional::Absent
         }
     }
+
 }
 
 /// An enum of all possible sensor templates.
+#[derive(Debug, Clone)]
 pub enum SensorTemplate {
     PeopleNowPresentSensorTemplate {
         location: Optional<String>,
@@ -167,7 +169,7 @@ pub struct Sensors {
 
 #[derive(Debug, Clone)]
 pub struct PeopleNowPresentSensor {
-    pub value: u32,
+    pub value: i64,
     pub location: Optional<String>,
     pub name: Optional<String>,
     pub names: Optional<Vec<String>>,
@@ -176,7 +178,7 @@ pub struct PeopleNowPresentSensor {
 
 #[derive(Debug, Clone)]
 pub struct TemperatureSensor {
-    pub value: f32,
+    pub value: f64,
     pub unit: String,
     pub location: String,
     pub name: Optional<String>,
