@@ -14,7 +14,8 @@
 //!
 //!     # extern crate rustc_serialize;
 //!     # extern crate spaceapi;
-//!     # use spaceapi::{Status, Location, Contact, Optional};
+//!     # use spaceapi::{Status, Location, Contact};
+//!     # use spaceapi::utils::Optional;
 //!     use rustc_serialize::json::ToJson;
 //!
 //!     # fn main() {
@@ -46,8 +47,10 @@
 extern crate rustc_serialize;
 
 use std::collections::BTreeMap;
+pub mod utils;
 
 use rustc_serialize::json::{Json, ToJson};
+use utils::Optional;
 
 /// An ``Optional`` can contain ``Optional::Value<T>`` or ``Optional::Absent``.
 /// It is similar to an ``Option``, but ``Optional::Absent`` means it will be
