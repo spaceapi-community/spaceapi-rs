@@ -51,7 +51,7 @@ pub mod utils;
 
 use std::collections::BTreeMap;
 use rustc_serialize::json::{Json, ToJson};
-use utils::Optional;
+pub use utils::Optional;
 pub use sensors::{SensorTemplate, Sensors};
 pub use sensors::{TemperatureSensor, PeopleNowPresentSensor};
 
