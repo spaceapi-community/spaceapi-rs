@@ -3,15 +3,14 @@
 use std::collections::BTreeMap;
 use rustc_serialize::json::{Json, ToJson};
 use utils::Optional;
-use status::Status;
 
 
 //--- Templates ---//
 
 /// A trait for all possible sensor templates.
-/// the `SensorTemplate`s are capable of registering themselves in a `Status` struct
+/// the `SensorTemplate`s are capable of registering themselves in a `Sensors` struct
 pub trait SensorTemplate : Send+Sync {
-    fn to_sensor(&self, value_str: &str, status: &mut Status);
+    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors);
 }
 
 #[derive(Debug, Clone)]
@@ -23,7 +22,7 @@ pub struct PeopleNowPresentSensorTemplate {
 }
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
-    fn to_sensor(&self, value_str: &str, status: &mut Status) {
+    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
         // TODO error handling
         let value = value_str.parse::<i64>().unwrap();
         let sensor = PeopleNowPresentSensor {
@@ -33,13 +32,11 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
             description: self.description.clone(),
             value: value,
         };
-        // TODO handle empty
-        status.sensors.as_mut().map_or((), |v| {
-            match v.people_now_present {
-                Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
-                Optional::Absent => v.people_now_present = Optional::Value(vec![sensor]),
-            }
-        });
+
+        match sensors.people_now_present {
+            Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
+            Optional::Absent => sensors.people_now_present = Optional::Value(vec![sensor]),
+        }
     }
 }
 
@@ -52,7 +49,7 @@ pub struct TemperatureSensorTemplate {
 }
 
 impl SensorTemplate for TemperatureSensorTemplate {
-    fn to_sensor(&self, value_str: &str, status: &mut Status) {
+    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
         // TODO error handling
         let value = value_str.parse::<f64>().unwrap();
         let sensor = TemperatureSensor {
@@ -62,13 +59,10 @@ impl SensorTemplate for TemperatureSensorTemplate {
             description: self.description.clone(),
             value: value,
         };
-        // TODO handle empty
-        status.sensors.as_mut().map_or((), |v| {
-            match v.temperature {
-                Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
-                Optional::Absent => v.temperature = Optional::Value(vec![sensor]),
-            }
-        });
+        match sensors.temperature {
+            Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
+            Optional::Absent => sensors.temperature = Optional::Value(vec![sensor]),
+        }
     }
 }
 
