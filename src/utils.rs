@@ -20,6 +20,7 @@ impl<T> Optional<T> {
         }
     }
 
+    /// Converts from `Optional<T>` to `Optional<&mut T>`
     pub fn as_mut<'r>(&'r mut self) -> Optional<&'r mut T> {
         match *self {
             Optional::Value(ref mut x) => Optional::Value(x),
@@ -27,6 +28,7 @@ impl<T> Optional<T> {
         }
     }
 
+    /// Converts from `Optional<T>` to `Optional<&T>`
     pub fn as_ref<'r>(&'r self) -> Optional<&'r T> {
         match *self {
             Optional::Value(ref x) => Optional::Value(x),
@@ -34,6 +36,20 @@ impl<T> Optional<T> {
         }
     }
 
+
+    /// Returns `true` if the optional is a `Absent` value
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// let x: Optional<u32> = Value(2);
+    /// assert_eq!(x.is_absent(), false);
+    ///
+    /// let x: Optional<u32> = Absent;
+    /// assert_eq!(x.is_absent(), true);
+    /// ```
     pub fn is_absent(&self) -> bool {
         match *self {
             Optional::Absent => true,
