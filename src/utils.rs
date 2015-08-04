@@ -10,6 +10,24 @@ pub enum Optional<T> {
 }
 
 impl<T> Optional<T> {
+    
+    /// Returns the contained value or computes it from a closure.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// let k = 10;
+    /// assert_eq!(Value(4).unwrap_or_else(|| 2 * k), 4);
+    /// assert_eq!(Absent.unwrap_or_else(|| 2 * k), 20);
+    /// ```
+    pub fn unwrap_or_else<F: FnOnce() -> T>(self, f: F) -> T {
+        match self {
+            Optional::Value(x) => x,
+            Optional::Absent => f()
+        }
+    }
 
     /// Applies a function to the contained value or returns a default.  see
     /// [`std::option::Option<T>::map_or`](http://doc.rust-lang.org/std/option/enum.Option.html#method.map_or)
