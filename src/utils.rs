@@ -34,4 +34,11 @@ impl<T> Optional<T> {
         }
     }
 
+    pub fn is_absent(&self) -> bool {
+        match *self {
+            Optional::Absent => true,
+            _ => false
+        }
+    }
+
 }
