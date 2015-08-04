@@ -8,3 +8,4 @@ authors = [
 
 [dependencies]
 rustc-serialize = "0.3"
+log = "0.3"

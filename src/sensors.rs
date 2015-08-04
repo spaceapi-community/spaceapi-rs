@@ -23,19 +23,21 @@ pub struct PeopleNowPresentSensorTemplate {
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
     fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        // TODO error handling
-        let value = value_str.parse::<i64>().unwrap();
-        let sensor = PeopleNowPresentSensor {
-            location: self.location.clone(),
-            name: self.name.clone(),
-            names: self.names.clone(),
-            description: self.description.clone(),
-            value: value,
-        };
+        if value_str.parse::<i64>().map(|value|{
+            let sensor = PeopleNowPresentSensor {
+                location: self.location.clone(),
+                name: self.name.clone(),
+                names: self.names.clone(),
+                description: self.description.clone(),
+                value: value,
+            };
 
-        match sensors.people_now_present {
-            Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
-            Optional::Absent => sensors.people_now_present = Optional::Value(vec![sensor]),
+            match sensors.people_now_present {
+                Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
+                Optional::Absent => sensors.people_now_present = Optional::Value(vec![sensor]),
+            }
+        }).is_err() {
+            warn!("Could not parse '{}': omiting the sensor", value_str);
         }
     }
 }
@@ -50,18 +52,20 @@ pub struct TemperatureSensorTemplate {
 
 impl SensorTemplate for TemperatureSensorTemplate {
     fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        // TODO error handling
-        let value = value_str.parse::<f64>().unwrap();
-        let sensor = TemperatureSensor {
-            unit: self.unit.clone(),
-            location: self.location.clone(),
-            name: self.name.clone(),
-            description: self.description.clone(),
-            value: value,
-        };
-        match sensors.temperature {
-            Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
-            Optional::Absent => sensors.temperature = Optional::Value(vec![sensor]),
+        if value_str.parse::<f64>().map(|value|{
+            let sensor = TemperatureSensor {
+                unit: self.unit.clone(),
+                location: self.location.clone(),
+                name: self.name.clone(),
+                description: self.description.clone(),
+                value: value,
+            };
+            match sensors.temperature {
+                Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
+                Optional::Absent => sensors.temperature = Optional::Value(vec![sensor]),
+            }
+        }).is_err() {
+            warn!("Could not parse '{}': omiting the sensor", value_str);
         }
     }
 }
