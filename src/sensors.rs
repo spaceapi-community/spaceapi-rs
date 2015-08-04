@@ -9,7 +9,7 @@ use status::Status;
 //--- Templates ---//
 
 /// A trait for all possible sensor templates.
-/// the SensorTemplate's are capable of registring themself in a Status struct
+/// the `SensorTemplate`s are capable of registering themselves in a `Status` struct
 pub trait SensorTemplate : Send+Sync {
     fn to_sensor(&self, value_str: &str, status: &mut Status);
 }
