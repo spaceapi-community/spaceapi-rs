@@ -10,7 +10,41 @@ pub enum Optional<T> {
 }
 
 impl<T> Optional<T> {
-    
+
+    /// Moves the value `v` out of the `Optional<T>` if it is `Value(v)`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the self value equals `Absent`.
+    ///
+    /// # Safety note
+    ///
+    /// In general, because this function may panic, its use is discouraged.
+    /// Instead, prefer to use pattern matching and handle the `Absent`
+    /// case explicitly.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// let x = Value("air");
+    /// assert_eq!(x.unwrap(), "air");
+    /// ```
+    ///
+    /// ```{.should_panic}
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// let x: Optional<&str> = Absent;
+    /// assert_eq!(x.unwrap(), "air"); // fails
+    /// ```
+    pub fn unwrap(self) -> T {
+        match self {
+            Optional::Value(val) => val,
+            Optional::Absent => panic!("called `Optional::unwrap()` on a `Absent` value"),
+        }
+    }
+
     /// Returns the contained value or computes it from a closure.
     ///
     /// # Examples
