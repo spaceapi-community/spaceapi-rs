@@ -47,7 +47,7 @@
 extern crate rustc_serialize;
 
 pub mod utils;
-mod sensors;
+pub mod sensors;
 mod status;
 pub use status::*;
 
