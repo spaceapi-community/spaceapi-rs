@@ -33,8 +33,12 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
             };
 
             match sensors.people_now_present {
-                Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
-                Optional::Absent => sensors.people_now_present = Optional::Value(vec![sensor]),
+                Optional::Value(ref mut vec_sensors) => {
+                    vec_sensors.push(sensor)
+                }
+                Optional::Absent => {
+                    sensors.people_now_present = Optional::Value(vec![sensor])
+                }
             }
         }).is_err() {
             warn!("Could not parse '{}': omiting the sensor", value_str);
@@ -61,8 +65,12 @@ impl SensorTemplate for TemperatureSensorTemplate {
                 value: value,
             };
             match sensors.temperature {
-                Optional::Value(ref mut vec_sensors) => vec_sensors.push(sensor),
-                Optional::Absent => sensors.temperature = Optional::Value(vec![sensor]),
+                Optional::Value(ref mut vec_sensors) => {
+                    vec_sensors.push(sensor)
+                }
+                Optional::Absent => {
+                    sensors.temperature = Optional::Value(vec![sensor])
+                }
             }
         }).is_err() {
             warn!("Could not parse '{}': omiting the sensor", value_str);
