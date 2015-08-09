@@ -108,6 +108,30 @@ impl<T> Optional<T> {
         }
     }
 
+    /// Returns `Absent` if the optional is `Absent`, otherwise calls `f` with the
+    /// wrapped value and returns the result.
+    ///
+    /// Some languages call this operation flatmap.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// fn sq(x: u32) -> Optional<u32> { Value(x * x) }
+    /// fn nope(_: u32) -> Optional<u32> { Absent }
+    ///
+    /// assert_eq!(Value(2).and_then(sq).and_then(sq), Value(16));
+    /// assert_eq!(Value(2).and_then(sq).and_then(nope), Absent);
+    /// assert_eq!(Value(2).and_then(nope).and_then(sq), Absent);
+    /// assert_eq!(Absent.and_then(sq).and_then(sq), Absent);
+    /// ```
+    pub fn and_then<U, F: FnOnce(T) -> Optional<U>>(self, f: F) -> Optional<U> {
+        match self {
+            Optional::Value(x) => f(x),
+            Optional::Absent => Optional::Absent,
+        }
+    }
 
     /// Returns `true` if the optional is a `Absent` value
     ///
