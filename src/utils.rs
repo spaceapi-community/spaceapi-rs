@@ -152,5 +152,26 @@ impl<T> Optional<T> {
             _ => false
         }
     }
+}
 
+impl<T> Into<Option<T>> for Optional<T> {
+    /// Convert Optional<T> into Option<T>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// let x: Optional<u32> = Value(2);
+    /// assert_eq!(Some(2), x.into());
+    ///
+    /// let x: Optional<u32> = Absent;
+    /// assert_eq!(None, x.into());
+    /// ```
+    fn into(self) -> Option<T> {
+        match self {
+            Optional::Value(x) => Some(x),
+            Optional::Absent => None,
+        }
+    }
 }
