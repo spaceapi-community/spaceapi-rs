@@ -63,6 +63,26 @@ impl<T> Optional<T> {
         }
     }
 
+    /// Maps an `Optional<T>` to `Optional<U>` by applying a function to a contained value
+    ///
+    /// # Examples
+    ///
+    /// Convert an `Optional<String>` into an `Optional<usize>`, consuming the original:
+    ///
+    /// ```
+    /// # use spaceapi::utils::Optional;
+    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// let num_as_str: Optional<String> = Value("10".to_string());
+    /// // `Optional::map` takes self *by value*, consuming `num_as_str`
+    /// let num_as_int: Optional<usize> = num_as_str.map(|n| n.len());
+    /// ```
+    pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> Optional<U> {
+        match self {
+            Optional::Value(x) => Optional::Value(f(x)),
+            Optional::Absent => Optional::Absent
+        }
+    }
+
     /// Applies a function to the contained value or returns a default.  see
     /// [`std::option::Option<T>::map_or`](http://doc.rust-lang.org/std/option/enum.Option.html#method.map_or)
     pub fn map_or<U, F: FnOnce(T) -> U>(self, def: U, f: F) -> U {
