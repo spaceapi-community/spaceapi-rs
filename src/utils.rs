@@ -3,7 +3,7 @@
 /// An ``Optional`` can contain ``Optional::Value<T>`` or ``Optional::Absent``.
 /// It is similar to an ``Option``, but ``Optional::Absent`` means it will be
 /// omitted when serialized, while ``None`` will be serialized to ``null``.
-#[derive(Debug, Copy, Clone)]
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Optional<T> {
     Value(T),
     Absent,
