@@ -26,15 +26,15 @@ impl<T> Optional<T> {
     /// # Examples
     ///
     /// ```
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// let x = Value("air");
     /// assert_eq!(x.unwrap(), "air");
     /// ```
     ///
     /// ```{.should_panic}
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// let x: Optional<&str> = Absent;
     /// assert_eq!(x.unwrap(), "air"); // fails
     /// ```
@@ -50,8 +50,8 @@ impl<T> Optional<T> {
     /// # Examples
     ///
     /// ```
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// let k = 10;
     /// assert_eq!(Value(4).unwrap_or_else(|| 2 * k), 4);
     /// assert_eq!(Absent.unwrap_or_else(|| 2 * k), 20);
@@ -70,8 +70,8 @@ impl<T> Optional<T> {
     /// Convert an `Optional<String>` into an `Optional<usize>`, consuming the original:
     ///
     /// ```
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// let num_as_str: Optional<String> = Value("10".to_string());
     /// // `Optional::map` takes self *by value*, consuming `num_as_str`
     /// let num_as_int: Optional<usize> = num_as_str.map(|n| n.len());
@@ -116,8 +116,8 @@ impl<T> Optional<T> {
     /// # Examples
     ///
     /// ```
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// fn sq(x: u32) -> Optional<u32> { Value(x * x) }
     /// fn nope(_: u32) -> Optional<u32> { Absent }
     ///
@@ -138,8 +138,8 @@ impl<T> Optional<T> {
     /// # Examples
     ///
     /// ```
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// let x: Optional<u32> = Value(2);
     /// assert_eq!(x.is_absent(), false);
     ///
@@ -160,8 +160,8 @@ impl<T> Into<Option<T>> for Optional<T> {
     /// # Examples
     ///
     /// ```
-    /// # use spaceapi::utils::Optional;
-    /// # use spaceapi::utils::Optional::{Value,Absent};
+    /// # use spaceapi::optional::Optional;
+    /// # use spaceapi::optional::Optional::{Value,Absent};
     /// let x: Optional<u32> = Value(2);
     /// assert_eq!(Some(2), x.into());
     ///

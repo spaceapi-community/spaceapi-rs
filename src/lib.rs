@@ -15,7 +15,7 @@
 //!     # extern crate rustc_serialize;
 //!     # extern crate spaceapi;
 //!     # use spaceapi::{Status, Location, Contact};
-//!     # use spaceapi::utils::Optional;
+//!     # use spaceapi::optional::Optional;
 //!     use rustc_serialize::json::ToJson;
 //!
 //!     # fn main() {
@@ -48,7 +48,7 @@
 extern crate log;
 extern crate rustc_serialize;
 
-pub mod utils;
+pub mod optional;
 pub mod sensors;
 mod status;
 pub use status::*;

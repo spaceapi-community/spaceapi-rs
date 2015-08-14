@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 use rustc_serialize::json::{Json, ToJson};
-use utils::Optional;
+use optional::Optional;
 
 
 //--- Templates ---//
