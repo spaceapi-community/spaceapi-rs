@@ -41,7 +41,7 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
                 }
             }
         }).is_err() {
-            warn!("Could not parse '{}': omiting the sensor", value_str);
+            warn!("Could not parse value '{}', omiting PeopleNowPresentSensor", value_str);
         }
     }
 }
@@ -73,7 +73,7 @@ impl SensorTemplate for TemperatureSensorTemplate {
                 }
             }
         }).is_err() {
-            warn!("Could not parse '{}': omiting the sensor", value_str);
+            warn!("Could not parse value '{}', omiting TemperatureSensor", value_str);
         }
     }
 }
