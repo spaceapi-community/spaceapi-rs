@@ -110,12 +110,12 @@ pub struct Status {
 impl Status {
 
     /// Create a new Status object with only the minimum amount of fields.
-    pub fn new(space: String, logo: String, url: String, location: Location, contact: Contact, issue_report_channels: Vec<String>) -> Status {
+    pub fn new<S: Into<String>>(space: S, logo: S, url: S, location: Location, contact: Contact, issue_report_channels: Vec<String>) -> Status {
         Status {
             api: "0.13",
-            space: space,
-            logo: logo,
-            url: url,
+            space: space.into(),
+            logo: logo.into(),
+            url: url.into(),
             location: location,
             contact: contact,
 
