@@ -83,7 +83,7 @@ pub struct RadioShow {
 pub struct Status {
 
     // Hackerspace properties
-    pub api: String,
+    pub api: &'static str,
     pub space: String,
     pub logo: String,
     pub url: String,
@@ -112,7 +112,7 @@ impl Status {
     /// Create a new Status object with only the minimum amount of fields.
     pub fn new(space: String, logo: String, url: String, location: Location, contact: Contact, issue_report_channels: Vec<String>) -> Status {
         Status {
-            api: "0.13".to_string(),
+            api: "0.13",
             space: space,
             logo: logo,
             url: url,
