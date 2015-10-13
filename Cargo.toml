@@ -7,5 +7,5 @@ authors = [
 ]
 
 [dependencies]
-rustc-serialize = "0.3"
-log = "0.3"
+rustc-serialize = "^0.3"
+log = "^0.3"
