@@ -8,7 +8,9 @@ use optional::Optional;
 //--- Templates ---//
 
 /// A trait for all possible sensor templates.
-/// the `SensorTemplate`s are capable of registering themselves in a `Sensors` struct
+///
+/// A sensor template is like a sensor struct, but without the actual data in it.
+/// A `SensorTemplate` is capable of registering itself in a `Sensors` struct.
 pub trait SensorTemplate : Send+Sync {
     fn to_sensor(&self, value_str: &str, sensors: &mut Sensors);
 }
