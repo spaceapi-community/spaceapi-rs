@@ -25,7 +25,7 @@ pub struct PeopleNowPresentSensorTemplate {
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
     fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        if value_str.parse::<i64>().map(|value|{
+        if value_str.parse::<u64>().map(|value|{
             let sensor = PeopleNowPresentSensor {
                 location: self.location.clone(),
                 name: self.name.clone(),
@@ -89,7 +89,7 @@ pub struct PeopleNowPresentSensor {
     pub name: Optional<String>,
     pub names: Optional<Vec<String>>,
     pub description: Optional<String>,
-    pub value: i64,
+    pub value: u64,
 }
 
 #[derive(Debug, Clone)]
