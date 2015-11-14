@@ -10,6 +10,13 @@ authors = [
 description = "Space API types and serialization/deserialization."
 readme = "README.md"
 keywords = ["spaceapi", "hackerspaces", "status", "api"]
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE.txt",
+    "AUTHORS.md",
+]
 
 [dependencies]
 rustc-serialize = "^0.3"
