@@ -5,6 +5,8 @@
 //! [`ToJson`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/trait.ToJson.html)
 //! trait for all structs.
 //!
+//! The currently supported Space API version is 0.13. It is not yet fully implemented.
+//!
 //! # Examples
 //!
 //! You can create a new ``Status`` instance by using the ``new()`` constructor method. To serialize
@@ -52,4 +54,3 @@ pub mod optional;
 pub mod sensors;
 mod status;
 pub use status::*;
-
