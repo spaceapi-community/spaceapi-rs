@@ -1,10 +1,15 @@
 [package]
 name = "spaceapi"
 version = "0.1.0"
+repository = "https://github.com/coredump-ch/spaceapi-rs/"
+license = "MIT"
 authors = [
     "Raphael Nestler <raphael.nestler@gmail.com>",
     "Danilo Bargen <mail@dbrgn.ch>",
 ]
+description = "Space API types and serialization/deserialization."
+readme = "README.md"
+keywords = ["spaceapi", "hackerspaces", "status", "api"]
 
 [dependencies]
 rustc-serialize = "^0.3"
