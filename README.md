@@ -4,12 +4,12 @@
 [![Crates.io](https://img.shields.io/crates/v/spaceapi.svg)](https://crates.io/crates/spaceapi)
 [![Crates.io](https://img.shields.io/crates/d/spaceapi.svg)](https://crates.io/crates/spaceapi)
 
-This is an implementation of the [SpaceAPI](http://spaceapi.net/) v0.13 in
+This is an implementation of the [SpaceAPI](https://spaceapi.net/) v0.13 in
 Rust. It contains both the type definitions as well as tools for serialization
 and deserialization.
 
 - Crate Documentation: https://coredump-ch.github.io/rust-docs/spaceapi/spaceapi/index.html
-- Space API Documentation: http://spaceapi.net/documentation
+- Space API Documentation: https://spaceapi.net/documentation
 
 
 ## Usage
