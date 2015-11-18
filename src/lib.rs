@@ -22,9 +22,9 @@
 //!
 //!     # fn main() {
 //!     let status = Status::new(
-//!         "coredump".to_string(),
-//!         "https://www.coredump.ch/logo.png".to_string(),
-//!         "https://www.coredump.ch/".to_string(),
+//!         "coredump",
+//!         "https://www.coredump.ch/logo.png",
+//!         "https://www.coredump.ch/",
 //!         Location {
 //!             address: Optional::Value("Spinnereistrasse 2, 8640 Rapperswil, Switzerland".to_string()),
 //!             lat: 47.22936,
