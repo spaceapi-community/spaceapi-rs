@@ -26,19 +26,19 @@
 //!         "https://www.coredump.ch/logo.png",
 //!         "https://www.coredump.ch/",
 //!         Location {
-//!             address: Optional::Value("Spinnereistrasse 2, 8640 Rapperswil, Switzerland".to_string()),
+//!             address: Optional::Value("Spinnereistrasse 2, 8640 Rapperswil, Switzerland".into()),
 //!             lat: 47.22936,
 //!             lon: 8.82949,
 //!         },
 //!         Contact {
-//!             irc: Optional::Value("irc://freenode.net/#coredump".to_string()),
-//!             twitter: Optional::Value("@coredump_ch".to_string()),
-//!             foursquare: Optional::Value("525c20e5498e875d8231b1e5".to_string()),
-//!             email: Optional::Value("danilo@coredump.ch".to_string()),
+//!             irc: Optional::Value("irc://freenode.net/#coredump".into()),
+//!             twitter: Optional::Value("@coredump_ch".into()),
+//!             foursquare: Optional::Value("525c20e5498e875d8231b1e5".into()),
+//!             email: Optional::Value("danilo@coredump.ch".into()),
 //!         },
 //!         vec![
-//!             "email".to_string(),
-//!             "twitter".to_string(),
+//!             "email".into(),
+//!             "twitter".into(),
 //!         ],
 //!     );
 //!
