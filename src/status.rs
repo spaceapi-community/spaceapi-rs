@@ -276,3 +276,34 @@ impl ToJson for RadioShow {
         Json::Object(d)
     }
 }
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use optional::Optional::*;
+  use rustc_serialize::json::{self, Json, ToJson};
+  
+  #[test]
+  fn serialize_deserialize_cache() {
+    let a :Cache = Cache{ schedule: format!("bla") };
+    let b :Cache = json::decode( & a.to_json().to_string() ).unwrap();
+    
+    assert_eq!(a.schedule, b.schedule);
+  }
+  
+  #[test]
+  fn serialize_deserialize_contact() {
+    let a :Contact = Contact{ 
+      irc: Value(format!("bla")),
+      twitter: Absent,
+      foursquare: Absent,
+      email: Value(format!("bli@bla")),
+    };
+    let b :Contact = json::decode( & a.to_json().to_string() ).unwrap();
+    
+    assert_eq!(a.irc, b.irc);
+    assert_eq!(a.twitter, b.twitter);
+    assert_eq!(a.foursquare, b.foursquare);
+    assert_eq!(a.email, b.email);
+  }
+}
