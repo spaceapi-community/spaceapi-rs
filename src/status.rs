@@ -281,7 +281,7 @@ impl ToJson for RadioShow {
 mod test {
   use super::*;
   use optional::Optional::*;
-  use rustc_serialize::json::{self, Json, ToJson};
+  use rustc_serialize::json::{self, ToJson};
   
   #[test]
   fn serialize_deserialize_cache() {

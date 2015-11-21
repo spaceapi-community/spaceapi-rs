@@ -1,13 +1,16 @@
 //! Useful stuff related to the spaceapi.
 
+use rustc_serialize::{Decodable, Decoder};
+
 /// An ``Optional`` can contain ``Optional::Value<T>`` or ``Optional::Absent``.
 /// It is similar to an ``Option``, but ``Optional::Absent`` means it will be
 /// omitted when serialized, while ``None`` will be serialized to ``null``.
-#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash, RustcDecodable)]
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Optional<T> {
     Value(T),
     Absent,
 }
+use Optional::*;
 
 impl<T> Optional<T> {
 
@@ -173,5 +176,17 @@ impl<T> Into<Option<T>> for Optional<T> {
             Optional::Value(x) => Some(x),
             Optional::Absent => None,
         }
+    }
+}
+
+impl<T:Decodable> Decodable for Optional<T> {
+    fn decode<D: Decoder>(d: &mut D) -> Result<Optional<T>, D::Error> {
+        d.read_option(|d, b| {
+            if b {
+                Ok(Value(try!(Decodable::decode(d))))
+            } else {
+                Ok(Absent)
+            }
+        })
     }
 }
