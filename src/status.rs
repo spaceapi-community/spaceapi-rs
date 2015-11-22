@@ -5,27 +5,27 @@ pub use sensors::{SensorTemplate, Sensors};
 pub use sensors::{TemperatureSensor, PeopleNowPresentSensor};
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Location {
     pub address: Optional<String>,
     pub lat: f64,
     pub lon: f64,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
     pub spacephone: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Icon {
     pub open: String,
     pub close: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct State {
     pub open: Option<bool>,
     pub lastchange: Optional<u64>,
@@ -34,7 +34,7 @@ pub struct State {
     pub icon: Optional<Icon>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Event {
     pub name: String,
     pub _type: String,
@@ -42,7 +42,7 @@ pub struct Event {
     pub extra: Optional<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Contact {
     pub irc: Optional<String>,
     pub twitter: Optional<String>,
@@ -50,13 +50,13 @@ pub struct Contact {
     pub email: Optional<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Feed {
     pub _type: Optional<String>,
     pub url: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Feeds {
     pub blog: Optional<Feed>,
     pub wiki: Optional<Feed>,
@@ -64,12 +64,12 @@ pub struct Feeds {
     pub flickr: Optional<Feed>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Cache {
     pub schedule: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct RadioShow {
     pub name: String,
     pub url: String,
@@ -79,11 +79,11 @@ pub struct RadioShow {
 }
 
 /// The main Space API status object.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Status {
 
     // Hackerspace properties
-    pub api: &'static str,
+    pub api: String,
     pub space: String,
     pub logo: String,
     pub url: String,
@@ -112,7 +112,7 @@ impl Status {
     /// Create a new Status object with only the absolutely required fields.
     pub fn new<S: Into<String>>(space: S, logo: S, url: S, location: Location, contact: Contact, issue_report_channels: Vec<String>) -> Status {
         Status {
-            api: "0.13",
+            api: "0.13".into(),
             space: space.into(),
             logo: logo.into(),
             url: url.into(),
@@ -275,4 +275,35 @@ impl ToJson for RadioShow {
         d.insert("start".to_string(), self.start.to_json()); d.insert("end".to_string(), self.end.to_json());
         Json::Object(d)
     }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use optional::Optional::*;
+  use rustc_serialize::json::{self, ToJson};
+  
+  #[test]
+  fn serialize_deserialize_cache() {
+    let a :Cache = Cache{ schedule: format!("bla") };
+    let b :Cache = json::decode( & a.to_json().to_string() ).unwrap();
+    
+    assert_eq!(a.schedule, b.schedule);
+  }
+  
+  #[test]
+  fn serialize_deserialize_contact() {
+    let a :Contact = Contact{ 
+      irc: Value(format!("bla")),
+      twitter: Absent,
+      foursquare: Absent,
+      email: Value(format!("bli@bla")),
+    };
+    let b :Contact = json::decode( & a.to_json().to_string() ).unwrap();
+    
+    assert_eq!(a.irc, b.irc);
+    assert_eq!(a.twitter, b.twitter);
+    assert_eq!(a.foursquare, b.foursquare);
+    assert_eq!(a.email, b.email);
+  }
 }

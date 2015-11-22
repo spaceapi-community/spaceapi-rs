@@ -83,7 +83,7 @@ impl SensorTemplate for TemperatureSensorTemplate {
 
 //--- Structures ---//
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct PeopleNowPresentSensor {
     pub location: Optional<String>,
     pub name: Optional<String>,
@@ -92,7 +92,7 @@ pub struct PeopleNowPresentSensor {
     pub value: u64,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct TemperatureSensor {
     pub unit: String,
     pub location: String,
@@ -101,7 +101,7 @@ pub struct TemperatureSensor {
     pub value: f64,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Sensors {
     pub people_now_present: Optional<Vec<PeopleNowPresentSensor>>,
     pub temperature: Optional<Vec<TemperatureSensor>>,
