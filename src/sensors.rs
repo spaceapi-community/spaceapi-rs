@@ -113,8 +113,8 @@ pub struct Sensors {
 impl ToJson for Sensors {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        self.people_now_present.as_ref().map_or((), |v| { d.insert("people_now_present".to_string(), v.to_json()); });
-        self.temperature.as_ref().map_or((), |v| { d.insert("temperature".to_string(), v.to_json()); });
+        self.people_now_present.as_ref().map_or((), |v| { d.insert("people_now_present".into(), v.to_json()); });
+        self.temperature.as_ref().map_or((), |v| { d.insert("temperature".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -122,11 +122,11 @@ impl ToJson for Sensors {
 impl ToJson for PeopleNowPresentSensor {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("value".to_string(), self.value.to_json());
-        self.location.as_ref().map_or((), |v| { d.insert("location".to_string(), v.to_json()); });
-        self.name.as_ref().map_or((), |v| { d.insert("name".to_string(), v.to_json()); });
-        self.names.as_ref().map_or((), |v| { d.insert("names".to_string(), v.to_json()); });
-        self.description.as_ref().map_or((), |v| { d.insert("description".to_string(), v.to_json()); });
+        d.insert("value".into(), self.value.to_json());
+        self.location.as_ref().map_or((), |v| { d.insert("location".into(), v.to_json()); });
+        self.name.as_ref().map_or((), |v| { d.insert("name".into(), v.to_json()); });
+        self.names.as_ref().map_or((), |v| { d.insert("names".into(), v.to_json()); });
+        self.description.as_ref().map_or((), |v| { d.insert("description".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -134,11 +134,11 @@ impl ToJson for PeopleNowPresentSensor {
 impl ToJson for TemperatureSensor {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("value".to_string(), self.value.to_json());
-        d.insert("unit".to_string(), self.unit.to_json());
-        d.insert("location".to_string(), self.location.to_json());
-        self.name.as_ref().map_or((), |v| { d.insert("name".to_string(), v.to_json()); });
-        self.description.as_ref().map_or((), |v| { d.insert("description".to_string(), v.to_json()); });
+        d.insert("value".into(), self.value.to_json());
+        d.insert("unit".into(), self.unit.to_json());
+        d.insert("location".into(), self.location.to_json());
+        self.name.as_ref().map_or((), |v| { d.insert("name".into(), v.to_json()); });
+        self.description.as_ref().map_or((), |v| { d.insert("description".into(), v.to_json()); });
         Json::Object(d)
     }
 }

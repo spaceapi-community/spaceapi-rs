@@ -146,25 +146,25 @@ impl ToJson for Status {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
 
-        d.insert("api".to_string(), self.api.to_json());
-        d.insert("space".to_string(), self.space.to_json());
-        d.insert("logo".to_string(), self.logo.to_json());
-        d.insert("url".to_string(), self.url.to_json());
-        d.insert("location".to_string(), self.location.to_json());
-        d.insert("contact".to_string(), self.contact.to_json());
+        d.insert("api".into(), self.api.to_json());
+        d.insert("space".into(), self.space.to_json());
+        d.insert("logo".into(), self.logo.to_json());
+        d.insert("url".into(), self.url.to_json());
+        d.insert("location".into(), self.location.to_json());
+        d.insert("contact".into(), self.contact.to_json());
 
-        self.spacefed.as_ref().map_or((), |v| { d.insert("spacefed".to_string(), v.to_json()); } );
-        self.projects.as_ref().map_or((), |v| { d.insert("projects".to_string(), v.to_json()); });
-        self.cam.as_ref().map_or((), |v| { d.insert("cam".to_string(), v.to_json()); });
-        self.feeds.as_ref().map_or((), |v| { d.insert("feeds".to_string(), v.to_json()); });
-        self.events.as_ref().map_or((), |v| { d.insert("events".to_string(), v.to_json()); });
-        self.radio_show.as_ref().map_or((), |v| { d.insert("radio_show".to_string(), v.to_json()); });
+        self.spacefed.as_ref().map_or((), |v| { d.insert("spacefed".into(), v.to_json()); } );
+        self.projects.as_ref().map_or((), |v| { d.insert("projects".into(), v.to_json()); });
+        self.cam.as_ref().map_or((), |v| { d.insert("cam".into(), v.to_json()); });
+        self.feeds.as_ref().map_or((), |v| { d.insert("feeds".into(), v.to_json()); });
+        self.events.as_ref().map_or((), |v| { d.insert("events".into(), v.to_json()); });
+        self.radio_show.as_ref().map_or((), |v| { d.insert("radio_show".into(), v.to_json()); });
 
-        self.cache.as_ref().map_or((), |v| { d.insert("cache".to_string(), v.to_json()); });
-        d.insert("issue_report_channels".to_string(), self.issue_report_channels.to_json());
+        self.cache.as_ref().map_or((), |v| { d.insert("cache".into(), v.to_json()); });
+        d.insert("issue_report_channels".into(), self.issue_report_channels.to_json());
 
-        d.insert("state".to_string(), self.state.to_json());
-        self.sensors.as_ref().map_or((), |v| { d.insert("sensors".to_string(), v.to_json()); });
+        d.insert("state".into(), self.state.to_json());
+        self.sensors.as_ref().map_or((), |v| { d.insert("sensors".into(), v.to_json()); });
 
         Json::Object(d)
     }
@@ -173,11 +173,11 @@ impl ToJson for Status {
 impl ToJson for Location {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("lat".to_string(), self.lat.to_json());
-        d.insert("lon".to_string(), self.lon.to_json());
+        d.insert("lat".into(), self.lat.to_json());
+        d.insert("lon".into(), self.lon.to_json());
         match self.address {
             Optional::Value(ref address) => {
-                d.insert("address".to_string(), address.to_json());
+                d.insert("address".into(), address.to_json());
             },
             Optional::Absent => (),
         };
@@ -188,9 +188,9 @@ impl ToJson for Location {
 impl ToJson for Spacefed {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("spacenet".to_string(), self.spacenet.to_json());
-        d.insert("spacesaml".to_string(), self.spacesaml.to_json());
-        d.insert("spacephone".to_string(), self.spacephone.to_json());
+        d.insert("spacenet".into(), self.spacenet.to_json());
+        d.insert("spacesaml".into(), self.spacesaml.to_json());
+        d.insert("spacephone".into(), self.spacephone.to_json());
         Json::Object(d)
     }
 }
@@ -198,8 +198,8 @@ impl ToJson for Spacefed {
 impl ToJson for Icon {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("open".to_string(), self.open.to_json());
-        d.insert("close".to_string(), self.close.to_json());
+        d.insert("open".into(), self.open.to_json());
+        d.insert("close".into(), self.close.to_json());
         Json::Object(d)
     }
 }
@@ -207,11 +207,11 @@ impl ToJson for Icon {
 impl ToJson for State {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("open".to_string(), self.open.to_json());
-        self.lastchange.as_ref().map_or((), |v| { d.insert("lastchange".to_string(), v.to_json()); });
-        self.trigger_person.as_ref().map_or((), |v| { d.insert("trigger_person".to_string(), v.to_json()); });
-        self.message.as_ref().map_or((), |v| { d.insert("message".to_string(), v.to_json()); });
-        self.icon.as_ref().map_or((), |v| { d.insert("icon".to_string(), v.to_json()); });
+        d.insert("open".into(), self.open.to_json());
+        self.lastchange.as_ref().map_or((), |v| { d.insert("lastchange".into(), v.to_json()); });
+        self.trigger_person.as_ref().map_or((), |v| { d.insert("trigger_person".into(), v.to_json()); });
+        self.message.as_ref().map_or((), |v| { d.insert("message".into(), v.to_json()); });
+        self.icon.as_ref().map_or((), |v| { d.insert("icon".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -219,10 +219,10 @@ impl ToJson for State {
 impl ToJson for Event {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("name".to_string(), self.name.to_json());
-        d.insert("type".to_string(), self._type.to_json());
-        d.insert("timestamp".to_string(), self.timestamp.to_json());
-        self.extra.as_ref().map_or((), |v| { d.insert("extra".to_string(), v.to_json()); });
+        d.insert("name".into(), self.name.to_json());
+        d.insert("type".into(), self._type.to_json());
+        d.insert("timestamp".into(), self.timestamp.to_json());
+        self.extra.as_ref().map_or((), |v| { d.insert("extra".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -230,10 +230,10 @@ impl ToJson for Event {
 impl ToJson for Contact {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        self.irc.as_ref().map_or((), |v| { d.insert("irc".to_string(), v.to_json()); });
-        self.twitter.as_ref().map_or((), |v| { d.insert("twitter".to_string(), v.to_json()); });
-        self.foursquare.as_ref().map_or((), |v| { d.insert("foursquare".to_string(), v.to_json()); });
-        self.email.as_ref().map_or((), |v| { d.insert("email".to_string(), v.to_json()); });
+        self.irc.as_ref().map_or((), |v| { d.insert("irc".into(), v.to_json()); });
+        self.twitter.as_ref().map_or((), |v| { d.insert("twitter".into(), v.to_json()); });
+        self.foursquare.as_ref().map_or((), |v| { d.insert("foursquare".into(), v.to_json()); });
+        self.email.as_ref().map_or((), |v| { d.insert("email".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -241,8 +241,8 @@ impl ToJson for Contact {
 impl ToJson for Feed {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("url".to_string(), self.url.to_json());
-        self._type.as_ref().map_or((), |v| { d.insert("type".to_string(), v.to_json()); });
+        d.insert("url".into(), self.url.to_json());
+        self._type.as_ref().map_or((), |v| { d.insert("type".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -250,10 +250,10 @@ impl ToJson for Feed {
 impl ToJson for Feeds {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        self.blog.as_ref().map_or((), |v| { d.insert("blog".to_string(), v.to_json()); });
-        self.wiki.as_ref().map_or((), |v| { d.insert("wiki".to_string(), v.to_json()); });
-        self.calendar.as_ref().map_or((), |v| { d.insert("calendar".to_string(), v.to_json()); });
-        self.flickr.as_ref().map_or((), |v| { d.insert("flickr".to_string(), v.to_json()); });
+        self.blog.as_ref().map_or((), |v| { d.insert("blog".into(), v.to_json()); });
+        self.wiki.as_ref().map_or((), |v| { d.insert("wiki".into(), v.to_json()); });
+        self.calendar.as_ref().map_or((), |v| { d.insert("calendar".into(), v.to_json()); });
+        self.flickr.as_ref().map_or((), |v| { d.insert("flickr".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -261,7 +261,7 @@ impl ToJson for Feeds {
 impl ToJson for Cache {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("schedule".to_string(), self.schedule.to_json());
+        d.insert("schedule".into(), self.schedule.to_json());
         Json::Object(d)
     }
 }
@@ -269,10 +269,10 @@ impl ToJson for Cache {
 impl ToJson for RadioShow {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
-        d.insert("name".to_string(), self.name.to_json());
-        d.insert("url".to_string(), self.url.to_json());
-        d.insert("type".to_string(), self._type.to_json());
-        d.insert("start".to_string(), self.start.to_json()); d.insert("end".to_string(), self.end.to_json());
+        d.insert("name".into(), self.name.to_json());
+        d.insert("url".into(), self.url.to_json());
+        d.insert("type".into(), self._type.to_json());
+        d.insert("start".into(), self.start.to_json()); d.insert("end".into(), self.end.to_json());
         Json::Object(d)
     }
 }
