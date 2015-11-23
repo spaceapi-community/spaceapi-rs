@@ -9,15 +9,20 @@
 //!
 //! # Examples
 //!
-//! You can create a new ``Status`` instance by using the ``new()`` constructor method. To serialize
-//! this to [``Json``](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/enum.Json.html), use
+//! ## Serializing
+//!
+//! You can create a new `Status` instance by using the `new()` constructor method.
+//!
+//! To serialize the status to
+//! [`Json`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/enum.Json.html), use
 //! the [`ToJson`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/trait.ToJson.html)
 //! trait implementation. You can then create a string from the resulting object.
 //!
-//!     # extern crate rustc_serialize;
-//!     # extern crate spaceapi;
-//!     # use spaceapi::{Status, Location, Contact};
-//!     # use spaceapi::optional::Optional;
+//!     extern crate rustc_serialize;
+//!     extern crate spaceapi;
+//!
+//!     use spaceapi::{Status, Location, Contact};
+//!     use spaceapi::optional::Optional;
 //!     use rustc_serialize::json::ToJson;
 //!
 //!     # fn main() {
@@ -26,7 +31,8 @@
 //!         "https://www.coredump.ch/logo.png",
 //!         "https://www.coredump.ch/",
 //!         Location {
-//!             address: Optional::Value("Spinnereistrasse 2, 8640 Rapperswil, Switzerland".into()),
+//!             address: Optional::Value(
+//!                 "Spinnereistrasse 2, 8640 Rapperswil, Switzerland".into()),
 //!             lat: 47.22936,
 //!             lon: 8.82949,
 //!         },
@@ -44,6 +50,27 @@
 //!
 //!     let jsonstatus = status.to_json();
 //!     let stringstatus = jsonstatus.to_string();
+//!
+//!     # assert!(&stringstatus[0..1] == "{");
+//!     # }
+//!
+//! ## Deserializing
+//!
+//! You can deserialize any struct of the Space API through `rustc_serialize::json`:
+//!
+//!     extern crate rustc_serialize;
+//!     extern crate spaceapi;
+//!
+//!     use rustc_serialize::json;
+//!     use spaceapi::Location;
+//!
+//!     # fn main() {
+//!     let location = "{\"lat\": 47.22936, \"lon\": 8.82949}";
+//!     let decoded: Location = json::decode(location).unwrap();
+//!     println!("{:?}", decoded);
+//!
+//!     // Output:
+//!     // Location { address: Absent, lat: 47.22936000000001, lon: 8.829490000000002 }
 //!     # }
 
 #[macro_use]

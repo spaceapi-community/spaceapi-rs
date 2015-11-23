@@ -1,8 +1,10 @@
 use std::collections::BTreeMap;
 use rustc_serialize::json::{Json, ToJson};
 pub use optional::Optional;
-pub use sensors::{SensorTemplate, Sensors};
-pub use sensors::{TemperatureSensor, PeopleNowPresentSensor};
+pub use sensors::SensorTemplate;
+pub use sensors::Sensors;
+pub use sensors::TemperatureSensor;
+pub use sensors::PeopleNowPresentSensor;
 
 
 #[derive(Debug, Clone, RustcDecodable)]
