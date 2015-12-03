@@ -45,11 +45,34 @@ pub struct Event {
 }
 
 #[derive(Debug, Clone, RustcDecodable)]
+pub struct Keymaster {
+    pub name: Optional<String>,
+    pub irc_nick: Optional<String>,
+    pub phone: Optional<String>,
+    pub email: Optional<String>,
+    pub twitter: Optional<String>,
+}
+
+#[derive(Debug, Clone, RustcDecodable)]
+pub struct GoogleContact {
+    pub plus: Optional<String>,
+}
+
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Contact {
+    pub phone: Optional<String>,
+    pub sip: Optional<String>,
+    pub keymasters: Optional<Vec<Keymaster>>,
     pub irc: Optional<String>,
     pub twitter: Optional<String>,
+    pub facebook: Optional<String>,
+    pub google: Optional<GoogleContact>,
+    pub identica: Optional<String>,
     pub foursquare: Optional<String>,
     pub email: Optional<String>,
+    pub ml: Optional<String>,
+    pub jabber: Optional<String>,
+    pub issue_mail: Optional<String>,
 }
 
 #[derive(Debug, Clone, RustcDecodable)]
@@ -229,13 +252,42 @@ impl ToJson for Event {
     }
 }
 
+impl ToJson for Keymaster {
+    fn to_json(&self) -> Json {
+        let mut d = BTreeMap::new();
+        self.name.as_ref().map_or((), |v| { d.insert("name".into(), v.to_json()); });
+        self.irc_nick.as_ref().map_or((), |v| { d.insert("irc_nick".into(), v.to_json()); });
+        self.phone.as_ref().map_or((), |v| { d.insert("phone".into(), v.to_json()); });
+        self.email.as_ref().map_or((), |v| { d.insert("email".into(), v.to_json()); });
+        self.twitter.as_ref().map_or((), |v| { d.insert("twitter".into(), v.to_json()); });
+        Json::Object(d)
+    }
+}
+
+impl ToJson for GoogleContact {
+    fn to_json(&self) -> Json {
+        let mut d = BTreeMap::new();
+        self.plus.as_ref().map_or((), |v| { d.insert("plus".into(), v.to_json()); });
+        Json::Object(d)
+    }
+}
+
 impl ToJson for Contact {
     fn to_json(&self) -> Json {
         let mut d = BTreeMap::new();
+        self.phone.as_ref().map_or((), |v| { d.insert("phone".into(), v.to_json()); });
+        self.sip.as_ref().map_or((), |v| { d.insert("sip".into(), v.to_json()); });
+        self.keymasters.as_ref().map_or((), |v| { d.insert("keymasters".into(), v.to_json()); });
         self.irc.as_ref().map_or((), |v| { d.insert("irc".into(), v.to_json()); });
         self.twitter.as_ref().map_or((), |v| { d.insert("twitter".into(), v.to_json()); });
+        self.facebook.as_ref().map_or((), |v| { d.insert("facebook".into(), v.to_json()); });
+        self.google.as_ref().map_or((), |v| { d.insert("google".into(), v.to_json()); });
+        self.identica.as_ref().map_or((), |v| { d.insert("identica".into(), v.to_json()); });
         self.foursquare.as_ref().map_or((), |v| { d.insert("foursquare".into(), v.to_json()); });
         self.email.as_ref().map_or((), |v| { d.insert("email".into(), v.to_json()); });
+        self.ml.as_ref().map_or((), |v| { d.insert("ml".into(), v.to_json()); });
+        self.jabber.as_ref().map_or((), |v| { d.insert("jabber".into(), v.to_json()); });
+        self.issue_mail.as_ref().map_or((), |v| { d.insert("issue_mail".into(), v.to_json()); });
         Json::Object(d)
     }
 }
@@ -287,25 +339,50 @@ mod test {
   
   #[test]
   fn serialize_deserialize_cache() {
-    let a :Cache = Cache{ schedule: format!("bla") };
-    let b :Cache = json::decode( & a.to_json().to_string() ).unwrap();
+    let a: Cache = Cache { schedule: "bla".into() };
+    let b: Cache = json::decode(&a.to_json().to_string()).unwrap();
     
     assert_eq!(a.schedule, b.schedule);
   }
   
   #[test]
-  fn serialize_deserialize_contact() {
-    let a :Contact = Contact{ 
-      irc: Value(format!("bla")),
+  fn serialize_deserialize_simple_contact() {
+    let a: Contact = Contact{
+      phone: Absent,
+      sip: Absent,
+      keymasters: Value(vec![
+          Keymaster {
+              name: Value("Joe".into()),
+              irc_nick: Absent,
+              phone: Absent,
+              email: Value("joe@example.com".into()),
+              twitter: Absent,
+          },
+      ]),
+      irc: Value("bla".into()),
       twitter: Absent,
+      facebook: Absent,
+      google: Value(GoogleContact { plus: Value("http://gplus/profile".into()) }),
+      identica: Absent,
       foursquare: Absent,
-      email: Value(format!("bli@bla")),
+      email: Value("bli@bla".into()),
+      ml: Absent,
+      jabber: Absent,
+      issue_mail: Absent,
     };
-    let b :Contact = json::decode( & a.to_json().to_string() ).unwrap();
+    let b: Contact = json::decode(&a.to_json().to_string()).unwrap();
     
     assert_eq!(a.irc, b.irc);
     assert_eq!(a.twitter, b.twitter);
     assert_eq!(a.foursquare, b.foursquare);
     assert_eq!(a.email, b.email);
+    assert_eq!(a.sip, b.sip);
+    assert_eq!(a.ml, b.ml);
+
+    assert_eq!(a.google.as_ref().unwrap().plus, b.google.as_ref().unwrap().plus);
+    assert_eq!(a.keymasters.as_ref().unwrap()[0].name, b.keymasters.as_ref().unwrap()[0].name);
+    assert_eq!(a.keymasters.as_ref().unwrap()[0].phone, b.keymasters.as_ref().unwrap()[0].phone);
+    assert_eq!(a.keymasters.as_ref().unwrap()[0].email, b.keymasters.as_ref().unwrap()[0].email);
   }
+
 }

@@ -22,7 +22,7 @@
 //!     extern crate spaceapi;
 //!
 //!     use spaceapi::{Status, Location, Contact};
-//!     use spaceapi::optional::Optional;
+//!     use spaceapi::optional::Optional::{Absent, Value};
 //!     use rustc_serialize::json::ToJson;
 //!
 //!     # fn main() {
@@ -31,16 +31,25 @@
 //!         "https://www.coredump.ch/logo.png",
 //!         "https://www.coredump.ch/",
 //!         Location {
-//!             address: Optional::Value(
+//!             address: Value(
 //!                 "Spinnereistrasse 2, 8640 Rapperswil, Switzerland".into()),
 //!             lat: 47.22936,
 //!             lon: 8.82949,
 //!         },
 //!         Contact {
-//!             irc: Optional::Value("irc://freenode.net/#coredump".into()),
-//!             twitter: Optional::Value("@coredump_ch".into()),
-//!             foursquare: Optional::Value("525c20e5498e875d8231b1e5".into()),
-//!             email: Optional::Value("danilo@coredump.ch".into()),
+//!             phone: Absent,
+//!             sip: Absent,
+//!             keymasters: Absent,
+//!             irc: Value("irc://freenode.net/#coredump".into()),
+//!             twitter: Value("@coredump_ch".into()),
+//!             facebook: Absent,
+//!             google: Absent,
+//!             identica: Absent,
+//!             foursquare: Value("525c20e5498e875d8231b1e5".into()),
+//!             email: Value("danilo@coredump.ch".into()),
+//!             ml: Absent,
+//!             jabber: Absent,
+//!             issue_mail: Absent,
 //!         },
 //!         vec![
 //!             "email".into(),
