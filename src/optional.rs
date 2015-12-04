@@ -46,8 +46,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn unwrap(self) -> T {
         match self {
-            Optional::Value(val) => val,
-            Optional::Absent => panic!("called `Optional::unwrap()` on a `Absent` value"),
+            Value(val) => val,
+            Absent => panic!("called `Optional::unwrap()` on a `Absent` value"),
         }
     }
 
@@ -64,8 +64,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn unwrap_or_else<F: FnOnce() -> T>(self, f: F) -> T {
         match self {
-            Optional::Value(x) => x,
-            Optional::Absent => f()
+            Value(x) => x,
+            Absent => f()
         }
     }
 
@@ -84,8 +84,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> Optional<U> {
         match self {
-            Optional::Value(x) => Optional::Value(f(x)),
-            Optional::Absent => Optional::Absent
+            Value(x) => Value(f(x)),
+            Absent => Absent
         }
     }
 
@@ -93,24 +93,24 @@ impl<T> Optional<T> {
     /// [`std::option::Option<T>::map_or`](http://doc.rust-lang.org/std/option/enum.Option.html#method.map_or)
     pub fn map_or<U, F: FnOnce(T) -> U>(self, def: U, f: F) -> U {
         match self {
-            Optional::Value(v) => f(v),
-            Optional::Absent => def,
+            Value(v) => f(v),
+            Absent => def,
         }
     }
 
     /// Converts from `Optional<T>` to `Optional<&mut T>`
     pub fn as_mut<'r>(&'r mut self) -> Optional<&'r mut T> {
         match *self {
-            Optional::Value(ref mut x) => Optional::Value(x),
-            Optional::Absent => Optional::Absent
+            Value(ref mut x) => Value(x),
+            Absent => Absent
         }
     }
 
     /// Converts from `Optional<T>` to `Optional<&T>`
     pub fn as_ref<'r>(&'r self) -> Optional<&'r T> {
         match *self {
-            Optional::Value(ref x) => Optional::Value(x),
-            Optional::Absent => Optional::Absent
+            Value(ref x) => Value(x),
+            Absent => Absent
         }
     }
 
@@ -134,8 +134,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn and_then<U, F: FnOnce(T) -> Optional<U>>(self, f: F) -> Optional<U> {
         match self {
-            Optional::Value(x) => f(x),
-            Optional::Absent => Optional::Absent,
+            Value(x) => f(x),
+            Absent => Absent,
         }
     }
 
@@ -154,7 +154,7 @@ impl<T> Optional<T> {
     /// ```
     pub fn is_absent(&self) -> bool {
         match *self {
-            Optional::Absent => true,
+            Absent => true,
             _ => false
         }
     }
@@ -183,8 +183,8 @@ impl<T> Into<Option<T>> for Optional<T> {
     /// ```
     fn into(self) -> Option<T> {
         match self {
-            Optional::Value(x) => Some(x),
-            Optional::Absent => None,
+            Value(x) => Some(x),
+            Absent => None,
         }
     }
 }
