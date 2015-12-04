@@ -6,6 +6,8 @@ use rustc_serialize::{Decodable, Decoder};
 /// An `Optional` can contain either `Value<T>` or `Absent`.
 /// It is similar to an `Option`, but `None` will be serialized to `null`
 /// while `Absent` means the value will be omitted when serialized.
+///
+/// An `Optional` implements the `Default` trait, it is `Absent` by default.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Optional<T> {
     Value(T),
@@ -158,6 +160,13 @@ impl<T> Optional<T> {
     }
 }
 
+impl<T> Default for Optional<T> {
+    /// An optional value is absent by default.
+    fn default() -> Optional<T> {
+        Absent
+    }
+}
+
 impl<T> Into<Option<T>> for Optional<T> {
     /// Convert Optional<T> into Option<T>
     ///
@@ -190,4 +199,33 @@ impl<T:Decodable> Decodable for Optional<T> {
             }
         })
     }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_default() {
+        let something: Optional<u8> = Default::default();
+        assert_eq!(something, Optional::Absent);
+    }
+
+    #[test]
+    fn test_default_in_struct() {
+        #[derive(Default)]
+        struct Foo {
+            something: Optional<u8>,
+            somenum: u8,
+        }
+
+        let foo1: Foo = Default::default();
+        assert_eq!(foo1.something, Optional::Absent);
+        assert_eq!(foo1.somenum, 0);
+
+        let foo2 = Foo { somenum: 7, ..Default::default() };
+        assert_eq!(foo2.something, Optional::Absent);
+        assert_eq!(foo2.somenum, 7);
+    }
+
 }
