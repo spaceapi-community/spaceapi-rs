@@ -14,6 +14,7 @@ Possible log types:
 
 ### UNRELEASED
 
+- [added] All types now implement `PartialEq` (#22)
 - ...
 
 ### v0.2.0 (2015-11-23)
