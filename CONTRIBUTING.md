@@ -15,6 +15,8 @@ please adhere to the following standards though:
 - **Keep your commit history clean**. If there are typo commits that should be squashed
   or if you want to re-order commits, please use `git rebase -i` or `git commit --amend`
   to clean up your commit history.
+- **Update CHANGELOG.md if you change something**. This is only necessary when
+  the change affects the public API of course.
 
 If you're a member of the development team (having push access to the repository):
 
