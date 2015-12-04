@@ -15,6 +15,8 @@ please adhere to the following standards though:
 - **Keep your commit history clean**. If there are typo commits that should be squashed
   or if you want to re-order commits, please use `git rebase -i` or `git commit --amend`
   to clean up your commit history.
+- **Mark breaking commits as such**: Put the string `[breaking-change]`
+  somewhere in your commit message. This doesn't need to be in the first line.
 - **Update CHANGELOG.md if you change something**. This is only necessary when
   the change affects the public API of course.
 
