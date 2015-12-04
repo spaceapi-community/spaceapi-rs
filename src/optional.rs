@@ -5,7 +5,8 @@ use rustc_serialize::{Decodable, Decoder};
 
 /// An `Optional` can contain either `Value<T>` or `Absent`.
 /// It is similar to an `Option`, but `None` will be serialized to `null`
-/// while `Absent` means the value will be omitted when serialized.
+/// while `Absent` means that both the key and the value will be omitted
+/// when serialized.
 ///
 /// An `Optional` implements the `Default` trait, it is `Absent` by default.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
