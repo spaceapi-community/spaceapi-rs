@@ -7,27 +7,27 @@ pub use sensors::TemperatureSensor;
 pub use sensors::PeopleNowPresentSensor;
 
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Location {
     pub address: Optional<String>,
     pub lat: f64,
     pub lon: f64,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
     pub spacephone: bool,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Icon {
     pub open: String,
     pub close: String,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct State {
     pub open: Option<bool>,
     pub lastchange: Optional<u64>,
@@ -36,7 +36,7 @@ pub struct State {
     pub icon: Optional<Icon>,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Event {
     pub name: String,
     pub _type: String,
@@ -44,7 +44,7 @@ pub struct Event {
     pub extra: Optional<String>,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Keymaster {
     pub name: Optional<String>,
     pub irc_nick: Optional<String>,
@@ -53,12 +53,12 @@ pub struct Keymaster {
     pub twitter: Optional<String>,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct GoogleContact {
     pub plus: Optional<String>,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Contact {
     pub phone: Optional<String>,
     pub sip: Optional<String>,
@@ -75,13 +75,13 @@ pub struct Contact {
     pub issue_mail: Optional<String>,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Feed {
     pub _type: Optional<String>,
     pub url: String,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Feeds {
     pub blog: Optional<Feed>,
     pub wiki: Optional<Feed>,
@@ -89,12 +89,12 @@ pub struct Feeds {
     pub flickr: Optional<Feed>,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Cache {
     pub schedule: String,
 }
 
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct RadioShow {
     pub name: String,
     pub url: String,
@@ -104,7 +104,7 @@ pub struct RadioShow {
 }
 
 /// The main Space API status object.
-#[derive(Debug, Clone, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq, RustcDecodable)]
 pub struct Status {
 
     // Hackerspace properties
@@ -379,10 +379,8 @@ mod test {
     assert_eq!(a.sip, b.sip);
     assert_eq!(a.ml, b.ml);
 
-    assert_eq!(a.google.as_ref().unwrap().plus, b.google.as_ref().unwrap().plus);
-    assert_eq!(a.keymasters.as_ref().unwrap()[0].name, b.keymasters.as_ref().unwrap()[0].name);
-    assert_eq!(a.keymasters.as_ref().unwrap()[0].phone, b.keymasters.as_ref().unwrap()[0].phone);
-    assert_eq!(a.keymasters.as_ref().unwrap()[0].email, b.keymasters.as_ref().unwrap()[0].email);
+    assert_eq!(a.google, b.google);
+    assert_eq!(a.keymasters, b.keymasters);
   }
 
 }
