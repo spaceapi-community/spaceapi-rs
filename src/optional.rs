@@ -5,7 +5,10 @@ use rustc_serialize::{Decodable, Decoder};
 
 /// An `Optional` can contain either `Value<T>` or `Absent`.
 /// It is similar to an `Option`, but `None` will be serialized to `null`
-/// while `Absent` means the value will be omitted when serialized.
+/// while `Absent` means that both the key and the value will be omitted
+/// when serialized.
+///
+/// An `Optional` implements the `Default` trait, it is `Absent` by default.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Optional<T> {
     Value(T),
@@ -44,8 +47,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn unwrap(self) -> T {
         match self {
-            Optional::Value(val) => val,
-            Optional::Absent => panic!("called `Optional::unwrap()` on a `Absent` value"),
+            Value(val) => val,
+            Absent => panic!("called `Optional::unwrap()` on a `Absent` value"),
         }
     }
 
@@ -62,8 +65,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn unwrap_or_else<F: FnOnce() -> T>(self, f: F) -> T {
         match self {
-            Optional::Value(x) => x,
-            Optional::Absent => f()
+            Value(x) => x,
+            Absent => f()
         }
     }
 
@@ -82,8 +85,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> Optional<U> {
         match self {
-            Optional::Value(x) => Optional::Value(f(x)),
-            Optional::Absent => Optional::Absent
+            Value(x) => Value(f(x)),
+            Absent => Absent
         }
     }
 
@@ -91,24 +94,24 @@ impl<T> Optional<T> {
     /// [`std::option::Option<T>::map_or`](http://doc.rust-lang.org/std/option/enum.Option.html#method.map_or)
     pub fn map_or<U, F: FnOnce(T) -> U>(self, def: U, f: F) -> U {
         match self {
-            Optional::Value(v) => f(v),
-            Optional::Absent => def,
+            Value(v) => f(v),
+            Absent => def,
         }
     }
 
     /// Converts from `Optional<T>` to `Optional<&mut T>`
     pub fn as_mut<'r>(&'r mut self) -> Optional<&'r mut T> {
         match *self {
-            Optional::Value(ref mut x) => Optional::Value(x),
-            Optional::Absent => Optional::Absent
+            Value(ref mut x) => Value(x),
+            Absent => Absent
         }
     }
 
     /// Converts from `Optional<T>` to `Optional<&T>`
     pub fn as_ref<'r>(&'r self) -> Optional<&'r T> {
         match *self {
-            Optional::Value(ref x) => Optional::Value(x),
-            Optional::Absent => Optional::Absent
+            Value(ref x) => Value(x),
+            Absent => Absent
         }
     }
 
@@ -132,8 +135,8 @@ impl<T> Optional<T> {
     /// ```
     pub fn and_then<U, F: FnOnce(T) -> Optional<U>>(self, f: F) -> Optional<U> {
         match self {
-            Optional::Value(x) => f(x),
-            Optional::Absent => Optional::Absent,
+            Value(x) => f(x),
+            Absent => Absent,
         }
     }
 
@@ -152,9 +155,16 @@ impl<T> Optional<T> {
     /// ```
     pub fn is_absent(&self) -> bool {
         match *self {
-            Optional::Absent => true,
+            Absent => true,
             _ => false
         }
+    }
+}
+
+impl<T> Default for Optional<T> {
+    /// An optional value is absent by default.
+    fn default() -> Optional<T> {
+        Absent
     }
 }
 
@@ -174,8 +184,8 @@ impl<T> Into<Option<T>> for Optional<T> {
     /// ```
     fn into(self) -> Option<T> {
         match self {
-            Optional::Value(x) => Some(x),
-            Optional::Absent => None,
+            Value(x) => Some(x),
+            Absent => None,
         }
     }
 }
@@ -190,4 +200,33 @@ impl<T:Decodable> Decodable for Optional<T> {
             }
         })
     }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_default() {
+        let something: Optional<u8> = Default::default();
+        assert_eq!(something, Optional::Absent);
+    }
+
+    #[test]
+    fn test_default_in_struct() {
+        #[derive(Default)]
+        struct Foo {
+            something: Optional<u8>,
+            somenum: u8,
+        }
+
+        let foo1: Foo = Default::default();
+        assert_eq!(foo1.something, Optional::Absent);
+        assert_eq!(foo1.somenum, 0);
+
+        let foo2 = Foo { somenum: 7, ..Default::default() };
+        assert_eq!(foo2.something, Optional::Absent);
+        assert_eq!(foo2.somenum, 7);
+    }
+
 }
