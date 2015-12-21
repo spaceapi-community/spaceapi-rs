@@ -15,6 +15,7 @@ Possible log types:
 ### UNRELEASED
 
 - [added] All types now implement `PartialEq` (#22)
+- [added] Completed implementation of the `Contact` field (#6)
 - ...
 
 ### v0.2.0 (2015-11-23)
