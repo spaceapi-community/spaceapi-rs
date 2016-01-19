@@ -1,0 +1,2 @@
+--type-set=rust=.rs
+--ignore-dir=target/
