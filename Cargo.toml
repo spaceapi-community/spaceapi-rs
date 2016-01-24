@@ -20,7 +20,13 @@ include = [
     "LICENSE-APACHE",
     "AUTHORS.md",
 ]
+build="build.rs"
+
+[build-dependencies]
+serde_codegen = "*"
+syntex = "*"
 
 [dependencies]
-rustc-serialize = "^0.3"
 log = "^0.3"
+serde = "*"
+serde_json = "*"

@@ -1,0 +1,28 @@
+
+//--- Structures ---//
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct PeopleNowPresentSensor {
+    pub location: Option<String>,
+    pub name: Option<String>,
+    pub names: Option<Vec<String>>,
+    pub description: Option<String>,
+    pub value: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct TemperatureSensor {
+    pub unit: String,
+    pub location: String,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub value: f64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Sensors {
+    pub people_now_present: Option<Vec<PeopleNowPresentSensor>>,
+    pub temperature: Option<Vec<TemperatureSensor>>,
+}
+
+
