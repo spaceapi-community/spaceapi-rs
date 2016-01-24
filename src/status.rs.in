@@ -1,0 +1,187 @@
+pub use sensors::SensorTemplate;
+pub use sensors::Sensors;
+pub use sensors::TemperatureSensor;
+pub use sensors::PeopleNowPresentSensor;
+
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Location {
+    pub address: Option<String>,
+    pub lat: f64,
+    pub lon: f64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Spacefed {
+    pub spacenet: bool,
+    pub spacesaml: bool,
+    pub spacephone: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Icon {
+    pub open: String,
+    pub close: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct State {
+    pub open: Option<bool>,
+    pub lastchange: Option<u64>,
+    pub trigger_person: Option<String>,
+    pub message: Option<String>,
+    pub icon: Option<Icon>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Event {
+    pub name: String,
+    pub _type: String,
+    pub timestamp: u64,
+    pub extra: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Keymaster {
+    pub name: Option<String>,
+    pub irc_nick: Option<String>,
+    pub phone: Option<String>,
+    pub email: Option<String>,
+    pub twitter: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct GoogleContact {
+    pub plus: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Contact {
+    pub phone: Option<String>,
+    pub sip: Option<String>,
+    pub keymasters: Option<Vec<Keymaster>>,
+    pub irc: Option<String>,
+    pub twitter: Option<String>,
+    pub facebook: Option<String>,
+    pub google: Option<GoogleContact>,
+    pub identica: Option<String>,
+    pub foursquare: Option<String>,
+    pub email: Option<String>,
+    pub ml: Option<String>,
+    pub jabber: Option<String>,
+    pub issue_mail: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Feed {
+    pub _type: Option<String>,
+    pub url: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Feeds {
+    pub blog: Option<Feed>,
+    pub wiki: Option<Feed>,
+    pub calendar: Option<Feed>,
+    pub flickr: Option<Feed>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Cache {
+    pub schedule: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct RadioShow {
+    pub name: String,
+    pub url: String,
+    pub _type: String,
+    pub start: String,
+    pub end: String,
+}
+
+/// The main Space API status object.
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Status {
+
+    // Hackerspace properties
+    pub api: String,
+    pub space: String,
+    pub logo: String,
+    pub url: String,
+    pub location: Location,
+    pub contact: Contact,
+
+    // Hackerspace features / projects
+    pub spacefed: Option<Spacefed>,
+    pub projects: Option<Vec<String>>,
+    pub cam: Option<Vec<String>>,
+    pub feeds: Option<Feeds>,
+    pub events: Option<Vec<Event>>,
+    pub radio_show: Option<Vec<RadioShow>>,
+
+    // SpaceAPI internal usage
+    pub cache: Option<Cache>,
+    pub issue_report_channels: Vec<String>,
+
+    // Mutable data
+    pub state: State,
+    pub sensors: Option<Sensors>,
+}
+
+
+/*
+#[cfg(test)]
+mod test {
+    use super::*;
+    use optional::Option::*;
+    use rustc_serialize::json::{self, ToJson};
+
+    #[test]
+    fn serialize_deserialize_cache() {
+        let a: Cache = Cache { schedule: "bla".into() };
+        let b: Cache = json::decode(&a.to_json().to_string()).unwrap();
+
+        assert_eq!(a.schedule, b.schedule);
+    }
+
+    #[test]
+    fn serialize_deserialize_simple_contact() {
+        let a: Contact = Contact{
+            phone: Absent,
+            sip: Absent,
+            keymasters: Value(vec![
+                              Keymaster {
+                                  name: Value("Joe".into()),
+                                  irc_nick: Absent,
+                                  phone: Absent,
+                                  email: Value("joe@example.com".into()),
+                                  twitter: Absent,
+                              },
+            ]),
+            irc: Value("bla".into()),
+            twitter: Absent,
+            facebook: Absent,
+            google: Value(GoogleContact { plus: Value("http://gplus/profile".into()) }),
+            identica: Absent,
+            foursquare: Absent,
+            email: Value("bli@bla".into()),
+            ml: Absent,
+            jabber: Absent,
+            issue_mail: Absent,
+        };
+        let b: Contact = json::decode(&a.to_json().to_string()).unwrap();
+
+        assert_eq!(a.irc, b.irc);
+        assert_eq!(a.twitter, b.twitter);
+        assert_eq!(a.foursquare, b.foursquare);
+        assert_eq!(a.email, b.email);
+        assert_eq!(a.sip, b.sip);
+        assert_eq!(a.ml, b.ml);
+
+        assert_eq!(a.google, b.google);
+        assert_eq!(a.keymasters, b.keymasters);
+    }
+
+}
+*/
