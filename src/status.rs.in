@@ -1,9 +1,3 @@
-pub use sensors::SensorTemplate;
-pub use sensors::Sensors;
-pub use sensors::TemperatureSensor;
-pub use sensors::PeopleNowPresentSensor;
-
-
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Location {
     pub address: Option<String>,
@@ -129,59 +123,3 @@ pub struct Status {
     pub sensors: Option<Sensors>,
 }
 
-
-/*
-#[cfg(test)]
-mod test {
-    use super::*;
-    use optional::Option::*;
-    use rustc_serialize::json::{self, ToJson};
-
-    #[test]
-    fn serialize_deserialize_cache() {
-        let a: Cache = Cache { schedule: "bla".into() };
-        let b: Cache = json::decode(&a.to_json().to_string()).unwrap();
-
-        assert_eq!(a.schedule, b.schedule);
-    }
-
-    #[test]
-    fn serialize_deserialize_simple_contact() {
-        let a: Contact = Contact{
-            phone: Absent,
-            sip: Absent,
-            keymasters: Value(vec![
-                              Keymaster {
-                                  name: Value("Joe".into()),
-                                  irc_nick: Absent,
-                                  phone: Absent,
-                                  email: Value("joe@example.com".into()),
-                                  twitter: Absent,
-                              },
-            ]),
-            irc: Value("bla".into()),
-            twitter: Absent,
-            facebook: Absent,
-            google: Value(GoogleContact { plus: Value("http://gplus/profile".into()) }),
-            identica: Absent,
-            foursquare: Absent,
-            email: Value("bli@bla".into()),
-            ml: Absent,
-            jabber: Absent,
-            issue_mail: Absent,
-        };
-        let b: Contact = json::decode(&a.to_json().to_string()).unwrap();
-
-        assert_eq!(a.irc, b.irc);
-        assert_eq!(a.twitter, b.twitter);
-        assert_eq!(a.foursquare, b.foursquare);
-        assert_eq!(a.email, b.email);
-        assert_eq!(a.sip, b.sip);
-        assert_eq!(a.ml, b.ml);
-
-        assert_eq!(a.google, b.google);
-        assert_eq!(a.keymasters, b.keymasters);
-    }
-
-}
-*/

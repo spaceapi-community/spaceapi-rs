@@ -1,3 +1,8 @@
+pub use sensors::SensorTemplate;
+pub use sensors::Sensors;
+pub use sensors::TemperatureSensor;
+pub use sensors::PeopleNowPresentSensor;
+
 include!(concat!(env!("OUT_DIR"), "/status.rs"));
 
 impl Status {
@@ -31,6 +36,50 @@ impl Status {
             },
             sensors: None,
         }
+    }
+
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use serde_json::{to_string, from_str};
+
+    #[test]
+    fn serialize_deserialize_cache() {
+        let a = Cache { schedule: "bla".into() };
+        let b: Cache = from_str(&to_string(&a).unwrap()).unwrap();
+        assert_eq!(a.schedule, b.schedule);
+    }
+
+    #[test]
+    fn serialize_deserialize_simple_contact() {
+        let a: Contact = Contact{
+            phone: None,
+            sip: None,
+            keymasters: Some(vec![
+                              Keymaster {
+                                  name: Some("Joe".into()),
+                                  irc_nick: None,
+                                  phone: None,
+                                  email: Some("joe@example.com".into()),
+                                  twitter: None,
+                              },
+            ]),
+            irc: Some("bla".into()),
+            twitter: None,
+            facebook: None,
+            google: Some(GoogleContact { plus: Some("http://gplus/profile".into()) }),
+            identica: None,
+            foursquare: None,
+            email: Some("bli@bla".into()),
+            ml: None,
+            jabber: None,
+            issue_mail: None,
+        };
+        let b: Contact = from_str(&to_string(&a).unwrap()).unwrap();
+
+        assert_eq!(a, b);
     }
 
 }

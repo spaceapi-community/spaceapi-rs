@@ -56,7 +56,7 @@
 //!         ],
 //!     );
 //!     let stringstatus = serde_json::to_string(&status).unwrap();
-//!     //let jsonstatus = serde_json::from_str(jsonstatus).unwrap();
+//!     let jsonstatus: Status = serde_json::from_str(&stringstatus).unwrap();
 //!
 //!     # assert!(&stringstatus[0..1] == "{");
 //!     # }
