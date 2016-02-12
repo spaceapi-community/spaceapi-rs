@@ -3,7 +3,7 @@ name = "spaceapi"
 version = "0.2.0"
 documentation = "https://coredump-ch.github.io/rust-docs/spaceapi/spaceapi/index.html"
 repository = "https://github.com/coredump-ch/spaceapi-rs/"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 authors = [
     "Raphael Nestler <raphael.nestler@gmail.com>",
     "Danilo Bargen <mail@dbrgn.ch>",
@@ -16,7 +16,8 @@ include = [
     "**/*.rs",
     "Cargo.toml",
     "README.md",
-    "LICENSE.txt",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
     "AUTHORS.md",
 ]
 
