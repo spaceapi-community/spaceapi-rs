@@ -23,10 +23,10 @@ include = [
 build="build.rs"
 
 [build-dependencies]
-serde_codegen = "*"
-syntex = "*"
+serde_codegen = "^0.6"
+syntex = "^0.29"
 
 [dependencies]
 log = "^0.3"
-serde = "*"
-serde_json = "*"
+serde = "^0.6"
+serde_json = "^0.6"
