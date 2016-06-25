@@ -17,6 +17,7 @@ Possible log types:
 - [added] All types now implement `PartialEq` (#22)
 - [added] Completed implementation of the `Contact` field (#6)
 - [added] `Optional` now implements the `Default` trait (#19)
+- [added] Implement `unwrap_or` for `Optional` (#27)
 - ...
 
 ### v0.2.0 (2015-11-23)

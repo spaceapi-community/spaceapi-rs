@@ -52,6 +52,23 @@ impl<T> Optional<T> {
         }
     }
 
+    /// Returns the contained value or a default.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use spaceapi::optional::Optional::{Value,Absent};
+    /// assert_eq!(Value("car").unwrap_or("bike"), "car");
+    /// assert_eq!(Absent.unwrap_or("bike"), "bike");
+    /// ```
+    #[inline]
+    pub fn unwrap_or(self, def: T) -> T {
+        match self {
+            Value(x) => x,
+            Absent => def,
+        }
+    }
+
     /// Returns the contained value or computes it from a closure.
     ///
     /// # Examples
