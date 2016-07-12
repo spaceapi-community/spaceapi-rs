@@ -3,6 +3,7 @@
 [![Travis branch](https://img.shields.io/travis/coredump-ch/spaceapi-rs/master.svg)](https://travis-ci.org/coredump-ch/spaceapi-rs)
 [![Crates.io](https://img.shields.io/crates/v/spaceapi.svg)](https://crates.io/crates/spaceapi)
 [![Crates.io](https://img.shields.io/crates/d/spaceapi.svg)](https://crates.io/crates/spaceapi)
+[![Dependency Status](https://dependencyci.com/github/coredump-ch/spaceapi-rs/badge)](https://dependencyci.com/github/coredump-ch/spaceapi-rs)
 
 This is an implementation of the [SpaceAPI](http://spaceapi.net/) v0.13 in
 Rust. It contains both the type definitions as well as tools for serialization
