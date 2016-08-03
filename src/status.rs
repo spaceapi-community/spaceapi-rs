@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use rustc_serialize::json::{Json, ToJson};
 pub use optional::Optional;
 pub use sensors::SensorTemplate;
@@ -130,6 +130,11 @@ pub struct Status {
     // Mutable data
     pub state: State,
     pub sensors: Optional<Sensors>,
+
+    // Version extension
+    // TODO: Once we move to serde, maybe we can store this
+    // as `HashMap<String, &'static str>`?
+    pub ext_versions: Optional<HashMap<String, String>>,
 }
 
 impl Status {
@@ -162,6 +167,8 @@ impl Status {
                 icon: Optional::Absent,
             },
             sensors: Optional::Absent,
+
+            ext_versions: Optional::Absent,
         }
     }
 
@@ -190,6 +197,10 @@ impl ToJson for Status {
 
         d.insert("state".into(), self.state.to_json());
         self.sensors.as_ref().map_or((), |v| { d.insert("sensors".into(), v.to_json()); });
+
+        if let Optional::Value(ref versions) = self.ext_versions {
+            d.insert("ext_versions".into(), versions.to_json());
+        }
 
         Json::Object(d)
     }
