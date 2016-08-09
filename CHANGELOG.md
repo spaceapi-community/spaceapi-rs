@@ -12,11 +12,14 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
-### v0.3.1 (UNRELEASED)
+### v0.3.2 (UNRELEASED)
+
+- ...
+
+### v0.3.1 (2016-08-09)
 
 - [added] Top level `get_version` function (#31)
 - [added] Added `Status::ext_versions` field (#31)
-- ...
 
 ### v0.3.0 (2016-06-25)
 
