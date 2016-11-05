@@ -1,12 +1,6 @@
 //! Module defining all sensor related structures.
 
-use std::collections::BTreeMap;
-use rustc_serialize::json::{Json, ToJson};
-use optional::Optional;
-
-
 //--- Templates ---//
-
 /// A trait for all possible sensor templates.
 ///
 /// A sensor template is like a sensor struct, but without the actual data in it.
@@ -17,10 +11,10 @@ pub trait SensorTemplate : Send+Sync {
 
 #[derive(Debug, Clone)]
 pub struct PeopleNowPresentSensorTemplate {
-    pub location: Optional<String>,
-    pub name: Optional<String>,
-    pub names: Optional<Vec<String>>,
-    pub description: Optional<String>,
+    pub location: Option<String>,
+    pub name: Option<String>,
+    pub names: Option<Vec<String>>,
+    pub description: Option<String>,
 }
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
@@ -35,11 +29,11 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
             };
 
             match sensors.people_now_present {
-                Optional::Value(ref mut vec_sensors) => {
+                Option::Some(ref mut vec_sensors) => {
                     vec_sensors.push(sensor)
                 }
-                Optional::Absent => {
-                    sensors.people_now_present = Optional::Value(vec![sensor])
+                Option::None => {
+                    sensors.people_now_present = Option::Some(vec![sensor])
                 }
             }
         }).is_err() {
@@ -52,8 +46,8 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
 pub struct TemperatureSensorTemplate {
     pub unit: String,
     pub location: String,
-    pub name: Optional<String>,
-    pub description: Optional<String>,
+    pub name: Option<String>,
+    pub description: Option<String>,
 }
 
 impl SensorTemplate for TemperatureSensorTemplate {
@@ -67,11 +61,11 @@ impl SensorTemplate for TemperatureSensorTemplate {
                 value: value,
             };
             match sensors.temperature {
-                Optional::Value(ref mut vec_sensors) => {
+                Option::Some(ref mut vec_sensors) => {
                     vec_sensors.push(sensor)
                 }
-                Optional::Absent => {
-                    sensors.temperature = Optional::Value(vec![sensor])
+                Option::None => {
+                    sensors.temperature = Option::Some(vec![sensor])
                 }
             }
         }).is_err() {
@@ -80,65 +74,4 @@ impl SensorTemplate for TemperatureSensorTemplate {
     }
 }
 
-
-//--- Structures ---//
-
-#[derive(Debug, Clone, PartialEq, RustcDecodable)]
-pub struct PeopleNowPresentSensor {
-    pub location: Optional<String>,
-    pub name: Optional<String>,
-    pub names: Optional<Vec<String>>,
-    pub description: Optional<String>,
-    pub value: u64,
-}
-
-#[derive(Debug, Clone, PartialEq, RustcDecodable)]
-pub struct TemperatureSensor {
-    pub unit: String,
-    pub location: String,
-    pub name: Optional<String>,
-    pub description: Optional<String>,
-    pub value: f64,
-}
-
-#[derive(Debug, Clone, PartialEq, RustcDecodable)]
-pub struct Sensors {
-    pub people_now_present: Optional<Vec<PeopleNowPresentSensor>>,
-    pub temperature: Optional<Vec<TemperatureSensor>>,
-}
-
-
-//--- Serialization ---//
-
-impl ToJson for Sensors {
-    fn to_json(&self) -> Json {
-        let mut d = BTreeMap::new();
-        self.people_now_present.as_ref().map_or((), |v| { d.insert("people_now_present".into(), v.to_json()); });
-        self.temperature.as_ref().map_or((), |v| { d.insert("temperature".into(), v.to_json()); });
-        Json::Object(d)
-    }
-}
-
-impl ToJson for PeopleNowPresentSensor {
-    fn to_json(&self) -> Json {
-        let mut d = BTreeMap::new();
-        d.insert("value".into(), self.value.to_json());
-        self.location.as_ref().map_or((), |v| { d.insert("location".into(), v.to_json()); });
-        self.name.as_ref().map_or((), |v| { d.insert("name".into(), v.to_json()); });
-        self.names.as_ref().map_or((), |v| { d.insert("names".into(), v.to_json()); });
-        self.description.as_ref().map_or((), |v| { d.insert("description".into(), v.to_json()); });
-        Json::Object(d)
-    }
-}
-
-impl ToJson for TemperatureSensor {
-    fn to_json(&self) -> Json {
-        let mut d = BTreeMap::new();
-        d.insert("value".into(), self.value.to_json());
-        d.insert("unit".into(), self.unit.to_json());
-        d.insert("location".into(), self.location.to_json());
-        self.name.as_ref().map_or((), |v| { d.insert("name".into(), v.to_json()); });
-        self.description.as_ref().map_or((), |v| { d.insert("description".into(), v.to_json()); });
-        Json::Object(d)
-    }
-}
+include!(concat!(env!("OUT_DIR"), "/sensors.rs"));

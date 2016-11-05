@@ -12,9 +12,9 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
-### v0.3.2 (UNRELEASED)
+### v0.4.0 (UNRELEASED)
 
-- ...
+- [changed] Use serde for (de)-serialization (#35)
 
 ### v0.3.1 (2016-08-09)
 
