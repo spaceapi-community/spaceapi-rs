@@ -6,7 +6,8 @@ rust:
   - nightly
 matrix:
   allow_failures:
-    - rust: nightly
+    - rust: stable
+    - rust: beta
 script:
   - cargo test
   - cargo doc --no-deps
