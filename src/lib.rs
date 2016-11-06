@@ -80,9 +80,13 @@
 //!     // Location { address: None, lat: 47.22936000000001, lon: 8.829490000000002 }
 //!     # }
 
+#![feature(proc_macro)]
+
 #[macro_use]
 extern crate log;
 extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 extern crate serde_json;
 
 pub mod sensors;
