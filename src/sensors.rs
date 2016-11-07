@@ -74,4 +74,38 @@ impl SensorTemplate for TemperatureSensorTemplate {
     }
 }
 
-include!(concat!(env!("OUT_DIR"), "/sensors.rs"));
+//--- Structures ---//
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct PeopleNowPresentSensor {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub names: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub value: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct TemperatureSensor {
+    pub unit: String,
+    pub location: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub value: f64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Sensors {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub people_now_present: Option<Vec<PeopleNowPresentSensor>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub temperature: Option<Vec<TemperatureSensor>>,
+}
+
+
