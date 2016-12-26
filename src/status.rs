@@ -286,15 +286,9 @@ mod test {
         let status = StatusBuilder::new("foo")
             .logo("bar")
             .url("foobar")
-            .location(Location{
-                address: None,
-                lat: 0.0,
-                lon: 0.0,
-            })
-        .contact(Contact{
-            ..Default::default()
-        })
-        .build();
+            .location(Location::default())
+            .contact(Contact::default())
+            .build();
         assert!(status.is_ok());
     }
 
