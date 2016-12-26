@@ -5,7 +5,7 @@ pub use sensors::PeopleNowPresentSensor;
 
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<String>,
@@ -13,20 +13,20 @@ pub struct Location {
     pub lon: f64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
     pub spacephone: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Icon {
     pub open: String,
     pub close: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct State {
     pub open: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -39,7 +39,7 @@ pub struct State {
     pub icon: Option<Icon>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Event {
     pub name: String,
     pub _type: String,
@@ -48,7 +48,7 @@ pub struct Event {
     pub extra: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Keymaster {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -62,13 +62,13 @@ pub struct Keymaster {
     pub twitter: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct GoogleContact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub plus: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Contact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub phone: Option<String>,
@@ -98,14 +98,14 @@ pub struct Contact {
     pub issue_mail: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Feed {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub _type: Option<String>,
     pub url: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Feeds {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub blog: Option<Feed>,
@@ -117,12 +117,12 @@ pub struct Feeds {
     pub flickr: Option<Feed>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Cache {
     pub schedule: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct RadioShow {
     pub name: String,
     pub url: String,
@@ -132,7 +132,7 @@ pub struct RadioShow {
 }
 
 /// The main Space API status object.
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
 
     // Hackerspace properties
