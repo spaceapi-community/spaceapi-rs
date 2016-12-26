@@ -22,39 +22,30 @@
 //!     extern crate serde_json;
 //!     extern crate spaceapi;
 //!
-//!     use spaceapi::{Status, Location, Contact};
+//!     use spaceapi::{Status, StatusBuilder, Location, Contact};
 //!
 //!     # fn main() {
-//!     let status = Status::new(
-//!         "coredump",
-//!         "https://www.coredump.ch/logo.png",
-//!         "https://www.coredump.ch/",
-//!         Location {
-//!             address: Some(
-//!                 "Spinnereistrasse 2, 8640 Rapperswil, Switzerland".into()),
-//!             lat: 47.22936,
-//!             lon: 8.82949,
-//!         },
-//!         Contact {
-//!             phone: None,
-//!             sip: None,
-//!             keymasters: None,
-//!             irc: Some("irc://freenode.net/#coredump".into()),
-//!             twitter: Some("@coredump_ch".into()),
-//!             facebook: None,
-//!             google: None,
-//!             identica: None,
-//!             foursquare: Some("525c20e5498e875d8231b1e5".into()),
-//!             email: Some("danilo@coredump.ch".into()),
-//!             ml: None,
-//!             jabber: None,
-//!             issue_mail: None,
-//!         },
-//!         vec![
-//!             "email".into(),
-//!             "twitter".into(),
-//!         ],
-//!     );
+//!     let status = StatusBuilder::new("coredump")
+//!         .logo("https://www.coredump.ch/logo.png")
+//!         .url("https://www.coredump.ch/")
+//!         .location(
+//!             Location {
+//!                 address: None,
+//!                 lat: 47.22936,
+//!                 lon: 8.82949,
+//!             })
+//!         .contact(
+//!             Contact {
+//!                 irc: Some("irc://freenode.net/#coredump".into()),
+//!                 twitter: Some("@coredump_ch".into()),
+//!                 foursquare: Some("525c20e5498e875d8231b1e5".into()),
+//!                 email: Some("danilo@coredump.ch".into()),
+//!                 ..Default::default()
+//!             })
+//!         .add_issue_report_channel("email")
+//!         .add_issue_report_channel("twitter")
+//!         .build()
+//!         .expect("Creating status failed");
 //!     let stringstatus = serde_json::to_string(&status).unwrap();
 //!     let jsonstatus: Status = serde_json::from_str(&stringstatus).unwrap();
 //!
