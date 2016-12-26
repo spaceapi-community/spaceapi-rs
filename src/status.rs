@@ -192,6 +192,61 @@ impl Status {
 
 }
 
+#[derive(Default, Debug, Clone)]
+pub struct StatusBuilder {
+    space: String,
+    logo: Option<String>,
+    url: Option<String>,
+    location: Option<Location>,
+    contact: Option<Contact>,
+    issue_report_channels: Vec<String>,
+}
+
+impl StatusBuilder {
+    pub fn new<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            ..Default::default()
+        }
+    }
+
+    pub fn logo<S: Into<String>>(mut self, logo: S) -> Self {
+        self.logo = Some(logo.into());
+        self
+    }
+
+    pub fn url<S: Into<String>>(mut self, url: S) -> Self {
+        self.url = Some(url.into());
+        self
+    }
+
+    pub fn location(mut self, location: Location) -> Self {
+        self.location = Some(location);
+        self
+    }
+
+    pub fn contact(mut self, contact: Contact) -> Self {
+        self.contact = Some(contact);
+        self
+    }
+
+    pub fn add_issue_report_channel<S: Into<String>>(mut self, report_channel: S) -> Self {
+        self.issue_report_channels.push(report_channel.into());
+        self
+    }
+
+    pub fn build(self) -> Result<Status, String> {
+        Ok(Status::new(
+            self.space,
+            self.logo.ok_or("logo missing")?,
+            self.url.ok_or("url missing")?,
+            self.location.ok_or("location missing")?,
+            self.contact.ok_or("contact missing")?,
+            self.issue_report_channels,
+            ))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -224,6 +279,23 @@ mod test {
         let b: Contact = from_str(&to_string(&a).unwrap()).unwrap();
 
         assert_eq!(a, b);
+    }
+
+    #[test]
+    fn test_builder() {
+        let status = StatusBuilder::new("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location{
+                address: None,
+                lat: 0.0,
+                lon: 0.0,
+            })
+        .contact(Contact{
+            ..Default::default()
+        })
+        .build();
+        assert!(status.is_ok());
     }
 
     #[test]
