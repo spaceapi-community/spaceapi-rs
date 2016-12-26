@@ -18,7 +18,7 @@ serialization and deserialization.
 Add `spaceapi` to your `Cargo.toml`:
 
     [dependencies]
-    spaceapi = "^0.3"
+    spaceapi = "^0.4"
 
 
 ## Docs
