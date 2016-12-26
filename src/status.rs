@@ -185,27 +185,8 @@ impl Status {
             url: url.into(),
             location: location,
             contact: contact,
-
-            spacefed: None,
-            projects: None,
-            cam: None,
-            feeds: None,
-            events: None,
-            radio_show: None,
-
-            cache: None,
             issue_report_channels: issue_report_channels,
-
-            state: State {
-                open: None,
-                lastchange: None,
-                trigger_person: None,
-                message: None,
-                icon: None,
-            },
-            sensors: None,
-
-            ext_versions: None,
+            ..Default::default()
         }
     }
 
@@ -226,8 +207,6 @@ mod test {
     #[test]
     fn serialize_deserialize_simple_contact() {
         let a: Contact = Contact {
-            phone: None,
-            sip: None,
             keymasters: Some(vec![
                               Keymaster {
                                   name: Some("Joe".into()),
@@ -238,15 +217,9 @@ mod test {
                               },
             ]),
             irc: Some("bla".into()),
-            twitter: None,
-            facebook: None,
             google: Some(GoogleContact { plus: Some("http://gplus/profile".into()) }),
-            identica: None,
-            foursquare: None,
             email: Some("bli@bla".into()),
-            ml: None,
-            jabber: None,
-            issue_mail: None,
+            ..Default::default()
         };
         let b: Contact = from_str(&to_string(&a).unwrap()).unwrap();
 
