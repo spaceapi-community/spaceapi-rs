@@ -2,9 +2,6 @@ language: rust
 sudo: false
 rust:
   - nightly
-script:
-  - cargo test
-  - cargo doc --no-deps
 notifications:
   irc:
     channels:
@@ -13,5 +10,3 @@ notifications:
     on_failure: always
     use_notice: true
     skip_join: true
-after_success:
-  - bash scripts/travis-doc-upload.sh
