@@ -9,7 +9,7 @@ This is an implementation of the [SpaceAPI](http://spaceapi.net/) v0.13 in Rust
 (nightly). It contains both the type definitions as well as tools for
 serialization and deserialization.
 
-- Crate Documentation: https://coredump-ch.github.io/rust-docs/spaceapi/spaceapi/index.html
+- Crate Documentation: https://docs.rs/spaceapi/
 - Space API Documentation: http://spaceapi.net/documentation
 
 
