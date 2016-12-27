@@ -5,7 +5,7 @@ pub use sensors::PeopleNowPresentSensor;
 
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<String>,
@@ -13,20 +13,20 @@ pub struct Location {
     pub lon: f64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
     pub spacephone: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Icon {
     pub open: String,
     pub close: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct State {
     pub open: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -39,7 +39,7 @@ pub struct State {
     pub icon: Option<Icon>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Event {
     pub name: String,
     pub _type: String,
@@ -48,7 +48,7 @@ pub struct Event {
     pub extra: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Keymaster {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -62,13 +62,13 @@ pub struct Keymaster {
     pub twitter: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct GoogleContact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub plus: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Contact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub phone: Option<String>,
@@ -98,14 +98,14 @@ pub struct Contact {
     pub issue_mail: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Feed {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub _type: Option<String>,
     pub url: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Feeds {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub blog: Option<Feed>,
@@ -117,12 +117,12 @@ pub struct Feeds {
     pub flickr: Option<Feed>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Cache {
     pub schedule: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct RadioShow {
     pub name: String,
     pub url: String,
@@ -132,7 +132,7 @@ pub struct RadioShow {
 }
 
 /// The main Space API status object.
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
 
     // Hackerspace properties
@@ -185,30 +185,66 @@ impl Status {
             url: url.into(),
             location: location,
             contact: contact,
-
-            spacefed: None,
-            projects: None,
-            cam: None,
-            feeds: None,
-            events: None,
-            radio_show: None,
-
-            cache: None,
             issue_report_channels: issue_report_channels,
-
-            state: State {
-                open: None,
-                lastchange: None,
-                trigger_person: None,
-                message: None,
-                icon: None,
-            },
-            sensors: None,
-
-            ext_versions: None,
+            ..Default::default()
         }
     }
 
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct StatusBuilder {
+    space: String,
+    logo: Option<String>,
+    url: Option<String>,
+    location: Option<Location>,
+    contact: Option<Contact>,
+    issue_report_channels: Vec<String>,
+}
+
+impl StatusBuilder {
+    pub fn new<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            ..Default::default()
+        }
+    }
+
+    pub fn logo<S: Into<String>>(mut self, logo: S) -> Self {
+        self.logo = Some(logo.into());
+        self
+    }
+
+    pub fn url<S: Into<String>>(mut self, url: S) -> Self {
+        self.url = Some(url.into());
+        self
+    }
+
+    pub fn location(mut self, location: Location) -> Self {
+        self.location = Some(location);
+        self
+    }
+
+    pub fn contact(mut self, contact: Contact) -> Self {
+        self.contact = Some(contact);
+        self
+    }
+
+    pub fn add_issue_report_channel<S: Into<String>>(mut self, report_channel: S) -> Self {
+        self.issue_report_channels.push(report_channel.into());
+        self
+    }
+
+    pub fn build(self) -> Result<Status, String> {
+        Ok(Status::new(
+            self.space,
+            self.logo.ok_or("logo missing")?,
+            self.url.ok_or("url missing")?,
+            self.location.ok_or("location missing")?,
+            self.contact.ok_or("contact missing")?,
+            self.issue_report_channels,
+            ))
+    }
 }
 
 #[cfg(test)]
@@ -226,8 +262,6 @@ mod test {
     #[test]
     fn serialize_deserialize_simple_contact() {
         let a: Contact = Contact {
-            phone: None,
-            sip: None,
             keymasters: Some(vec![
                               Keymaster {
                                   name: Some("Joe".into()),
@@ -238,19 +272,24 @@ mod test {
                               },
             ]),
             irc: Some("bla".into()),
-            twitter: None,
-            facebook: None,
             google: Some(GoogleContact { plus: Some("http://gplus/profile".into()) }),
-            identica: None,
-            foursquare: None,
             email: Some("bli@bla".into()),
-            ml: None,
-            jabber: None,
-            issue_mail: None,
+            ..Default::default()
         };
         let b: Contact = from_str(&to_string(&a).unwrap()).unwrap();
 
         assert_eq!(a, b);
+    }
+
+    #[test]
+    fn test_builder() {
+        let status = StatusBuilder::new("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .build();
+        assert!(status.is_ok());
     }
 
     #[test]
