@@ -203,42 +203,35 @@ impl Serialize for Status {
 
         // Serialize fields
         let mut state = serializer.serialize_struct("Status", field_count)?;
-        serializer.serialize_struct_elt(&mut state, "api", &self.api)?;
-        serializer.serialize_struct_elt(&mut state, "space", &self.api)?;
-        serializer.serialize_struct_elt(&mut state, "logo", &self.logo)?;
-        serializer.serialize_struct_elt(&mut state, "url", &self.url)?;
-        serializer.serialize_struct_elt(&mut state, "location", &self.location)?;
-        serializer.serialize_struct_elt(&mut state, "contact", &self.contact)?;
-        if let Some(ref spacefed) = self.spacefed {
-            serializer.serialize_struct_elt(&mut state, "spacefed", &spacefed)?;
+        macro_rules! serialize {
+            ($field:expr, $field_name:expr) => {
+                serializer.serialize_struct_elt(&mut state, $field_name, &$field)?;
+            };
         }
-        if let Some(ref projects) = self.projects {
-            serializer.serialize_struct_elt(&mut state, "projects", &projects)?;
+        macro_rules! maybe_serialize {
+            ($field:expr, $field_name:expr) => {
+                if let Some(ref val) = $field {
+                    serializer.serialize_struct_elt(&mut state, $field_name, &val)?;
+                }
+            };
         }
-        if let Some(ref cam) = self.cam {
-            serializer.serialize_struct_elt(&mut state, "cam", &cam)?;
-        }
-        if let Some(ref feeds) = self.feeds {
-            serializer.serialize_struct_elt(&mut state, "feeds", &feeds)?;
-        }
-        if let Some(ref events) = self.events {
-            serializer.serialize_struct_elt(&mut state, "events", &events)?;
-        }
-        if let Some(ref radio_show) = self.radio_show {
-            serializer.serialize_struct_elt(&mut state, "radio_show", &radio_show)?;
-        }
-        if let Some(ref cache) = self.cache {
-            serializer.serialize_struct_elt(&mut state, "cache", &cache)?;
-        }
-        serializer.serialize_struct_elt(&mut state,
-                                        "issue_report_channels", &self.issue_report_channels)?;
-        serializer.serialize_struct_elt(&mut state, "state", &self.state)?;
-        if let Some(ref sensors) = self.sensors {
-            serializer.serialize_struct_elt(&mut state, "sensors", &sensors)?;
-        }
-        if let Some(ref ext_versions) = self.ext_versions {
-            serializer.serialize_struct_elt(&mut state, "ext_versions", ext_versions)?;
-        }
+        serialize!(self.api, "api");
+        serialize!(self.api, "space");
+        serialize!(self.logo, "logo");
+        serialize!(self.url, "url");
+        serialize!(self.location, "location");
+        serialize!(self.contact, "contact");
+        maybe_serialize!(self.spacefed, "spacefed");
+        maybe_serialize!(self.projects, "projects");
+        maybe_serialize!(self.cam, "cam");
+        maybe_serialize!(self.feeds, "feeds");
+        maybe_serialize!(self.events, "events");
+        maybe_serialize!(self.radio_show, "radio_show");
+        maybe_serialize!(self.cache, "cache");
+        serialize!(self.issue_report_channels, "issue_report_channels");
+        serialize!(self.state, "state");
+        maybe_serialize!(self.sensors, "sensors");
+        maybe_serialize!(self.ext_versions, "ext_versions");
         serializer.serialize_struct_end(state)
     }
 }
