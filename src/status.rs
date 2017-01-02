@@ -1,5 +1,5 @@
 use serde::ser::{Serializer, Serialize};
-use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, SeqVisitor, Error as SerdeError};
+use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
 
 pub use sensors::SensorTemplate;
 pub use sensors::Sensors;
@@ -297,62 +297,6 @@ impl Deserialize for Status {
 
         impl Visitor for StatusVisitor {
             type Value = Status;
-
-            fn visit_seq<V: SeqVisitor>(&mut self, mut visitor: V) -> Result<Status, V::Error> {
-                let mut counter = 0;
-                macro_rules! visit_seq_field {
-                    () => (visit_seq_field!(()));
-                    ($ok_action:stmt) => {
-                        match visitor.visit()? {
-                            Some(value) => {
-                                $ok_action;
-                                value
-                            },
-                            None => {
-                                visitor.end()?;
-                                return Err(SerdeError::invalid_length(counter));
-                            }
-                        }
-                    };
-                }
-                let api: String = visit_seq_field!(counter += 1);
-                let space: String = visit_seq_field!(counter += 1);
-                let logo: String = visit_seq_field!(counter += 1);
-                let url: String = visit_seq_field!(counter += 1);
-                let location: Location = visit_seq_field!(counter += 1);
-                let contact: Contact = visit_seq_field!(counter += 1);
-                let spacefed: Option<Spacefed> = visit_seq_field!(counter += 1);
-                let projects: Option<Vec<String>> = visit_seq_field!(counter += 1);
-                let cam: Option<Vec<String>> = visit_seq_field!(counter += 1);
-                let feeds: Option<Feeds> = visit_seq_field!(counter += 1);
-                let events: Option<Vec<Event>> = visit_seq_field!(counter += 1);
-                let radio_show: Option<Vec<RadioShow>> = visit_seq_field!(counter += 1);
-                let cache: Option<Cache> = visit_seq_field!(counter += 1);
-                let issue_report_channels: Vec<String> = visit_seq_field!(counter += 1);
-                let state: State = visit_seq_field!(counter += 1);
-                let sensors: Option<Sensors> = visit_seq_field!(counter += 1);
-                let ext_versions: Option<HashMap<String, String>> = visit_seq_field!();
-                visitor.end()?;
-                Ok(Status {
-                    api: api,
-                    space: space,
-                    logo: logo,
-                    url: url,
-                    location: location,
-                    contact: contact,
-                    spacefed: spacefed,
-                    projects: projects,
-                    cam: cam,
-                    feeds: feeds,
-                    events: events,
-                    radio_show: radio_show,
-                    cache: cache,
-                    issue_report_channels: issue_report_channels,
-                    state: state,
-                    sensors: sensors,
-                    ext_versions: ext_versions,
-                })
-            }
 
             fn visit_map<V: MapVisitor>(&mut self, mut visitor: V) -> Result<Status, V::Error> {
                 macro_rules! visit_map_field {
