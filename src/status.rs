@@ -1,3 +1,6 @@
+use serde::ser::{Serializer, Serialize};
+use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
+
 pub use sensors::SensorTemplate;
 pub use sensors::Sensors;
 pub use sensors::TemperatureSensor;
@@ -132,7 +135,7 @@ pub struct RadioShow {
 }
 
 /// The main Space API status object.
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct Status {
 
     // Hackerspace properties
@@ -144,33 +147,24 @@ pub struct Status {
     pub contact: Contact,
 
     // Hackerspace features / projects
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub spacefed: Option<Spacefed>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub projects: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub cam: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub feeds: Option<Feeds>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub events: Option<Vec<Event>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub radio_show: Option<Vec<RadioShow>>,
 
     // SpaceAPI internal usage
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub cache: Option<Cache>,
     pub issue_report_channels: Vec<String>,
 
     // Mutable data
     pub state: State,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub sensors: Option<Sensors>,
 
     // Version extension
     // TODO: Once we move to serde, maybe we can store this
     // as `HashMap<String, &'static str>`?
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub ext_versions: Option<HashMap<String, String>>,
 }
 
@@ -190,6 +184,208 @@ impl Status {
         }
     }
 
+}
+
+impl Serialize for Status {
+    fn serialize<S: Serializer>(&self, serializer: &mut S) -> Result<(), S::Error> {
+
+        // Determine number of fields to serialize
+        let mut field_count = 8;
+        if self.spacefed.is_some() { field_count += 1; }
+        if self.projects.is_some() { field_count += 1; }
+        if self.cam.is_some() { field_count += 1; }
+        if self.feeds.is_some() { field_count += 1; }
+        if self.events.is_some() { field_count += 1; }
+        if self.radio_show.is_some() { field_count += 1; }
+        if self.cache.is_some() { field_count += 1; }
+        if self.sensors.is_some() { field_count += 1; }
+        if self.ext_versions.is_some() { field_count += 1; }
+
+        // Serialize fields
+        let mut state = serializer.serialize_struct("Status", field_count)?;
+        macro_rules! serialize {
+            ($field:expr, $field_name:expr) => {
+                serializer.serialize_struct_elt(&mut state, $field_name, &$field)?;
+            };
+        }
+        macro_rules! maybe_serialize {
+            ($field:expr, $field_name:expr) => {
+                if let Some(ref val) = $field {
+                    serializer.serialize_struct_elt(&mut state, $field_name, &val)?;
+                }
+            };
+        }
+        serialize!(self.api, "api");
+        serialize!(self.api, "space");
+        serialize!(self.logo, "logo");
+        serialize!(self.url, "url");
+        serialize!(self.location, "location");
+        serialize!(self.contact, "contact");
+        maybe_serialize!(self.spacefed, "spacefed");
+        maybe_serialize!(self.projects, "projects");
+        maybe_serialize!(self.cam, "cam");
+        maybe_serialize!(self.feeds, "feeds");
+        maybe_serialize!(self.events, "events");
+        maybe_serialize!(self.radio_show, "radio_show");
+        maybe_serialize!(self.cache, "cache");
+        serialize!(self.issue_report_channels, "issue_report_channels");
+        serialize!(self.state, "state");
+        maybe_serialize!(self.sensors, "sensors");
+        maybe_serialize!(self.ext_versions, "ext_versions");
+        serializer.serialize_struct_end(state)
+    }
+}
+
+
+impl Deserialize for Status {
+    fn deserialize<D: Deserializer>(deserializer: &mut D) -> Result<Self, D::Error> {
+        enum Field {
+            Api,
+            Space,
+            Logo,
+            Url,
+            Location,
+            Contact,
+            Spacefed,
+            Projects,
+            Cam,
+            Feeds,
+            Events,
+            RadioShow,
+            Cache,
+            IssueReportChanels,
+            State,
+            Sensors,
+            ExtVersions,
+        };
+
+        impl Deserialize for Field {
+            fn deserialize<D: Deserializer>(deserializer: &mut D) -> Result<Field, D::Error> {
+                struct FieldVisitor;
+
+                impl Visitor for FieldVisitor {
+                    type Value = Field;
+
+                    fn visit_str<E: SerdeError>(&mut self, value: &str) -> Result<Field, E> {
+                        match value {
+                            "api" => Ok(Field::Api),
+                            "space" => Ok(Field::Space),
+                            "logo" => Ok(Field::Logo),
+                            "url" => Ok(Field::Url),
+                            "location" => Ok(Field::Location),
+                            "contact" => Ok(Field::Contact),
+                            "spacefed" => Ok(Field::Spacefed),
+                            "projects" => Ok(Field::Projects),
+                            "cam" => Ok(Field::Cam),
+                            "feeds" => Ok(Field::Feeds),
+                            "events" => Ok(Field::Events),
+                            "radio_show" => Ok(Field::RadioShow),
+                            "cache" => Ok(Field::Cache),
+                            "issue_report_channels" => Ok(Field::IssueReportChanels),
+                            "state" => Ok(Field::State),
+                            "sensors" => Ok(Field::Sensors),
+                            "ext_versions" => Ok(Field::ExtVersions),
+                            _ => Err(SerdeError::unknown_field(value)),
+                        }
+                    }
+                }
+                deserializer.deserialize_struct_field(FieldVisitor)
+            }
+        }
+
+        struct StatusVisitor;
+
+        impl Visitor for StatusVisitor {
+            type Value = Status;
+
+            fn visit_map<V: MapVisitor>(&mut self, mut visitor: V) -> Result<Status, V::Error> {
+                macro_rules! visit_map_field {
+                    ($field:ident, $field_name:expr) => {
+                        {
+                            if $field.is_some() {
+                                return Err(SerdeError::duplicate_field($field_name));
+                            }
+                            $field = Some(visitor.visit_value()?);
+                        }
+                    };
+                }
+                macro_rules! process_map_field {
+                    ($field:ident, $field_name:expr) => {
+                        match $field {
+                            Some(val) => val,
+                            None => return Err(SerdeError::missing_field($field_name)),
+                        };
+                    };
+                }
+                let mut api: Option<String> = None;
+                let mut space: Option<String> = None;
+                let mut logo: Option<String> = None;
+                let mut url: Option<String> = None;
+                let mut location: Option<Location> = None;
+                let mut contact: Option<Contact> = None;
+                let mut spacefed: Option<Option<Spacefed>> = None;
+                let mut projects: Option<Option<Vec<String>>> = None;
+                let mut cam: Option<Option<Vec<String>>> = None;
+                let mut feeds: Option<Option<Feeds>> = None;
+                let mut events: Option<Option<Vec<Event>>> = None;
+                let mut radio_show: Option<Option<Vec<RadioShow>>> = None;
+                let mut cache: Option<Option<Cache>> = None;
+                let mut issue_report_channels: Option<Vec<String>> = None;
+                let mut state: Option<State> = None;
+                let mut sensors: Option<Option<Sensors>> = None;
+                let mut ext_versions: Option<Option<HashMap<String, String>>> = None;
+                while let Some(key) = visitor.visit_key()? {
+                    match key {
+                        Field::Api => visit_map_field!(api, "api"),
+                        Field::Space => visit_map_field!(space, "space"),
+                        Field::Logo => visit_map_field!(logo, "logo"),
+                        Field::Url => visit_map_field!(url, "url"),
+                        Field::Location => visit_map_field!(location, "location"),
+                        Field::Contact => visit_map_field!(contact, "contact"),
+                        Field::Spacefed => visit_map_field!(spacefed, "spacefed"),
+                        Field::Projects => visit_map_field!(projects, "projects"),
+                        Field::Cam => visit_map_field!(cam, "cam"),
+                        Field::Feeds => visit_map_field!(feeds, "feeds"),
+                        Field::Events => visit_map_field!(events, "events"),
+                        Field::RadioShow => visit_map_field!(radio_show, "radio_show"),
+                        Field::Cache => visit_map_field!(cache, "cache"),
+                        Field::IssueReportChanels => visit_map_field!(issue_report_channels, "issue_report_channels"),
+                        Field::State => visit_map_field!(state, "state"),
+                        Field::Sensors => visit_map_field!(sensors, "sensors"),
+                        Field::ExtVersions => visit_map_field!(ext_versions, "ext_versions"),
+
+                    }
+                }
+                visitor.end()?;
+                Ok(Status {
+                    api: process_map_field!(api, "api"),
+                    space: process_map_field!(space, "space"),
+                    logo: process_map_field!(logo, "logo"),
+                    url: process_map_field!(url, "url"),
+                    location: process_map_field!(location, "location"),
+                    contact: process_map_field!(contact, "contact"),
+                    spacefed: spacefed.unwrap_or(None),
+                    projects: projects.unwrap_or(None),
+                    cam: cam.unwrap_or(None),
+                    feeds: feeds.unwrap_or(None),
+                    events: events.unwrap_or(None),
+                    radio_show: radio_show.unwrap_or(None),
+                    cache: cache.unwrap_or(None),
+                    issue_report_channels: process_map_field!(issue_report_channels, "issue_report_channels"),
+                    state: process_map_field!(state, "state"),
+                    sensors: sensors.unwrap_or(None),
+                    ext_versions: ext_versions.unwrap_or(None),
+                })
+            }
+        }
+
+        const FIELDS: &'static [&'static str] = &[
+            "api", "space", "logo", "url", "location", "contact", "spacefed",
+            "projects", "cam", "feeds", "events", "radio_show", "cache",
+            "issue_report_channels", "state", "sensors", "ext_versions"
+        ];
+        deserializer.deserialize_struct("Status", FIELDS, StatusVisitor)
+    }
 }
 
 #[derive(Default, Debug, Clone)]
