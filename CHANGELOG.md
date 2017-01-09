@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### v0.4.1 (2017-01-09)
+
+- [added] `StatusBuilder` which implements the builder pattern (#38)
+- [changed] Use custom implementation for `Status` serialization (#40)
 
 ### v0.4.0 (2016-12-26)
 
