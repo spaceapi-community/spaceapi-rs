@@ -88,10 +88,22 @@ pub struct TemperatureSensor {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Sensors {
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub people_now_present: Vec<PeopleNowPresentSensor>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub temperature: Vec<TemperatureSensor>,
 }
 
 
+#[cfg(test)]
+mod test {
+    use super::*;
+    use serde_json::{to_string, from_str};
+
+    #[test]
+    fn serialize_deserialize_sensors() {
+        let a = Sensors {people_now_present: vec![], temperature: vec![]};
+        let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
+        assert_eq!(a, b);
+    }
+}
