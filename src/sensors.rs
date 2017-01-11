@@ -29,11 +29,11 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
             };
 
             match sensors.people_now_present {
-                Option::Some(ref mut vec_sensors) => {
+                Some(ref mut vec_sensors) => {
                     vec_sensors.push(sensor)
                 }
-                Option::None => {
-                    sensors.people_now_present = Option::Some(vec![sensor])
+                None => {
+                    sensors.people_now_present = Some(vec![sensor])
                 }
             }
         }).is_err() {
@@ -61,11 +61,11 @@ impl SensorTemplate for TemperatureSensorTemplate {
                 value: value,
             };
             match sensors.temperature {
-                Option::Some(ref mut vec_sensors) => {
+                Some(ref mut vec_sensors) => {
                     vec_sensors.push(sensor)
                 }
-                Option::None => {
-                    sensors.temperature = Option::Some(vec![sensor])
+                None => {
+                    sensors.temperature = Some(vec![sensor])
                 }
             }
         }).is_err() {
