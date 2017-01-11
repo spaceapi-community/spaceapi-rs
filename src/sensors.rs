@@ -28,14 +28,7 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
                 value: value,
             };
 
-            match sensors.people_now_present {
-                Some(ref mut vec_sensors) => {
-                    vec_sensors.push(sensor)
-                }
-                None => {
-                    sensors.people_now_present = Some(vec![sensor])
-                }
-            }
+            sensors.people_now_present.push(sensor);
         }).is_err() {
             warn!("Could not parse value '{}', omiting PeopleNowPresentSensor", value_str);
         }
@@ -60,14 +53,7 @@ impl SensorTemplate for TemperatureSensorTemplate {
                 description: self.description.clone(),
                 value: value,
             };
-            match sensors.temperature {
-                Some(ref mut vec_sensors) => {
-                    vec_sensors.push(sensor)
-                }
-                None => {
-                    sensors.temperature = Some(vec![sensor])
-                }
-            }
+            sensors.temperature.push(sensor);
         }).is_err() {
             warn!("Could not parse value '{}', omiting TemperatureSensor", value_str);
         }
@@ -102,10 +88,10 @@ pub struct TemperatureSensor {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Sensors {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub people_now_present: Option<Vec<PeopleNowPresentSensor>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub temperature: Option<Vec<TemperatureSensor>>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub people_now_present: Vec<PeopleNowPresentSensor>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub temperature: Vec<TemperatureSensor>,
 }
 
 
