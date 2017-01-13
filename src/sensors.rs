@@ -28,14 +28,7 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
                 value: value,
             };
 
-            match sensors.people_now_present {
-                Option::Some(ref mut vec_sensors) => {
-                    vec_sensors.push(sensor)
-                }
-                Option::None => {
-                    sensors.people_now_present = Option::Some(vec![sensor])
-                }
-            }
+            sensors.people_now_present.push(sensor);
         }).is_err() {
             warn!("Could not parse value '{}', omiting PeopleNowPresentSensor", value_str);
         }
@@ -60,14 +53,7 @@ impl SensorTemplate for TemperatureSensorTemplate {
                 description: self.description.clone(),
                 value: value,
             };
-            match sensors.temperature {
-                Option::Some(ref mut vec_sensors) => {
-                    vec_sensors.push(sensor)
-                }
-                Option::None => {
-                    sensors.temperature = Option::Some(vec![sensor])
-                }
-            }
+            sensors.temperature.push(sensor);
         }).is_err() {
             warn!("Could not parse value '{}', omiting TemperatureSensor", value_str);
         }
@@ -102,10 +88,22 @@ pub struct TemperatureSensor {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Sensors {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub people_now_present: Option<Vec<PeopleNowPresentSensor>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub temperature: Option<Vec<TemperatureSensor>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub people_now_present: Vec<PeopleNowPresentSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub temperature: Vec<TemperatureSensor>,
 }
 
 
+#[cfg(test)]
+mod test {
+    use super::*;
+    use serde_json::{to_string, from_str};
+
+    #[test]
+    fn serialize_deserialize_sensors() {
+        let a = Sensors {people_now_present: vec![], temperature: vec![]};
+        let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
+        assert_eq!(a, b);
+    }
+}
