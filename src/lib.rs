@@ -46,10 +46,10 @@
 //!         .add_issue_report_channel("twitter")
 //!         .build()
 //!         .expect("Creating status failed");
-//!     let stringstatus = serde_json::to_string(&status).unwrap();
-//!     let jsonstatus: Status = serde_json::from_str(&stringstatus).unwrap();
+//!     let serialized = serde_json::to_string(&status).unwrap();
+//!     let deserialized: Status = serde_json::from_str(&serialized).unwrap();
 //!
-//!     # assert!(&stringstatus[0..1] == "{");
+//!     # assert!(&serialized[0..1] == "{");
 //!     # }
 //!
 //! ## Deserializing
