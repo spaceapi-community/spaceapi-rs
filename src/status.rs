@@ -176,6 +176,8 @@ pub struct Status {
 
 impl Status {
     /// Create a new Status object with only the absolutely required fields.
+    #[deprecated(since="0.5.0",
+                 note="Please use the `StatusBuilder` or a struct expression instead")]
     pub fn new<S: Into<String>>(space: S, logo: S, url: S, location: Location, contact: Contact,
                                 issue_report_channels: Vec<String>) -> Status {
         Status {
@@ -453,14 +455,16 @@ impl StatusBuilder {
     }
 
     pub fn build(self) -> Result<Status, String> {
-        Ok(Status::new(
-            self.space,
-            self.logo.ok_or("logo missing")?,
-            self.url.ok_or("url missing")?,
-            self.location.ok_or("location missing")?,
-            self.contact.ok_or("contact missing")?,
-            self.issue_report_channels,
-            ))
+        Ok(Status {
+            api: "0.13".into(), // TODO: Deduplicate
+            space: self.space,
+            logo: self.logo.ok_or("logo missing")?,
+            url: self.url.ok_or("url missing")?,
+            location: self.location.ok_or("location missing")?,
+            contact: self.contact.ok_or("contact missing")?,
+            issue_report_channels: self.issue_report_channels,
+            ..Default::default()
+        })
     }
 }
 
