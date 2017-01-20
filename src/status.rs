@@ -1,12 +1,15 @@
+use std::collections::HashMap;
+
 use serde::ser::{Serializer, Serialize};
 use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
+use serde_json::value::Value;
 
 pub use sensors::SensorTemplate;
 pub use sensors::Sensors;
 pub use sensors::TemperatureSensor;
 pub use sensors::PeopleNowPresentSensor;
 
-use std::collections::HashMap;
+type Extensions = HashMap<String, Value>;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
@@ -166,6 +169,9 @@ pub struct Status {
     // TODO: Once we move to serde, maybe we can store this
     // as `HashMap<String, &'static str>`?
     pub ext_versions: Option<HashMap<String, String>>,
+
+    // Custom extensions are allowed and will be prefixed with `ext_`.
+    pub extensions: Extensions,
 }
 
 impl Status {
@@ -375,6 +381,7 @@ impl Deserialize for Status {
                     state: process_map_field!(state, "state"),
                     sensors: sensors.unwrap_or(None),
                     ext_versions: ext_versions.unwrap_or(None),
+                    extensions: HashMap::new(),//process_map_field!(extensions, "extensions"),
                 })
             }
         }
@@ -382,7 +389,7 @@ impl Deserialize for Status {
         const FIELDS: &'static [&'static str] = &[
             "api", "space", "logo", "url", "location", "contact", "spacefed",
             "projects", "cam", "feeds", "events", "radio_show", "cache",
-            "issue_report_channels", "state", "sensors", "ext_versions"
+            "issue_report_channels", "state", "sensors", "ext_versions", "extensions",
         ];
         deserializer.deserialize_struct("Status", FIELDS, StatusVisitor)
     }
@@ -396,6 +403,7 @@ pub struct StatusBuilder {
     location: Option<Location>,
     contact: Option<Contact>,
     issue_report_channels: Vec<String>,
+    extensions: Extensions,
 }
 
 impl StatusBuilder {
@@ -428,6 +436,19 @@ impl StatusBuilder {
 
     pub fn add_issue_report_channel<S: Into<String>>(mut self, report_channel: S) -> Self {
         self.issue_report_channels.push(report_channel.into());
+        self
+    }
+
+    /// Add an extension to the `Status` object.
+    ///
+    /// The prefix `ext_` will automatically be prepended to the name, if not
+    /// already present.
+    pub fn add_extension<S: Into<String>>(mut self, name: S, value: Value) -> Self {
+        let mut key = name.into();
+        if !key.starts_with("ext_") {
+            key = String::from("ext_") + &key;
+        }
+        self.extensions.insert(key, value);
         self
     }
 
@@ -522,5 +543,21 @@ mod test {
         assert_eq!(status, deserialized);
     }
 
-}
+    #[test]
+    fn serialize_extension_fields_none() {
+        let status = StatusBuilder::new("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .build();
+        assert!(status.is_ok());
+        assert_eq!(
+            &to_string(&status.unwrap()).unwrap(),
+            "{\"api\":\"0.13\",\"space\":\"foo\",\"logo\":\"bar\",\"url\":\"foobar\",\
+            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+            \"state\":{\"open\":null}}"
+        );
+    }
 
+}
