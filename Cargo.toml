@@ -21,6 +21,9 @@ include = [
     "AUTHORS.md",
 ]
 
+[badges]
+travis-ci = { repository = "coredump-ch/spaceapi-rs" }
+
 [dependencies]
 log = "^0.3"
 serde = "^0.8"
