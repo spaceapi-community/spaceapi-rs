@@ -598,4 +598,27 @@ mod test {
         );
     }
 
+    /// Extension field names are automatically prepended with `ext_`.
+    /// If two extensions with the same name (before or after prepending) are
+    /// added, then the second call will overwrite the first one (standard Map
+    /// behavior).
+    #[test]
+    fn prepend_ext_to_extension_field_names() {
+        let status = StatusBuilder::new("a")
+            .logo("b")
+            .url("c")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_extension("aaa", Value::String("xxx".into()))
+            .add_extension("ext_aaa", Value::String("yyy".into()))
+            .add_extension("bbb", Value::Null)
+            .add_extension("ext_ccc", Value::Null)
+            .build();
+        assert!(status.is_ok());
+        let serialized = to_string(&status.unwrap()).unwrap();
+        assert!(serialized.contains("\"ext_aaa\":\"yyy\""));
+        assert!(serialized.contains("\"ext_bbb\":null"));
+        assert!(serialized.contains("\"ext_ccc\":null"));
+    }
+
 }
