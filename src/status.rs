@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeMap};
 
 use serde::ser::{Serializer, Serialize};
 use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
@@ -9,7 +9,7 @@ pub use sensors::Sensors;
 pub use sensors::TemperatureSensor;
 pub use sensors::PeopleNowPresentSensor;
 
-type Extensions = HashMap<String, Value>;
+type Extensions = BTreeMap<String, Value>;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
@@ -208,18 +208,21 @@ impl Serialize for Status {
         if self.cache.is_some() { field_count += 1; }
         if self.sensors.is_some() { field_count += 1; }
         if self.ext_versions.is_some() { field_count += 1; }
+        field_count += self.extensions.len();
 
         // Serialize fields
-        let mut state = serializer.serialize_struct("Status", field_count)?;
+        let mut state = serializer.serialize_map(Some(field_count))?;
         macro_rules! serialize {
             ($field:expr, $field_name:expr) => {
-                serializer.serialize_struct_elt(&mut state, $field_name, &$field)?;
+                serializer.serialize_map_key(&mut state, $field_name)?;
+                serializer.serialize_map_value(&mut state, &$field)?;
             };
         }
         macro_rules! maybe_serialize {
             ($field:expr, $field_name:expr) => {
                 if let Some(ref val) = $field {
-                    serializer.serialize_struct_elt(&mut state, $field_name, &val)?;
+                    serializer.serialize_map_key(&mut state, $field_name)?;
+                    serializer.serialize_map_value(&mut state, &val)?;
                 }
             };
         }
@@ -240,7 +243,15 @@ impl Serialize for Status {
         serialize!(self.state, "state");
         maybe_serialize!(self.sensors, "sensors");
         maybe_serialize!(self.ext_versions, "ext_versions");
-        serializer.serialize_struct_end(state)
+
+        // Serialize extensions
+        for (name, value) in self.extensions.iter() {
+            serializer.serialize_map_key(&mut state, name)?;
+            serializer.serialize_map_value(&mut state, value)?;
+        }
+
+        // Finalize
+        serializer.serialize_map_end(state)
     }
 }
 
@@ -265,6 +276,7 @@ impl Deserialize for Status {
             State,
             Sensors,
             ExtVersions,
+            Extensions,
         };
 
         impl Deserialize for Field {
@@ -293,6 +305,7 @@ impl Deserialize for Status {
                             "state" => Ok(Field::State),
                             "sensors" => Ok(Field::Sensors),
                             "ext_versions" => Ok(Field::ExtVersions),
+                            "extensions" => Ok(Field::Extensions),
                             _ => Err(SerdeError::unknown_field(value)),
                         }
                     }
@@ -342,6 +355,7 @@ impl Deserialize for Status {
                 let mut state: Option<State> = None;
                 let mut sensors: Option<Option<Sensors>> = None;
                 let mut ext_versions: Option<Option<HashMap<String, String>>> = None;
+                let mut extensions: Option<Extensions> = None;
                 while let Some(key) = visitor.visit_key()? {
                     match key {
                         Field::Api => visit_map_field!(api, "api"),
@@ -361,7 +375,7 @@ impl Deserialize for Status {
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::ExtVersions => visit_map_field!(ext_versions, "ext_versions"),
-
+                        Field::Extensions => visit_map_field!(extensions, "extensions"),
                     }
                 }
                 visitor.end()?;
@@ -383,7 +397,7 @@ impl Deserialize for Status {
                     state: process_map_field!(state, "state"),
                     sensors: sensors.unwrap_or(None),
                     ext_versions: ext_versions.unwrap_or(None),
-                    extensions: HashMap::new(),//process_map_field!(extensions, "extensions"),
+                    extensions: BTreeMap::new(),//process_map_field!(extensions, "extensions"),
                 })
             }
         }
@@ -463,6 +477,7 @@ impl StatusBuilder {
             location: self.location.ok_or("location missing")?,
             contact: self.contact.ok_or("contact missing")?,
             issue_report_channels: self.issue_report_channels,
+            extensions: self.extensions,
             ..Default::default()
         })
     }
@@ -548,19 +563,38 @@ mod test {
     }
 
     #[test]
-    fn serialize_extension_fields_none() {
-        let status = StatusBuilder::new("foo")
-            .logo("bar")
-            .url("foobar")
+    fn serialize_extension_fields_empty() {
+        let status = StatusBuilder::new("a")
+            .logo("b")
+            .url("c")
             .location(Location::default())
             .contact(Contact::default())
             .build();
         assert!(status.is_ok());
         assert_eq!(
             &to_string(&status.unwrap()).unwrap(),
-            "{\"api\":\"0.13\",\"space\":\"foo\",\"logo\":\"bar\",\"url\":\"foobar\",\
+            "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
             \"state\":{\"open\":null}}"
+        );
+    }
+
+    #[test]
+    fn serialize_extension_fields() {
+        let status = StatusBuilder::new("a")
+            .logo("b")
+            .url("c")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_extension("aaa", Value::String("xxx".into()))
+            .add_extension("bbb", Value::Array(vec![Value::Null, Value::U64(42)]))
+            .build();
+        assert!(status.is_ok());
+        assert_eq!(
+            &to_string(&status.unwrap()).unwrap(),
+            "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
+            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+            \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
         );
     }
 
