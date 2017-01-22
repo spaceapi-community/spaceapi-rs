@@ -216,7 +216,7 @@ impl Serialize for Status {
             };
         }
         serialize!(self.api, "api");
-        serialize!(self.api, "space");
+        serialize!(self.space, "space");
         serialize!(self.logo, "logo");
         serialize!(self.url, "url");
         serialize!(self.location, "location");
@@ -484,8 +484,12 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
-            .build();
-        assert!(status.is_ok());
+            .build()
+            .unwrap();
+        assert_eq!(status.api, "0.13");
+        assert_eq!(status.space, "foo");
+        assert_eq!(status.logo, "bar");
+        assert_eq!(status.url, "foobar");
     }
 
     #[test]
@@ -502,6 +506,20 @@ mod test {
             "{\"_type\":\"rss\",\"url\":\"https://some/rss.xml\"}".to_string());
         assert_eq!(to_string(&f2).unwrap(),
             "{\"url\":\"https://some/rss.xml\"}".to_string());
+    }
+
+    #[test]
+    fn serialize_deserialize_full() {
+        let status = StatusBuilder::new("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .build()
+            .unwrap();
+        let serialized = to_string(&status).unwrap();
+        let deserialized = from_str::<Status>(&serialized).unwrap();
+        assert_eq!(status, deserialized);
     }
 
 }
