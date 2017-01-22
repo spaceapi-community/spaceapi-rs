@@ -166,8 +166,6 @@ pub struct Status {
     pub sensors: Option<Sensors>,
 
     // Version extension
-    // TODO: Once we move to serde, maybe we can store this
-    // as `HashMap<String, &'static str>`?
     pub ext_versions: Option<HashMap<String, String>>,
 
     // Custom extensions are allowed and will be prefixed with `ext_`.
