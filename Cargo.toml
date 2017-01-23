@@ -12,6 +12,7 @@ authors = [
 description = "Space API types and serialization/deserialization."
 readme = "README.md"
 keywords = ["spaceapi", "hackerspaces", "status", "api"]
+categories = ["api-bindings"]
 include = [
     "**/*.rs",
     "Cargo.toml",
