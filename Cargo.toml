@@ -12,6 +12,7 @@ authors = [
 description = "Space API types and serialization/deserialization."
 readme = "README.md"
 keywords = ["spaceapi", "hackerspaces", "status", "api"]
+categories = ["api-bindings"]
 include = [
     "**/*.rs",
     "Cargo.toml",
@@ -20,6 +21,9 @@ include = [
     "LICENSE-APACHE",
     "AUTHORS.md",
 ]
+
+[badges]
+travis-ci = { repository = "coredump-ch/spaceapi-rs" }
 
 [dependencies]
 log = "^0.3"
