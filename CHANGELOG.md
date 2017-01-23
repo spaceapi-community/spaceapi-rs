@@ -11,6 +11,12 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### v0.4.2 (2017-01-23)
+
+- [fixed] Get rid of unneeded attribute warning (#42)
+- [fixed] Fix bug in Status serializer (#47)
+- [changed] Various small code improvements
+
 ### v0.4.1 (2017-01-09)
 
 - [added] `StatusBuilder` which implements the builder pattern (#38)
