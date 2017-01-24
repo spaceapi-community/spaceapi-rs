@@ -426,6 +426,12 @@ pub struct StatusBuilder {
     url: Option<String>,
     location: Option<Location>,
     contact: Option<Contact>,
+    spacefed: Option<Spacefed>,
+    projects: Option<Vec<String>>,
+    cam: Option<Vec<String>>,
+    feeds: Option<Feeds>,
+    events: Option<Vec<Event>>,
+    radio_show: Option<Vec<RadioShow>>,
     issue_report_channels: Vec<String>,
     extensions: Extensions,
 }
@@ -458,6 +464,52 @@ impl StatusBuilder {
         self
     }
 
+    pub fn spacefed(mut self, spacefed: Spacefed) -> Self {
+        self.spacefed = Some(spacefed);
+        self
+    }
+
+    pub fn add_event(mut self, event: Event) -> Self {
+        if let Some(ref mut events) = self.events {
+            events.push(event);
+        } else {
+            self.events = Some(vec![event]);
+        }
+        self
+    }
+
+    pub fn add_cam<S: Into<String>>(mut self, cam: S) -> Self {
+        if let Some(ref mut cams) = self.cam {
+            cams.push(cam.into());
+        } else {
+            self.cam = Some(vec![cam.into()]);
+        }
+        self
+    }
+
+    pub fn feeds(mut self, feeds: Feeds) -> Self {
+        self.feeds = Some(feeds);
+        self
+    }
+
+    pub fn add_radio_show(mut self, radio_show: RadioShow) -> Self {
+        if let Some(ref mut radio_shows) = self.radio_show {
+            radio_shows.push(radio_show);
+        } else {
+            self.radio_show = Some(vec![radio_show]);
+        }
+        self
+    }
+
+    pub fn add_project<S: Into<String>>(mut self, project: S) -> Self {
+        if let Some(ref mut projects) = self.projects {
+            projects.push(project.into());
+        } else {
+            self.projects = Some(vec![project.into()]);
+        }
+        self
+    }
+
     pub fn add_issue_report_channel<S: Into<String>>(mut self, report_channel: S) -> Self {
         self.issue_report_channels.push(report_channel.into());
         self
@@ -483,6 +535,12 @@ impl StatusBuilder {
             url: self.url.ok_or("url missing")?,
             location: self.location.ok_or("location missing")?,
             contact: self.contact.ok_or("contact missing")?,
+            spacefed: self.spacefed,
+            projects: self.projects,
+            cam: self.cam,
+            feeds: self.feeds,
+            events: self.events,
+            radio_show: self.radio_show,
             issue_report_channels: self.issue_report_channels,
             extensions: self.extensions,
             ..Default::default()
@@ -531,12 +589,27 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
+            .spacefed(Spacefed::default())
+            .feeds(Feeds::default())
+            .add_project("spaceapi-rs")
+            .add_cam("cam1")
+            .add_cam("cam2".to_string())
+            .add_event(Event::default())
+            .add_issue_report_channel("chan")
             .build()
             .unwrap();
         assert_eq!(status.api, "0.13");
         assert_eq!(status.space, "foo");
         assert_eq!(status.logo, "bar");
         assert_eq!(status.url, "foobar");
+        assert_eq!(status.location, Location::default());
+        assert_eq!(status.contact, Contact::default());
+        assert_eq!(status.spacefed, Some(Spacefed::default()));
+        assert_eq!(status.feeds, Some(Feeds::default()));
+        assert_eq!(status.projects, Some(vec!["spaceapi-rs".to_string()]));
+        assert_eq!(status.cam, Some(vec!["cam1".to_string(), "cam2".to_string()]));
+        assert_eq!(status.events, Some(vec![Event::default()]));
+        assert_eq!(status.issue_report_channels, vec!["chan".to_string()]);
     }
 
     #[test]
