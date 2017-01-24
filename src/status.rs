@@ -244,7 +244,7 @@ impl Serialize for Status {
 
         // Serialize extensions
         for (name, value) in self.extensions.iter() {
-            serializer.serialize_map_key(&mut state, name)?;
+            serializer.serialize_map_key(&mut state, format!("ext_{}", name))?;
             serializer.serialize_map_value(&mut state, value)?;
         }
 
@@ -274,7 +274,7 @@ impl Deserialize for Status {
             State,
             Sensors,
             ExtVersions,
-            Extensions,
+            Extension(String),
         };
 
         impl Deserialize for Field {
@@ -303,8 +303,15 @@ impl Deserialize for Status {
                             "state" => Ok(Field::State),
                             "sensors" => Ok(Field::Sensors),
                             "ext_versions" => Ok(Field::ExtVersions),
-                            "extensions" => Ok(Field::Extensions),
-                            _ => Err(SerdeError::unknown_field(value)),
+                            _ => {
+                                if value.starts_with("ext_") {
+                                    Ok(Field::Extension(
+                                        value.trim_left_matches("ext_").to_owned()
+                                    ))
+                                } else {
+                                    Err(SerdeError::unknown_field(value))
+                                }
+                            }
                         }
                     }
                 }
@@ -353,7 +360,7 @@ impl Deserialize for Status {
                 let mut state: Option<State> = None;
                 let mut sensors: Option<Option<Sensors>> = None;
                 let mut ext_versions: Option<Option<HashMap<String, String>>> = None;
-                let mut extensions: Option<Extensions> = None;
+                let mut extensions = Extensions::new();
                 while let Some(key) = visitor.visit_key()? {
                     match key {
                         Field::Api => visit_map_field!(api, "api"),
@@ -373,7 +380,10 @@ impl Deserialize for Status {
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::ExtVersions => visit_map_field!(ext_versions, "ext_versions"),
-                        Field::Extensions => visit_map_field!(extensions, "extensions"),
+                        Field::Extension(name) => {
+                            let value: Value = visitor.visit_value()?;
+                            extensions.insert(name, value);
+                        }
                     }
                 }
                 visitor.end()?;
@@ -395,7 +405,7 @@ impl Deserialize for Status {
                     state: process_map_field!(state, "state"),
                     sensors: sensors.unwrap_or(None),
                     ext_versions: ext_versions.unwrap_or(None),
-                    extensions: BTreeMap::new(),//process_map_field!(extensions, "extensions"),
+                    extensions: extensions,
                 })
             }
         }
@@ -455,14 +465,15 @@ impl StatusBuilder {
 
     /// Add an extension to the `Status` object.
     ///
-    /// The prefix `ext_` will automatically be prepended to the name, if not
-    /// already present.
+    /// The prefix `ext_` will automatically be prepended to the name during
+    /// serialization, if not already present.
     pub fn add_extension<S: Into<String>>(mut self, name: S, value: Value) -> Self {
-        let mut key = name.into();
+        let key = name.into();
         if !key.starts_with("ext_") {
-            key = String::from("ext_") + &key;
+            self.extensions.insert(key, value);
+        } else {
+            self.extensions.insert(key.trim_left_matches("ext_").to_owned(), value);
         }
-        self.extensions.insert(key, value);
         self
     }
 
@@ -553,6 +564,7 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
+            .add_extension("aaa", Value::Array(vec![Value::Null, Value::U64(42)]))
             .build()
             .unwrap();
         let serialized = to_string(&status).unwrap();
@@ -617,6 +629,17 @@ mod test {
         assert!(serialized.contains("\"ext_aaa\":\"yyy\""));
         assert!(serialized.contains("\"ext_bbb\":null"));
         assert!(serialized.contains("\"ext_ccc\":null"));
+    }
+
+    #[test]
+    fn deserialize() {
+        let data = "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
+            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+            \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
+        let deserialized: Status = from_str(&data).unwrap();
+        assert_eq!(&deserialized.api, "0.13");
+        let keys: Vec<_> = deserialized.extensions.keys().collect();
+        assert_eq!(keys.len(), 2)
     }
 
 }

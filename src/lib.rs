@@ -50,6 +50,7 @@
 //!     let deserialized: Status = serde_json::from_str(&serialized).unwrap();
 //!
 //!     # assert!(&serialized[0..1] == "{");
+//!     # assert_eq!(deserialized, status);
 //!     # }
 //!
 //! ## Deserializing
