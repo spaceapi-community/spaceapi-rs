@@ -1,6 +1,9 @@
 language: rust
 sudo: false
 rust:
+  - 1.15.0
+  - stable
+  - beta
   - nightly
 notifications:
   irc:
