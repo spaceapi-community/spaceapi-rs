@@ -5,12 +5,14 @@
 [![Crates.io](https://img.shields.io/crates/d/spaceapi.svg)](https://crates.io/crates/spaceapi)
 [![Dependency Status](https://dependencyci.com/github/coredump-ch/spaceapi-rs/badge)](https://dependencyci.com/github/coredump-ch/spaceapi-rs)
 
-This is an implementation of the [SpaceAPI](http://spaceapi.net/) v0.13 in Rust
-(nightly). It contains both the type definitions as well as tools for
-serialization and deserialization.
+This is an implementation of the [SpaceAPI](http://spaceapi.net/) v0.13 in
+Rust. It contains both the type definitions as well as tools for serialization
+and deserialization.
 
 - Crate Documentation: https://docs.rs/spaceapi/
 - Space API Documentation: http://spaceapi.net/documentation
+
+This library requires Rust 1.15 or newer.
 
 
 ## Usage
