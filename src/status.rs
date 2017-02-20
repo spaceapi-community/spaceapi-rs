@@ -1,6 +1,7 @@
 use std::collections::{HashMap, BTreeMap};
+use std::fmt;
 
-use serde::ser::{Serializer, Serialize};
+use serde::ser::{Serializer, Serialize, SerializeMap};
 use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
 use serde_json::value::Value;
 
@@ -193,7 +194,7 @@ impl Status {
 }
 
 impl Serialize for Status {
-    fn serialize<S: Serializer>(&self, serializer: &mut S) -> Result<(), S::Error> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
 
         // Determine number of fields to serialize
         let mut field_count = 8;
@@ -212,15 +213,13 @@ impl Serialize for Status {
         let mut state = serializer.serialize_map(Some(field_count))?;
         macro_rules! serialize {
             ($field:expr, $field_name:expr) => {
-                serializer.serialize_map_key(&mut state, $field_name)?;
-                serializer.serialize_map_value(&mut state, &$field)?;
+                state.serialize_entry($field_name, &$field)?;
             };
         }
         macro_rules! maybe_serialize {
             ($field:expr, $field_name:expr) => {
                 if let Some(ref val) = $field {
-                    serializer.serialize_map_key(&mut state, $field_name)?;
-                    serializer.serialize_map_value(&mut state, &val)?;
+                    state.serialize_entry($field_name, &val)?;
                 }
             };
         }
@@ -244,18 +243,17 @@ impl Serialize for Status {
 
         // Serialize extensions
         for (name, value) in self.extensions.iter() {
-            serializer.serialize_map_key(&mut state, format!("ext_{}", name))?;
-            serializer.serialize_map_value(&mut state, value)?;
+            state.serialize_entry(&format!("ext_{}", name), &value)?;
         }
 
         // Finalize
-        serializer.serialize_map_end(state)
+        state.end()
     }
 }
 
 
 impl Deserialize for Status {
-    fn deserialize<D: Deserializer>(deserializer: &mut D) -> Result<Self, D::Error> {
+    fn deserialize<D: Deserializer>(deserializer: D) -> Result<Self, D::Error> {
         enum Field {
             Api,
             Space,
@@ -278,13 +276,17 @@ impl Deserialize for Status {
         };
 
         impl Deserialize for Field {
-            fn deserialize<D: Deserializer>(deserializer: &mut D) -> Result<Field, D::Error> {
+            fn deserialize<D: Deserializer>(deserializer: D) -> Result<Field, D::Error> {
                 struct FieldVisitor;
 
                 impl Visitor for FieldVisitor {
                     type Value = Field;
 
-                    fn visit_str<E: SerdeError>(&mut self, value: &str) -> Result<Field, E> {
+                    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                        write!(formatter, "a valid field name")
+                    }
+
+                    fn visit_str<E: SerdeError>(self, value: &str) -> Result<Field, E> {
                         match value {
                             "api" => Ok(Field::Api),
                             "space" => Ok(Field::Space),
@@ -309,7 +311,7 @@ impl Deserialize for Status {
                                         value.trim_left_matches("ext_").to_owned()
                                     ))
                                 } else {
-                                    Err(SerdeError::unknown_field(value))
+                                    Err(SerdeError::unknown_field(value, &FIELDS))
                                 }
                             }
                         }
@@ -324,7 +326,11 @@ impl Deserialize for Status {
         impl Visitor for StatusVisitor {
             type Value = Status;
 
-            fn visit_map<V: MapVisitor>(&mut self, mut visitor: V) -> Result<Status, V::Error> {
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                write!(formatter, "a valid status object")
+            }
+
+            fn visit_map<V: MapVisitor>(self, mut visitor: V) -> Result<Status, V::Error> {
                 macro_rules! visit_map_field {
                     ($field:ident, $field_name:expr) => {
                         {
@@ -386,7 +392,6 @@ impl Deserialize for Status {
                         }
                     }
                 }
-                visitor.end()?;
                 Ok(Status {
                     api: process_map_field!(api, "api"),
                     space: process_map_field!(space, "space"),
@@ -519,11 +524,8 @@ impl StatusBuilder {
     ///
     /// The prefix `ext_` will automatically be prepended to the name during
     /// serialization, if not already present.
-    ///
-    /// TODO Serde 0.9: Replace `Value` parameter with `V: Into<Value>` and
-    /// `update examples/serialization.rs`.
-    pub fn add_extension(mut self, name: &str, value: Value) -> Self {
-        self.extensions.insert(name.trim_left_matches("ext_").to_owned(), value);
+    pub fn add_extension<V: Into<Value>>(mut self, name: &str, value: V) -> Self {
+        self.extensions.insert(name.trim_left_matches("ext_").to_owned(), value.into());
         self
     }
 
@@ -635,7 +637,7 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
-            .add_extension("aaa", Value::Array(vec![Value::Null, Value::U64(42)]))
+            .add_extension("aaa", Value::Array(vec![Value::Null, Value::from(42)]))
             .build()
             .unwrap();
         let serialized = to_string(&status).unwrap();
@@ -668,7 +670,7 @@ mod test {
             .location(Location::default())
             .contact(Contact::default())
             .add_extension("aaa", Value::String("xxx".into()))
-            .add_extension("bbb", Value::Array(vec![Value::Null, Value::U64(42)]))
+            .add_extension("bbb", Value::Array(vec![Value::Null, Value::from(42)]))
             .build();
         assert!(status.is_ok());
         assert_eq!(
