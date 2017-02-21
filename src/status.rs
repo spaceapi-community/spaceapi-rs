@@ -679,6 +679,25 @@ mod test {
         );
     }
 
+    #[test]
+    fn serialize_deserialize_full_with_optional() {
+        let mut status = StatusBuilder::new("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .build()
+            .unwrap();
+        status.spacefed = Some(Spacefed::default());
+        status.feeds = Some(Feeds::default());
+        status.projects = Some(vec![]);
+        status.cam = Some(vec![]);
+
+        let serialized = to_string(&status).unwrap();
+        let deserialized = from_str::<Status>(&serialized).unwrap();
+        assert_eq!(status, deserialized);
+    }
+
     /// Extension field names are automatically prepended with `ext_`.
     /// If two extensions with the same name (before or after prepending) are
     /// added, then the second call will overwrite the first one (standard Map
