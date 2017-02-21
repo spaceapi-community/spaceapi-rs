@@ -467,13 +467,8 @@ impl StatusBuilder {
     ///
     /// The prefix `ext_` will automatically be prepended to the name during
     /// serialization, if not already present.
-    pub fn add_extension<S: Into<String>>(mut self, name: S, value: Value) -> Self {
-        let key = name.into();
-        if !key.starts_with("ext_") {
-            self.extensions.insert(key, value);
-        } else {
-            self.extensions.insert(key.trim_left_matches("ext_").to_owned(), value);
-        }
+    pub fn add_extension(mut self, name: &str, value: Value) -> Self {
+        self.extensions.insert(name.trim_left_matches("ext_").to_owned(), value);
         self
     }
 
