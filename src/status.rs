@@ -1,12 +1,15 @@
+use std::collections::{HashMap, BTreeMap};
+
 use serde::ser::{Serializer, Serialize};
 use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
+use serde_json::value::Value;
 
 pub use sensors::SensorTemplate;
 pub use sensors::Sensors;
 pub use sensors::TemperatureSensor;
 pub use sensors::PeopleNowPresentSensor;
 
-use std::collections::HashMap;
+type Extensions = BTreeMap<String, Value>;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
@@ -163,13 +166,16 @@ pub struct Status {
     pub sensors: Option<Sensors>,
 
     // Version extension
-    // TODO: Once we move to serde, maybe we can store this
-    // as `HashMap<String, &'static str>`?
     pub ext_versions: Option<HashMap<String, String>>,
+
+    // Custom extensions are allowed and will be prefixed with `ext_`.
+    pub extensions: Extensions,
 }
 
 impl Status {
     /// Create a new Status object with only the absolutely required fields.
+    #[deprecated(since="0.5.0",
+                 note="Please use the `StatusBuilder` or a struct expression instead")]
     pub fn new<S: Into<String>>(space: S, logo: S, url: S, location: Location, contact: Contact,
                                 issue_report_channels: Vec<String>) -> Status {
         Status {
@@ -200,18 +206,21 @@ impl Serialize for Status {
         if self.cache.is_some() { field_count += 1; }
         if self.sensors.is_some() { field_count += 1; }
         if self.ext_versions.is_some() { field_count += 1; }
+        field_count += self.extensions.len();
 
         // Serialize fields
-        let mut state = serializer.serialize_struct("Status", field_count)?;
+        let mut state = serializer.serialize_map(Some(field_count))?;
         macro_rules! serialize {
             ($field:expr, $field_name:expr) => {
-                serializer.serialize_struct_elt(&mut state, $field_name, &$field)?;
+                serializer.serialize_map_key(&mut state, $field_name)?;
+                serializer.serialize_map_value(&mut state, &$field)?;
             };
         }
         macro_rules! maybe_serialize {
             ($field:expr, $field_name:expr) => {
                 if let Some(ref val) = $field {
-                    serializer.serialize_struct_elt(&mut state, $field_name, &val)?;
+                    serializer.serialize_map_key(&mut state, $field_name)?;
+                    serializer.serialize_map_value(&mut state, &val)?;
                 }
             };
         }
@@ -232,7 +241,15 @@ impl Serialize for Status {
         serialize!(self.state, "state");
         maybe_serialize!(self.sensors, "sensors");
         maybe_serialize!(self.ext_versions, "ext_versions");
-        serializer.serialize_struct_end(state)
+
+        // Serialize extensions
+        for (name, value) in self.extensions.iter() {
+            serializer.serialize_map_key(&mut state, format!("ext_{}", name))?;
+            serializer.serialize_map_value(&mut state, value)?;
+        }
+
+        // Finalize
+        serializer.serialize_map_end(state)
     }
 }
 
@@ -257,6 +274,7 @@ impl Deserialize for Status {
             State,
             Sensors,
             ExtVersions,
+            Extension(String),
         };
 
         impl Deserialize for Field {
@@ -285,7 +303,15 @@ impl Deserialize for Status {
                             "state" => Ok(Field::State),
                             "sensors" => Ok(Field::Sensors),
                             "ext_versions" => Ok(Field::ExtVersions),
-                            _ => Err(SerdeError::unknown_field(value)),
+                            _ => {
+                                if value.starts_with("ext_") {
+                                    Ok(Field::Extension(
+                                        value.trim_left_matches("ext_").to_owned()
+                                    ))
+                                } else {
+                                    Err(SerdeError::unknown_field(value))
+                                }
+                            }
                         }
                     }
                 }
@@ -334,6 +360,7 @@ impl Deserialize for Status {
                 let mut state: Option<State> = None;
                 let mut sensors: Option<Option<Sensors>> = None;
                 let mut ext_versions: Option<Option<HashMap<String, String>>> = None;
+                let mut extensions = Extensions::new();
                 while let Some(key) = visitor.visit_key()? {
                     match key {
                         Field::Api => visit_map_field!(api, "api"),
@@ -353,7 +380,10 @@ impl Deserialize for Status {
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::ExtVersions => visit_map_field!(ext_versions, "ext_versions"),
-
+                        Field::Extension(name) => {
+                            let value: Value = visitor.visit_value()?;
+                            extensions.insert(name, value);
+                        }
                     }
                 }
                 visitor.end()?;
@@ -375,6 +405,7 @@ impl Deserialize for Status {
                     state: process_map_field!(state, "state"),
                     sensors: sensors.unwrap_or(None),
                     ext_versions: ext_versions.unwrap_or(None),
+                    extensions: extensions,
                 })
             }
         }
@@ -382,7 +413,7 @@ impl Deserialize for Status {
         const FIELDS: &'static [&'static str] = &[
             "api", "space", "logo", "url", "location", "contact", "spacefed",
             "projects", "cam", "feeds", "events", "radio_show", "cache",
-            "issue_report_channels", "state", "sensors", "ext_versions"
+            "issue_report_channels", "state", "sensors", "ext_versions", "extensions",
         ];
         deserializer.deserialize_struct("Status", FIELDS, StatusVisitor)
     }
@@ -396,6 +427,7 @@ pub struct StatusBuilder {
     location: Option<Location>,
     contact: Option<Contact>,
     issue_report_channels: Vec<String>,
+    extensions: Extensions,
 }
 
 impl StatusBuilder {
@@ -431,15 +463,30 @@ impl StatusBuilder {
         self
     }
 
+    /// Add an extension to the `Status` object.
+    ///
+    /// The prefix `ext_` will automatically be prepended to the name during
+    /// serialization, if not already present.
+    ///
+    /// TODO Serde 0.9: Replace `Value` parameter with `V: Into<Value>` and
+    /// `update examples/serialization.rs`.
+    pub fn add_extension(mut self, name: &str, value: Value) -> Self {
+        self.extensions.insert(name.trim_left_matches("ext_").to_owned(), value);
+        self
+    }
+
     pub fn build(self) -> Result<Status, String> {
-        Ok(Status::new(
-            self.space,
-            self.logo.ok_or("logo missing")?,
-            self.url.ok_or("url missing")?,
-            self.location.ok_or("location missing")?,
-            self.contact.ok_or("contact missing")?,
-            self.issue_report_channels,
-            ))
+        Ok(Status {
+            api: "0.13".into(), // TODO: Deduplicate
+            space: self.space,
+            logo: self.logo.ok_or("logo missing")?,
+            url: self.url.ok_or("url missing")?,
+            location: self.location.ok_or("location missing")?,
+            contact: self.contact.ok_or("contact missing")?,
+            issue_report_channels: self.issue_report_channels,
+            extensions: self.extensions,
+            ..Default::default()
+        })
     }
 }
 
@@ -515,6 +562,7 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
+            .add_extension("aaa", Value::Array(vec![Value::Null, Value::U64(42)]))
             .build()
             .unwrap();
         let serialized = to_string(&status).unwrap();
@@ -522,5 +570,74 @@ mod test {
         assert_eq!(status, deserialized);
     }
 
-}
+    #[test]
+    fn serialize_extension_fields_empty() {
+        let status = StatusBuilder::new("a")
+            .logo("b")
+            .url("c")
+            .location(Location::default())
+            .contact(Contact::default())
+            .build();
+        assert!(status.is_ok());
+        assert_eq!(
+            &to_string(&status.unwrap()).unwrap(),
+            "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
+            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+            \"state\":{\"open\":null}}"
+        );
+    }
 
+    #[test]
+    fn serialize_extension_fields() {
+        let status = StatusBuilder::new("a")
+            .logo("b")
+            .url("c")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_extension("aaa", Value::String("xxx".into()))
+            .add_extension("bbb", Value::Array(vec![Value::Null, Value::U64(42)]))
+            .build();
+        assert!(status.is_ok());
+        assert_eq!(
+            &to_string(&status.unwrap()).unwrap(),
+            "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
+            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+            \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
+        );
+    }
+
+    /// Extension field names are automatically prepended with `ext_`.
+    /// If two extensions with the same name (before or after prepending) are
+    /// added, then the second call will overwrite the first one (standard Map
+    /// behavior).
+    #[test]
+    fn prepend_ext_to_extension_field_names() {
+        let status = StatusBuilder::new("a")
+            .logo("b")
+            .url("c")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_extension("aaa", Value::String("xxx".into()))
+            .add_extension("ext_aaa", Value::String("yyy".into()))
+            .add_extension("bbb", Value::Null)
+            .add_extension("ext_ccc", Value::Null)
+            .build();
+        assert!(status.is_ok());
+        let serialized = to_string(&status.unwrap()).unwrap();
+        assert!(serialized.contains("\"ext_aaa\":\"yyy\""));
+        assert!(serialized.contains("\"ext_bbb\":null"));
+        assert!(serialized.contains("\"ext_ccc\":null"));
+    }
+
+    #[test]
+    fn deserialize() {
+        let data = "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
+            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+            \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
+        let deserialized: Status = from_str(&data).unwrap();
+        assert_eq!(&deserialized.api, "0.13");
+        let keys: Vec<_> = deserialized.extensions.keys().collect();
+        assert_eq!(keys.len(), 2)
+    }
+
+}

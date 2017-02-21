@@ -7,7 +7,7 @@
 
 This is an implementation of the [SpaceAPI](http://spaceapi.net/) v0.13 in
 Rust. It contains both the type definitions as well as tools for serialization
-and deserialization.
+and deserialization to/from JSON using Serde.
 
 - Crate Documentation: https://docs.rs/spaceapi/
 - Space API Documentation: http://spaceapi.net/documentation
