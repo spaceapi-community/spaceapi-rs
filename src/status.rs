@@ -467,6 +467,9 @@ impl StatusBuilder {
     ///
     /// The prefix `ext_` will automatically be prepended to the name during
     /// serialization, if not already present.
+    ///
+    /// TODO Serde 0.9: Replace `Value` parameter with `V: Into<Value>` and
+    /// `update examples/serialization.rs`.
     pub fn add_extension(mut self, name: &str, value: Value) -> Self {
         self.extensions.insert(name.trim_left_matches("ext_").to_owned(), value);
         self
