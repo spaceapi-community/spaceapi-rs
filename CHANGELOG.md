@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### v0.5.0 (2017-xx-xx)
+
+- [changed] Update to serde 0.9
+
 ### v0.4.2 (2017-01-23)
 
 - [fixed] Get rid of unneeded attribute warning (#42)

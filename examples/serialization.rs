@@ -25,7 +25,7 @@ fn main() {
             })
         .add_issue_report_channel("email")
         .add_issue_report_channel("twitter")
-        .add_extension("ccc", serde_json::to_value("chaostreff"))
+        .add_extension("ccc", "chaostreff")
         .build()
         .expect("Creating status failed");
     let stringstatus = serde_json::to_string(&status).unwrap();
