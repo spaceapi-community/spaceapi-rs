@@ -1,22 +1,26 @@
 //! Space API definitions and serialization.
 //!
-//! This crate contains all data-related definitions that are present in the Space API
-//! (http://spaceapi.net/). It also handles serializing that data to JSON by implementing the
-//! [`ToJson`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/trait.ToJson.html)
-//! trait for all structs.
+//! This crate contains all data-related definitions that are present in the
+//! [Space API](https://spacedirectory.org/). It also handles serializing and
+//! deserializing of that data from/to JSON by implementing the Serde
+//! [`Serialize`](https://docs.serde.rs/serde/ser/trait.Serialize.html) and
+//! [`Deserialize`](https://docs.serde.rs/serde/de/trait.Deserialize.html)
+//! traits for all structs.
 //!
-//! The currently supported Space API version is 0.13. It is not yet fully implemented.
+//! The currently supported Space API version is 0.13. It is not yet fully
+//! implemented.
+//!
+//! If you want to implement a Space API server on top of these types, you
+//! might want to take a look at the [`spaceapi_server`
+//! crate](https://github.com/coredump-ch/spaceapi-server-rs).
+//!
+//! This library requires Rust 1.15 or newer.
 //!
 //! # Examples
 //!
 //! ## Serializing
 //!
-//! You can create a new `Status` instance by using the `new()` constructor method.
-//!
-//! To serialize the status to
-//! [`Json`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/enum.Json.html), use
-//! the [`ToJson`](http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/trait.ToJson.html)
-//! trait implementation. You can then create a string from the resulting object.
+//! You can create a new `Status` instance by using the `StatusBuilder`.
 //!
 //!     extern crate serde;
 //!     extern crate serde_json;
@@ -55,7 +59,7 @@
 //!
 //! ## Deserializing
 //!
-//! You can deserialize any struct of the Space API through `rustc_serialize::json`:
+//! You can deserialize any struct of the Space API through Serde:
 //!
 //!     extern crate serde;
 //!     extern crate serde_json;
