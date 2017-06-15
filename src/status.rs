@@ -424,6 +424,7 @@ impl Deserialize for Status {
     }
 }
 
+/// Builder for the `Status` object.
 #[derive(Default, Debug, Clone)]
 pub struct StatusBuilder {
     space: String,
