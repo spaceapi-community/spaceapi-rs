@@ -49,6 +49,7 @@ pub struct State {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Event {
     pub name: String,
+    #[serde(rename = "type")]
     pub _type: String,
     pub timestamp: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
