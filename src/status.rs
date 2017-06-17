@@ -1,4 +1,4 @@
-use std::collections::{HashMap, BTreeMap};
+use std::collections::BTreeMap;
 use std::fmt;
 
 use serde::ser::{Serializer, Serialize, SerializeMap};

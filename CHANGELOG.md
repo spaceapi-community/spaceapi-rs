@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### v0.5.1 (2017-xx-xx)
+
+- [fixed] Fix compilation warning (#65)
+
 ### v0.5.0 (2017-06-17)
 
 - [changed] Update to serde 1.0
