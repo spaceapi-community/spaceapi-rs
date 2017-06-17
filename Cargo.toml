@@ -27,6 +27,6 @@ travis-ci = { repository = "coredump-ch/spaceapi-rs" }
 
 [dependencies]
 log = "^0.3"
-serde = "^0.9"
-serde_json = "^0.9"
-serde_derive = "^0.9"
+serde = "^1.0"
+serde_json = "^1.0"
+serde_derive = "^1.0"
