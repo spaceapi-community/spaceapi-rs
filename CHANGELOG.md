@@ -14,6 +14,7 @@ Possible log types:
 ### v0.5.0 (2017-xx-xx)
 
 - [changed] Update to serde 0.9
+- [changed] Renamed `_type` fields to `type_` (#58)
 
 ### v0.4.2 (2017-01-23)
 
