@@ -168,9 +168,6 @@ pub struct Status {
     pub state: State,
     pub sensors: Option<Sensors>,
 
-    // Version extension
-    pub ext_versions: Option<HashMap<String, String>>,
-
     // Custom extensions are allowed and will be prefixed with `ext_`.
     pub extensions: Extensions,
 }
@@ -208,7 +205,6 @@ impl Serialize for Status {
         if self.radio_show.is_some() { field_count += 1; }
         if self.cache.is_some() { field_count += 1; }
         if self.sensors.is_some() { field_count += 1; }
-        if self.ext_versions.is_some() { field_count += 1; }
         field_count += self.extensions.len();
 
         // Serialize fields
@@ -241,7 +237,6 @@ impl Serialize for Status {
         serialize!(self.issue_report_channels, "issue_report_channels");
         serialize!(self.state, "state");
         maybe_serialize!(self.sensors, "sensors");
-        maybe_serialize!(self.ext_versions, "ext_versions");
 
         // Serialize extensions
         for (name, value) in self.extensions.iter() {
@@ -275,7 +270,6 @@ impl<'de> Deserialize<'de> for Status {
             IssueReportChanels,
             State,
             Sensors,
-            ExtVersions,
             Extension(String),
         };
 
@@ -312,7 +306,6 @@ impl<'de> Deserialize<'de> for Status {
                             "issue_report_channels" => Ok(Field::IssueReportChanels),
                             "state" => Ok(Field::State),
                             "sensors" => Ok(Field::Sensors),
-                            "ext_versions" => Ok(Field::ExtVersions),
                             _ => {
                                 if value.starts_with("ext_") {
                                     Ok(Field::Extension(
@@ -375,7 +368,6 @@ impl<'de> Deserialize<'de> for Status {
                 let mut issue_report_channels: Option<Vec<String>> = None;
                 let mut state: Option<State> = None;
                 let mut sensors: Option<Option<Sensors>> = None;
-                let mut ext_versions: Option<Option<HashMap<String, String>>> = None;
                 let mut extensions = Extensions::new();
                 while let Some(key) = map.next_key()? {
                     match key {
@@ -395,7 +387,6 @@ impl<'de> Deserialize<'de> for Status {
                         Field::IssueReportChanels => visit_map_field!(issue_report_channels, "issue_report_channels"),
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
-                        Field::ExtVersions => visit_map_field!(ext_versions, "ext_versions"),
                         Field::Extension(name) => {
                             let value: Value = map.next_value()?;
                             extensions.insert(name, value);
@@ -419,7 +410,6 @@ impl<'de> Deserialize<'de> for Status {
                     issue_report_channels: process_map_field!(issue_report_channels, "issue_report_channels"),
                     state: process_map_field!(state, "state"),
                     sensors: sensors.unwrap_or(None),
-                    ext_versions: ext_versions.unwrap_or(None),
                     extensions: extensions,
                 })
             }
@@ -428,7 +418,7 @@ impl<'de> Deserialize<'de> for Status {
         const FIELDS: &'static [&'static str] = &[
             "api", "space", "logo", "url", "location", "contact", "spacefed",
             "projects", "cam", "feeds", "events", "radio_show", "cache",
-            "issue_report_channels", "state", "sensors", "ext_versions", "extensions",
+            "issue_report_channels", "state", "sensors", "extensions",
         ];
         deserializer.deserialize_struct("Status", FIELDS, StatusVisitor)
     }
