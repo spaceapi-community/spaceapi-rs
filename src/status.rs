@@ -270,7 +270,6 @@ impl<'de> Deserialize<'de> for Status {
             IssueReportChanels,
             State,
             Sensors,
-            ExtVersions,
             Extension(String),
         };
 
