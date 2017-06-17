@@ -20,7 +20,7 @@ This library requires Rust 1.15 or newer.
 Add `spaceapi` to your `Cargo.toml`:
 
     [dependencies]
-    spaceapi = "^0.4"
+    spaceapi = "^0.5"
 
 
 ## Docs
