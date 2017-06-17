@@ -108,7 +108,7 @@ pub struct Contact {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Feed {
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub _type: Option<String>,
     pub url: String,
 }
@@ -134,6 +134,7 @@ pub struct Cache {
 pub struct RadioShow {
     pub name: String,
     pub url: String,
+    #[serde(rename = "type")]
     pub _type: String,
     pub start: String,
     pub end: String,
@@ -627,7 +628,7 @@ mod test {
             url: "https://some/rss.xml".to_string(),
         };
         assert_eq!(to_string(&f1).unwrap(),
-            "{\"_type\":\"rss\",\"url\":\"https://some/rss.xml\"}".to_string());
+            "{\"type\":\"rss\",\"url\":\"https://some/rss.xml\"}".to_string());
         assert_eq!(to_string(&f2).unwrap(),
             "{\"url\":\"https://some/rss.xml\"}".to_string());
     }
