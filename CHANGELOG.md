@@ -11,10 +11,13 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
-### v0.5.0 (2017-xx-xx)
+### v0.5.0 (2017-06-17)
 
 - [changed] Update to serde 1.0
-- [changed] Renamed `_type` fields to `type_` (#58)
+- [added] Support arbitrary extension fields (#34)
+- [added] Add more methods to `StatusBuilder` (#54)
+- [changed] Rename `_type` fields to `type_` (#58)
+- [changed] Fix and improve crate documentation (#55)
 - [removed] Get rid of `Status::ext_versions` field, use extensions
   mechanism instead (#48)
 
