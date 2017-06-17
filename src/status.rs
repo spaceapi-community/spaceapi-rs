@@ -50,7 +50,7 @@ pub struct State {
 pub struct Event {
     pub name: String,
     #[serde(rename = "type")]
-    pub _type: String,
+    pub type_: String,
     pub timestamp: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extra: Option<String>,
@@ -109,7 +109,7 @@ pub struct Contact {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Feed {
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    pub _type: Option<String>,
+    pub type_: Option<String>,
     pub url: String,
 }
 
@@ -135,7 +135,7 @@ pub struct RadioShow {
     pub name: String,
     pub url: String,
     #[serde(rename = "type")]
-    pub _type: String,
+    pub type_: String,
     pub start: String,
     pub end: String,
 }
@@ -620,11 +620,11 @@ mod test {
     #[test]
     fn serialize_skip_none() {
         let f1 = Feed {
-            _type: Some("rss".to_string()),
+            type_: Some("rss".to_string()),
             url: "https://some/rss.xml".to_string(),
         };
         let f2 = Feed {
-            _type: None,
+            type_: None,
             url: "https://some/rss.xml".to_string(),
         };
         assert_eq!(to_string(&f1).unwrap(),
