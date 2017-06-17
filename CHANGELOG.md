@@ -15,6 +15,8 @@ Possible log types:
 
 - [changed] Update to serde 1.0
 - [changed] Renamed `_type` fields to `type_` (#58)
+- [removed] Get rid of `Status::ext_versions` field, use extensions
+  mechanism instead (#48)
 
 ### v0.4.2 (2017-01-23)
 
