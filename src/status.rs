@@ -2,7 +2,7 @@ use std::collections::{HashMap, BTreeMap};
 use std::fmt;
 
 use serde::ser::{Serializer, Serialize, SerializeMap};
-use serde::de::{Deserializer, Deserialize, Visitor, MapVisitor, Error as SerdeError};
+use serde::de::{self, Deserializer, Deserialize, Visitor, MapAccess};
 use serde_json::value::Value;
 
 pub use sensors::SensorTemplate;
@@ -254,8 +254,10 @@ impl Serialize for Status {
 }
 
 
-impl Deserialize for Status {
-    fn deserialize<D: Deserializer>(deserializer: D) -> Result<Self, D::Error> {
+impl<'de> Deserialize<'de> for Status {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where D: Deserializer<'de>
+    {
         enum Field {
             Api,
             Space,
@@ -277,18 +279,22 @@ impl Deserialize for Status {
             Extension(String),
         };
 
-        impl Deserialize for Field {
-            fn deserialize<D: Deserializer>(deserializer: D) -> Result<Field, D::Error> {
+        impl<'de> Deserialize<'de> for Field {
+            fn deserialize<D>(deserializer: D) -> Result<Field, D::Error>
+                where D: Deserializer<'de>
+            {
                 struct FieldVisitor;
 
-                impl Visitor for FieldVisitor {
+                impl<'de> Visitor<'de> for FieldVisitor {
                     type Value = Field;
 
                     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                         write!(formatter, "a valid field name")
                     }
 
-                    fn visit_str<E: SerdeError>(self, value: &str) -> Result<Field, E> {
+                    fn visit_str<E>(self, value: &str) -> Result<Field, E>
+                        where E: de::Error
+                    {
                         match value {
                             "api" => Ok(Field::Api),
                             "space" => Ok(Field::Space),
@@ -313,33 +319,35 @@ impl Deserialize for Status {
                                         value.trim_left_matches("ext_").to_owned()
                                     ))
                                 } else {
-                                    Err(SerdeError::unknown_field(value, &FIELDS))
+                                    Err(de::Error::unknown_field(value, &FIELDS))
                                 }
                             }
                         }
                     }
                 }
-                deserializer.deserialize_struct_field(FieldVisitor)
+                deserializer.deserialize_identifier(FieldVisitor)
             }
         }
 
         struct StatusVisitor;
 
-        impl Visitor for StatusVisitor {
+        impl<'de> Visitor<'de> for StatusVisitor {
             type Value = Status;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 write!(formatter, "a valid status object")
             }
 
-            fn visit_map<V: MapVisitor>(self, mut visitor: V) -> Result<Status, V::Error> {
+            fn visit_map<V>(self, mut map: V) -> Result<Status, V::Error>
+                where V: MapAccess<'de>
+            {
                 macro_rules! visit_map_field {
                     ($field:ident, $field_name:expr) => {
                         {
                             if $field.is_some() {
-                                return Err(SerdeError::duplicate_field($field_name));
+                                return Err(de::Error::duplicate_field($field_name));
                             }
-                            $field = Some(visitor.visit_value()?);
+                            $field = Some(map.next_value()?);
                         }
                     };
                 }
@@ -347,7 +355,7 @@ impl Deserialize for Status {
                     ($field:ident, $field_name:expr) => {
                         match $field {
                             Some(val) => val,
-                            None => return Err(SerdeError::missing_field($field_name)),
+                            None => return Err(de::Error::missing_field($field_name)),
                         };
                     };
                 }
@@ -369,7 +377,7 @@ impl Deserialize for Status {
                 let mut sensors: Option<Option<Sensors>> = None;
                 let mut ext_versions: Option<Option<HashMap<String, String>>> = None;
                 let mut extensions = Extensions::new();
-                while let Some(key) = visitor.visit_key()? {
+                while let Some(key) = map.next_key()? {
                     match key {
                         Field::Api => visit_map_field!(api, "api"),
                         Field::Space => visit_map_field!(space, "space"),
@@ -389,7 +397,7 @@ impl Deserialize for Status {
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::ExtVersions => visit_map_field!(ext_versions, "ext_versions"),
                         Field::Extension(name) => {
-                            let value: Value = visitor.visit_value()?;
+                            let value: Value = map.next_value()?;
                             extensions.insert(name, value);
                         }
                     }
