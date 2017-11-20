@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### Unreleased
+
+- [changed] Minimal required Rust version 1.20.0 (#68)
+
 ### v0.5.1 (2017-06-17)
 
 - [fixed] Fix compilation warning (#65)
