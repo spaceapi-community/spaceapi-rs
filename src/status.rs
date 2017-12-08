@@ -476,20 +476,12 @@ impl StatusBuilder {
     }
 
     pub fn add_event(mut self, event: Event) -> Self {
-        if let Some(ref mut events) = self.events {
-            events.push(event);
-        } else {
-            self.events = Some(vec![event]);
-        }
+        self.events.get_or_insert(vec![]).push(event);
         self
     }
 
     pub fn add_cam<S: Into<String>>(mut self, cam: S) -> Self {
-        if let Some(ref mut cams) = self.cam {
-            cams.push(cam.into());
-        } else {
-            self.cam = Some(vec![cam.into()]);
-        }
+        self.cam.get_or_insert(vec![]).push(cam.into());
         self
     }
 
@@ -499,20 +491,12 @@ impl StatusBuilder {
     }
 
     pub fn add_radio_show(mut self, radio_show: RadioShow) -> Self {
-        if let Some(ref mut radio_shows) = self.radio_show {
-            radio_shows.push(radio_show);
-        } else {
-            self.radio_show = Some(vec![radio_show]);
-        }
+        self.radio_show.get_or_insert(vec![]).push(radio_show);
         self
     }
 
     pub fn add_project<S: Into<String>>(mut self, project: S) -> Self {
-        if let Some(ref mut projects) = self.projects {
-            projects.push(project.into());
-        } else {
-            self.projects = Some(vec![project.into()]);
-        }
+        self.projects.get_or_insert(vec![]).push(project.into());
         self
     }
 
