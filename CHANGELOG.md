@@ -14,6 +14,7 @@ Possible log types:
 ### Unreleased
 
 - [changed] Minimal required Rust version 1.20.0 (#68)
+- [changed] Update `log` crate to version 0.4
 
 ### v0.5.1 (2017-06-17)
 
