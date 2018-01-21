@@ -26,7 +26,7 @@
 //!     extern crate serde_json;
 //!     extern crate spaceapi;
 //!
-//!     use spaceapi::{Status, StatusBuilder, Location, Contact};
+//!     use spaceapi::{Status, StatusBuilder, Location, Contact, IssueReportChannel};
 //!
 //!     # fn main() {
 //!     let status = StatusBuilder::new("coredump")
@@ -46,8 +46,8 @@
 //!                 email: Some("danilo@coredump.ch".into()),
 //!                 ..Default::default()
 //!             })
-//!         .add_issue_report_channel("email")
-//!         .add_issue_report_channel("twitter")
+//!         .add_issue_report_channel(IssueReportChannel::Email)
+//!         .add_issue_report_channel(IssueReportChannel::Twitter)
 //!         .build()
 //!         .expect("Creating status failed");
 //!     let serialized = serde_json::to_string(&status).unwrap();
