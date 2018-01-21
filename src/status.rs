@@ -267,7 +267,7 @@ impl<'de> Deserialize<'de> for Status {
             Events,
             RadioShow,
             Cache,
-            IssueReportChanels,
+            IssueReportChannels,
             State,
             Sensors,
             Extension(String),
@@ -303,7 +303,7 @@ impl<'de> Deserialize<'de> for Status {
                             "events" => Ok(Field::Events),
                             "radio_show" => Ok(Field::RadioShow),
                             "cache" => Ok(Field::Cache),
-                            "issue_report_channels" => Ok(Field::IssueReportChanels),
+                            "issue_report_channels" => Ok(Field::IssueReportChannels),
                             "state" => Ok(Field::State),
                             "sensors" => Ok(Field::Sensors),
                             _ => {
@@ -384,7 +384,7 @@ impl<'de> Deserialize<'de> for Status {
                         Field::Events => visit_map_field!(events, "events"),
                         Field::RadioShow => visit_map_field!(radio_show, "radio_show"),
                         Field::Cache => visit_map_field!(cache, "cache"),
-                        Field::IssueReportChanels => visit_map_field!(issue_report_channels, "issue_report_channels"),
+                        Field::IssueReportChannels => visit_map_field!(issue_report_channels, "issue_report_channels"),
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::Extension(name) => {
