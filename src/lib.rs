@@ -12,9 +12,9 @@
 //!
 //! If you want to implement a Space API server on top of these types, you
 //! might want to take a look at the [`spaceapi_server`
-//! crate](https://github.com/coredump-ch/spaceapi-server-rs).
+//! crate](https://github.com/spaceapi-community/spaceapi-server-rs).
 //!
-//! This library requires Rust 1.15 or newer.
+//! This library requires Rust 1.20.0 or newer.
 //!
 //! # Examples
 //!
