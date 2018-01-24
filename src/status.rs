@@ -140,6 +140,15 @@ pub struct RadioShow {
     pub end: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum IssueReportChannel {
+    Email,
+    IssueMail,
+    Twitter,
+    Ml,
+}
+
 /// The main Space API status object.
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct Status {
@@ -162,7 +171,7 @@ pub struct Status {
 
     // SpaceAPI internal usage
     pub cache: Option<Cache>,
-    pub issue_report_channels: Vec<String>,
+    pub issue_report_channels: Vec<IssueReportChannel>,
 
     // Mutable data
     pub state: State,
@@ -177,7 +186,7 @@ impl Status {
     #[deprecated(since="0.5.0",
                  note="Please use the `StatusBuilder` or a struct expression instead")]
     pub fn new<S: Into<String>>(space: S, logo: S, url: S, location: Location, contact: Contact,
-                                issue_report_channels: Vec<String>) -> Status {
+                                issue_report_channels: Vec<IssueReportChannel>) -> Status {
         Status {
             api: "0.13".into(),
             space: space.into(),
@@ -267,7 +276,7 @@ impl<'de> Deserialize<'de> for Status {
             Events,
             RadioShow,
             Cache,
-            IssueReportChanels,
+            IssueReportChannels,
             State,
             Sensors,
             Extension(String),
@@ -303,7 +312,7 @@ impl<'de> Deserialize<'de> for Status {
                             "events" => Ok(Field::Events),
                             "radio_show" => Ok(Field::RadioShow),
                             "cache" => Ok(Field::Cache),
-                            "issue_report_channels" => Ok(Field::IssueReportChanels),
+                            "issue_report_channels" => Ok(Field::IssueReportChannels),
                             "state" => Ok(Field::State),
                             "sensors" => Ok(Field::Sensors),
                             _ => {
@@ -365,7 +374,7 @@ impl<'de> Deserialize<'de> for Status {
                 let mut events: Option<Option<Vec<Event>>> = None;
                 let mut radio_show: Option<Option<Vec<RadioShow>>> = None;
                 let mut cache: Option<Option<Cache>> = None;
-                let mut issue_report_channels: Option<Vec<String>> = None;
+                let mut issue_report_channels: Option<Vec<IssueReportChannel>> = None;
                 let mut state: Option<State> = None;
                 let mut sensors: Option<Option<Sensors>> = None;
                 let mut extensions = Extensions::new();
@@ -384,7 +393,7 @@ impl<'de> Deserialize<'de> for Status {
                         Field::Events => visit_map_field!(events, "events"),
                         Field::RadioShow => visit_map_field!(radio_show, "radio_show"),
                         Field::Cache => visit_map_field!(cache, "cache"),
-                        Field::IssueReportChanels => visit_map_field!(issue_report_channels, "issue_report_channels"),
+                        Field::IssueReportChannels => visit_map_field!(issue_report_channels, "issue_report_channels"),
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::Extension(name) => {
@@ -438,7 +447,7 @@ pub struct StatusBuilder {
     feeds: Option<Feeds>,
     events: Option<Vec<Event>>,
     radio_show: Option<Vec<RadioShow>>,
-    issue_report_channels: Vec<String>,
+    issue_report_channels: Vec<IssueReportChannel>,
     extensions: Extensions,
 }
 
@@ -500,8 +509,8 @@ impl StatusBuilder {
         self
     }
 
-    pub fn add_issue_report_channel<S: Into<String>>(mut self, report_channel: S) -> Self {
-        self.issue_report_channels.push(report_channel.into());
+    pub fn add_issue_report_channel(mut self, report_channel: IssueReportChannel) -> Self {
+        self.issue_report_channels.push(report_channel);
         self
     }
 
@@ -582,7 +591,7 @@ mod test {
             .add_cam("cam1")
             .add_cam("cam2".to_string())
             .add_event(Event::default())
-            .add_issue_report_channel("chan")
+            .add_issue_report_channel(IssueReportChannel::Email)
             .build()
             .unwrap();
         assert_eq!(status.api, "0.13");
@@ -596,7 +605,7 @@ mod test {
         assert_eq!(status.projects, Some(vec!["spaceapi-rs".to_string()]));
         assert_eq!(status.cam, Some(vec!["cam1".to_string(), "cam2".to_string()]));
         assert_eq!(status.events, Some(vec![Event::default()]));
-        assert_eq!(status.issue_report_channels, vec!["chan".to_string()]);
+        assert_eq!(status.issue_report_channels, vec![IssueReportChannel::Email]);
     }
 
     #[test]
@@ -709,7 +718,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize() {
+    fn deserialize_status() {
         let data = "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
             \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
@@ -719,4 +728,43 @@ mod test {
         assert_eq!(keys.len(), 2)
     }
 
+    mod serialize {
+        use super::*;
+
+        /// Macro to generate serialization test code
+        macro_rules! test_serialize {
+            ($test_name:ident, $value:expr, $expected:expr) => {
+                #[test]
+                fn $test_name() {
+                    let serialized = to_string(&$value).unwrap();
+                    assert_eq!(serialized, $expected);
+                }
+            }
+        }
+
+        test_serialize!(issue_report_channel_email, IssueReportChannel::Email, "\"email\"");
+        test_serialize!(issue_report_channel_issue_mail, IssueReportChannel::IssueMail, "\"issue_mail\"");
+        test_serialize!(issue_report_channel_twitter, IssueReportChannel::Twitter, "\"twitter\"");
+        test_serialize!(issue_report_channel_ml, IssueReportChannel::Ml, "\"ml\"");
+    }
+
+    mod deserialize {
+        use super::*;
+
+        /// Macro to generate deserialization test code
+        macro_rules! test_deserialize {
+            ($test_name:ident, $value:expr, $type:ty, $expected:expr) => {
+                #[test]
+                fn $test_name() {
+                    let deserialized = from_str::<$type>(&$value).unwrap();
+                    assert_eq!(deserialized, $expected);
+                }
+            }
+        }
+
+        test_deserialize!(issue_report_channel_email, "\"email\"", IssueReportChannel, IssueReportChannel::Email);
+        test_deserialize!(issue_report_channel_issue_mail, "\"issue_mail\"", IssueReportChannel, IssueReportChannel::IssueMail);
+        test_deserialize!(issue_report_channel_twitter, "\"twitter\"", IssueReportChannel, IssueReportChannel::Twitter);
+        test_deserialize!(issue_report_channel_ml, "\"ml\"", IssueReportChannel, IssueReportChannel::Ml);
+    }
 }

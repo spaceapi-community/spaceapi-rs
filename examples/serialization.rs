@@ -3,7 +3,7 @@ extern crate serde;
 extern crate serde_json;
 extern crate spaceapi;
 
-use spaceapi::{StatusBuilder, Location, Contact};
+use spaceapi::{StatusBuilder, Location, Contact, IssueReportChannel};
 
 fn main() {
     let status = StatusBuilder::new("coredump")
@@ -23,8 +23,8 @@ fn main() {
                 email: Some("danilo@coredump.ch".into()),
                 ..Default::default()
             })
-        .add_issue_report_channel("email")
-        .add_issue_report_channel("twitter")
+        .add_issue_report_channel(IssueReportChannel::Email)
+        .add_issue_report_channel(IssueReportChannel::Twitter)
         .add_extension("ccc", "chaostreff")
         .build()
         .expect("Creating status failed");
