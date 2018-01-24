@@ -14,7 +14,7 @@
 //! might want to take a look at the [`spaceapi_server`
 //! crate](https://github.com/spaceapi-community/spaceapi-server-rs).
 //!
-//! This library requires Rust 1.15 or newer.
+//! This library requires Rust 1.20.0 or newer.
 //!
 //! # Examples
 //!
