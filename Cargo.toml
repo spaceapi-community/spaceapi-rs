@@ -2,7 +2,7 @@
 name = "spaceapi"
 version = "0.5.1"
 documentation = "https://docs.rs/spaceapi/0.5.1/"
-repository = "https://github.com/coredump-ch/spaceapi-rs/"
+repository = "https://github.com/spaceapi-community/spaceapi-rs/"
 license = "MIT OR Apache-2.0"
 authors = [
     "Raphael Nestler <raphael.nestler@gmail.com>",
@@ -23,7 +23,7 @@ include = [
 ]
 
 [badges]
-travis-ci = { repository = "coredump-ch/spaceapi-rs" }
+travis-ci = { repository = "spaceapi-community/spaceapi-rs" }
 
 [dependencies]
 log = "^0.4"
