@@ -13,8 +13,12 @@ Possible log types:
 
 ### Unreleased
 
+...
+
+### v0.6.0 (2018-01-25)
+
 - [changed] Minimal required Rust version 1.20.0 (#68)
-- [changed] Update `log` crate to version 0.4
+- [changed] Update `log` crate to version 0.4 (#70)
 - [changed] Use an enum (`IssueReportChannel`) for the `issue_report_channels`
   field (#4)
 
