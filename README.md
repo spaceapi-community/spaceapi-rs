@@ -10,7 +10,7 @@ in Rust. It contains both the type definitions as well as tools for
 serialization and deserialization to/from JSON using Serde.
 
 - Crate Documentation: https://docs.rs/spaceapi/
-- Space API Documentation: http://spaceapi.net/documentation
+- Space API Documentation: https://spaceapi.io/pages/docs.html
 
 This library requires Rust 1.20.0 or newer.
 
