@@ -21,6 +21,7 @@ include = [
     "LICENSE-APACHE",
     "AUTHORS.md",
 ]
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "spaceapi-community/spaceapi-rs" }

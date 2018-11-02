@@ -85,7 +85,7 @@ extern crate serde_json;
 
 pub mod sensors;
 mod status;
-pub use status::*;
+pub use crate::status::*;
 
 /// Return own crate version. Used in API responses.
 pub fn get_version() -> &'static str {
