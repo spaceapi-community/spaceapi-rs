@@ -1,6 +1,3 @@
-extern crate serde_json;
-extern crate spaceapi;
-
 use spaceapi::Status;
 use serde_json::from_str;
 
