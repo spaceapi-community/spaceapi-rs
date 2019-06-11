@@ -22,10 +22,7 @@
 //!
 //! You can create a new `Status` instance by using the `StatusBuilder`.
 //!
-//!     extern crate serde;
-//!     extern crate serde_json;
-//!     extern crate spaceapi;
-//!
+//!     use serde_json;
 //!     use spaceapi::{Status, StatusBuilder, Location, Contact, IssueReportChannel};
 //!
 //!     # fn main() {
@@ -61,10 +58,7 @@
 //!
 //! You can deserialize any struct of the Space API through Serde:
 //!
-//!     extern crate serde;
-//!     extern crate serde_json;
-//!     extern crate spaceapi;
-//!
+//!     use serde_json;
 //!     use spaceapi::Location;
 //!
 //!     # fn main() {
@@ -75,11 +69,6 @@
 //!     // Output:
 //!     // Location { address: None, lat: 47.22936000000001, lon: 8.829490000000002 }
 //!     # }
-
-#[macro_use]
-extern crate log;
-#[macro_use]
-extern crate serde_derive;
 
 pub mod sensors;
 mod status;

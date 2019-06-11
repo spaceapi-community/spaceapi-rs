@@ -1,8 +1,9 @@
 use std::collections::BTreeMap;
 use std::fmt;
 
-use serde::ser::{Serializer, Serialize, SerializeMap};
-use serde::de::{self, Deserializer, Deserialize, Visitor, MapAccess};
+use serde::{Deserialize, Serialize};
+use serde::de::{self, Deserializer, MapAccess, Visitor};
+use serde::ser::{SerializeMap, Serializer};
 use serde_json::value::Value;
 
 pub use crate::sensors::SensorTemplate;
