@@ -1,5 +1,8 @@
 //! Module defining all sensor related structures.
 
+use log::warn;
+use serde::{Deserialize, Serialize};
+
 //--- Templates ---//
 /// A trait for all possible sensor templates.
 ///

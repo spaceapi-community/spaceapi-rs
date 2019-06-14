@@ -1,14 +1,15 @@
 use std::collections::BTreeMap;
 use std::fmt;
 
-use serde::ser::{Serializer, Serialize, SerializeMap};
-use serde::de::{self, Deserializer, Deserialize, Visitor, MapAccess};
+use serde::{Deserialize, Serialize};
+use serde::de::{self, Deserializer, MapAccess, Visitor};
+use serde::ser::{SerializeMap, Serializer};
 use serde_json::value::Value;
 
-pub use sensors::SensorTemplate;
-pub use sensors::Sensors;
-pub use sensors::TemperatureSensor;
-pub use sensors::PeopleNowPresentSensor;
+pub use crate::sensors::SensorTemplate;
+pub use crate::sensors::Sensors;
+pub use crate::sensors::TemperatureSensor;
+pub use crate::sensors::PeopleNowPresentSensor;
 
 type Extensions = BTreeMap<String, Value>;
 

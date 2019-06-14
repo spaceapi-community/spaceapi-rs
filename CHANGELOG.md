@@ -13,6 +13,8 @@ Possible log types:
 
 ### Unreleased
 
+- [changed] Require Rust 1.31+ (Rust 2018 edition) (#76)
+
 ...
 
 ### v0.6.0 (2018-01-25)

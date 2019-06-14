@@ -1,7 +1,5 @@
+use serde_json;
 
-extern crate serde;
-extern crate serde_json;
-extern crate spaceapi;
 
 use spaceapi::{StatusBuilder, Location, Contact, IssueReportChannel};
 
