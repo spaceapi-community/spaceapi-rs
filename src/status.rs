@@ -193,9 +193,9 @@ impl Status {
             space: space.into(),
             logo: logo.into(),
             url: url.into(),
-            location: location,
-            contact: contact,
-            issue_report_channels: issue_report_channels,
+            location,
+            contact,
+            issue_report_channels,
             ..Default::default()
         }
     }
@@ -319,7 +319,7 @@ impl<'de> Deserialize<'de> for Status {
                             _ => {
                                 if value.starts_with("ext_") {
                                     Ok(Field::Extension(
-                                        value.trim_left_matches("ext_").to_owned()
+                                        value.trim_start_matches("ext_").to_owned()
                                     ))
                                 } else {
                                     Err(de::Error::unknown_field(value, &FIELDS))
@@ -420,12 +420,12 @@ impl<'de> Deserialize<'de> for Status {
                     issue_report_channels: process_map_field!(issue_report_channels, "issue_report_channels"),
                     state: process_map_field!(state, "state"),
                     sensors: sensors.unwrap_or(None),
-                    extensions: extensions,
+                    extensions,
                 })
             }
         }
 
-        const FIELDS: &'static [&'static str] = &[
+        const FIELDS: &[&str] = &[
             "api", "space", "logo", "url", "location", "contact", "spacefed",
             "projects", "cam", "feeds", "events", "radio_show", "cache",
             "issue_report_channels", "state", "sensors", "extensions",
@@ -520,7 +520,7 @@ impl StatusBuilder {
     /// The prefix `ext_` will automatically be prepended to the name during
     /// serialization, if not already present.
     pub fn add_extension<V: Into<Value>>(mut self, name: &str, value: V) -> Self {
-        self.extensions.insert(name.trim_left_matches("ext_").to_owned(), value.into());
+        self.extensions.insert(name.trim_start_matches("ext_").to_owned(), value.into());
         self
     }
 

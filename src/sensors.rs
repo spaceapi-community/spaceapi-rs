@@ -22,17 +22,17 @@ pub struct PeopleNowPresentSensorTemplate {
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
     fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        if value_str.parse::<u64>().map(|value|{
+        let parse_result = value_str.parse::<u64>().map(|value|{
             let sensor = PeopleNowPresentSensor {
                 location: self.location.clone(),
                 name: self.name.clone(),
                 names: self.names.clone(),
                 description: self.description.clone(),
-                value: value,
+                value,
             };
-
             sensors.people_now_present.push(sensor);
-        }).is_err() {
+        });
+        if parse_result.is_err() {
             warn!("Could not parse value '{}', omiting PeopleNowPresentSensor", value_str);
         }
     }
@@ -48,16 +48,17 @@ pub struct TemperatureSensorTemplate {
 
 impl SensorTemplate for TemperatureSensorTemplate {
     fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        if value_str.parse::<f64>().map(|value|{
+        let parse_result = value_str.parse::<f64>().map(|value|{
             let sensor = TemperatureSensor {
                 unit: self.unit.clone(),
                 location: self.location.clone(),
                 name: self.name.clone(),
                 description: self.description.clone(),
-                value: value,
+                value,
             };
             sensors.temperature.push(sensor);
-        }).is_err() {
+        });
+        if parse_result.is_err() {
             warn!("Could not parse value '{}', omiting TemperatureSensor", value_str);
         }
     }

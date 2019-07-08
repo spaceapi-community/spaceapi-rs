@@ -23,9 +23,6 @@ include = [
 ]
 edition = "2018"
 
-[badges]
-travis-ci = { repository = "spaceapi-community/spaceapi-rs" }
-
 [dependencies]
 log = "^0.4"
 serde = { version = "1.0", features = ["derive"] }
