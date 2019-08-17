@@ -1,15 +1,15 @@
 use std::collections::BTreeMap;
 use std::fmt;
 
-use serde::{Deserialize, Serialize};
 use serde::de::{self, Deserializer, MapAccess, Visitor};
 use serde::ser::{SerializeMap, Serializer};
+use serde::{Deserialize, Serialize};
 use serde_json::value::Value;
 
+pub use crate::sensors::PeopleNowPresentSensor;
 pub use crate::sensors::SensorTemplate;
 pub use crate::sensors::Sensors;
 pub use crate::sensors::TemperatureSensor;
-pub use crate::sensors::PeopleNowPresentSensor;
 
 type Extensions = BTreeMap<String, Value>;
 
@@ -153,7 +153,6 @@ pub enum IssueReportChannel {
 /// The main Space API status object.
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct Status {
-
     // Hackerspace properties
     pub api: String,
     pub space: String,
@@ -184,10 +183,18 @@ pub struct Status {
 
 impl Status {
     /// Create a new Status object with only the absolutely required fields.
-    #[deprecated(since="0.5.0",
-                 note="Please use the `StatusBuilder` or a struct expression instead")]
-    pub fn new<S: Into<String>>(space: S, logo: S, url: S, location: Location, contact: Contact,
-                                issue_report_channels: Vec<IssueReportChannel>) -> Status {
+    #[deprecated(
+        since = "0.5.0",
+        note = "Please use the `StatusBuilder` or a struct expression instead"
+    )]
+    pub fn new<S: Into<String>>(
+        space: S,
+        logo: S,
+        url: S,
+        location: Location,
+        contact: Contact,
+        issue_report_channels: Vec<IssueReportChannel>,
+    ) -> Status {
         Status {
             api: "0.13".into(),
             space: space.into(),
@@ -199,22 +206,36 @@ impl Status {
             ..Default::default()
         }
     }
-
 }
 
 impl Serialize for Status {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-
         // Determine number of fields to serialize
         let mut field_count = 8;
-        if self.spacefed.is_some() { field_count += 1; }
-        if self.projects.is_some() { field_count += 1; }
-        if self.cam.is_some() { field_count += 1; }
-        if self.feeds.is_some() { field_count += 1; }
-        if self.events.is_some() { field_count += 1; }
-        if self.radio_show.is_some() { field_count += 1; }
-        if self.cache.is_some() { field_count += 1; }
-        if self.sensors.is_some() { field_count += 1; }
+        if self.spacefed.is_some() {
+            field_count += 1;
+        }
+        if self.projects.is_some() {
+            field_count += 1;
+        }
+        if self.cam.is_some() {
+            field_count += 1;
+        }
+        if self.feeds.is_some() {
+            field_count += 1;
+        }
+        if self.events.is_some() {
+            field_count += 1;
+        }
+        if self.radio_show.is_some() {
+            field_count += 1;
+        }
+        if self.cache.is_some() {
+            field_count += 1;
+        }
+        if self.sensors.is_some() {
+            field_count += 1;
+        }
         field_count += self.extensions.len();
 
         // Serialize fields
@@ -258,10 +279,10 @@ impl Serialize for Status {
     }
 }
 
-
 impl<'de> Deserialize<'de> for Status {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where D: Deserializer<'de>
+    where
+        D: Deserializer<'de>,
     {
         enum Field {
             Api,
@@ -285,7 +306,8 @@ impl<'de> Deserialize<'de> for Status {
 
         impl<'de> Deserialize<'de> for Field {
             fn deserialize<D>(deserializer: D) -> Result<Field, D::Error>
-                where D: Deserializer<'de>
+            where
+                D: Deserializer<'de>,
             {
                 struct FieldVisitor;
 
@@ -297,7 +319,8 @@ impl<'de> Deserialize<'de> for Status {
                     }
 
                     fn visit_str<E>(self, value: &str) -> Result<Field, E>
-                        where E: de::Error
+                    where
+                        E: de::Error,
                     {
                         match value {
                             "api" => Ok(Field::Api),
@@ -318,9 +341,7 @@ impl<'de> Deserialize<'de> for Status {
                             "sensors" => Ok(Field::Sensors),
                             _ => {
                                 if value.starts_with("ext_") {
-                                    Ok(Field::Extension(
-                                        value.trim_start_matches("ext_").to_owned()
-                                    ))
+                                    Ok(Field::Extension(value.trim_start_matches("ext_").to_owned()))
                                 } else {
                                     Err(de::Error::unknown_field(value, &FIELDS))
                                 }
@@ -342,17 +363,16 @@ impl<'de> Deserialize<'de> for Status {
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<Status, V::Error>
-                where V: MapAccess<'de>
+            where
+                V: MapAccess<'de>,
             {
                 macro_rules! visit_map_field {
-                    ($field:ident, $field_name:expr) => {
-                        {
-                            if $field.is_some() {
-                                return Err(de::Error::duplicate_field($field_name));
-                            }
-                            $field = Some(map.next_value()?);
+                    ($field:ident, $field_name:expr) => {{
+                        if $field.is_some() {
+                            return Err(de::Error::duplicate_field($field_name));
                         }
-                    };
+                        $field = Some(map.next_value()?);
+                    }};
                 }
                 macro_rules! process_map_field {
                     ($field:ident, $field_name:expr) => {
@@ -394,7 +414,9 @@ impl<'de> Deserialize<'de> for Status {
                         Field::Events => visit_map_field!(events, "events"),
                         Field::RadioShow => visit_map_field!(radio_show, "radio_show"),
                         Field::Cache => visit_map_field!(cache, "cache"),
-                        Field::IssueReportChannels => visit_map_field!(issue_report_channels, "issue_report_channels"),
+                        Field::IssueReportChannels => {
+                            visit_map_field!(issue_report_channels, "issue_report_channels")
+                        }
                         Field::State => visit_map_field!(state, "state"),
                         Field::Sensors => visit_map_field!(sensors, "sensors"),
                         Field::Extension(name) => {
@@ -426,9 +448,23 @@ impl<'de> Deserialize<'de> for Status {
         }
 
         const FIELDS: &[&str] = &[
-            "api", "space", "logo", "url", "location", "contact", "spacefed",
-            "projects", "cam", "feeds", "events", "radio_show", "cache",
-            "issue_report_channels", "state", "sensors", "extensions",
+            "api",
+            "space",
+            "logo",
+            "url",
+            "location",
+            "contact",
+            "spacefed",
+            "projects",
+            "cam",
+            "feeds",
+            "events",
+            "radio_show",
+            "cache",
+            "issue_report_channels",
+            "state",
+            "sensors",
+            "extensions",
         ];
         deserializer.deserialize_struct("Status", FIELDS, StatusVisitor)
     }
@@ -520,7 +556,8 @@ impl StatusBuilder {
     /// The prefix `ext_` will automatically be prepended to the name during
     /// serialization, if not already present.
     pub fn add_extension<V: Into<Value>>(mut self, name: &str, value: V) -> Self {
-        self.extensions.insert(name.trim_start_matches("ext_").to_owned(), value.into());
+        self.extensions
+            .insert(name.trim_start_matches("ext_").to_owned(), value.into());
         self
     }
 
@@ -548,11 +585,13 @@ impl StatusBuilder {
 #[cfg(test)]
 mod test {
     use super::*;
-    use serde_json::{to_string, from_str};
+    use serde_json::{from_str, to_string};
 
     #[test]
     fn serialize_deserialize_cache() {
-        let a = Cache { schedule: "bla".into() };
+        let a = Cache {
+            schedule: "bla".into(),
+        };
         let b: Cache = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a.schedule, b.schedule);
     }
@@ -560,17 +599,17 @@ mod test {
     #[test]
     fn serialize_deserialize_simple_contact() {
         let a: Contact = Contact {
-            keymasters: Some(vec![
-                              Keymaster {
-                                  name: Some("Joe".into()),
-                                  irc_nick: None,
-                                  phone: None,
-                                  email: Some("joe@example.com".into()),
-                                  twitter: None,
-                              },
-            ]),
+            keymasters: Some(vec![Keymaster {
+                name: Some("Joe".into()),
+                irc_nick: None,
+                phone: None,
+                email: Some("joe@example.com".into()),
+                twitter: None,
+            }]),
             irc: Some("bla".into()),
-            google: Some(GoogleContact { plus: Some("http://gplus/profile".into()) }),
+            google: Some(GoogleContact {
+                plus: Some("http://gplus/profile".into()),
+            }),
             email: Some("bli@bla".into()),
             ..Default::default()
         };
@@ -619,10 +658,14 @@ mod test {
             type_: None,
             url: "https://some/rss.xml".to_string(),
         };
-        assert_eq!(to_string(&f1).unwrap(),
-            "{\"type\":\"rss\",\"url\":\"https://some/rss.xml\"}".to_string());
-        assert_eq!(to_string(&f2).unwrap(),
-            "{\"url\":\"https://some/rss.xml\"}".to_string());
+        assert_eq!(
+            to_string(&f1).unwrap(),
+            "{\"type\":\"rss\",\"url\":\"https://some/rss.xml\"}".to_string()
+        );
+        assert_eq!(
+            to_string(&f2).unwrap(),
+            "{\"url\":\"https://some/rss.xml\"}".to_string()
+        );
     }
 
     #[test]
@@ -652,8 +695,8 @@ mod test {
         assert_eq!(
             &to_string(&status.unwrap()).unwrap(),
             "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
-            \"state\":{\"open\":null}}"
+             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+             \"state\":{\"open\":null}}"
         );
     }
 
@@ -671,8 +714,8 @@ mod test {
         assert_eq!(
             &to_string(&status.unwrap()).unwrap(),
             "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
-            \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
+             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+             \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
         );
     }
 
@@ -721,8 +764,8 @@ mod test {
     #[test]
     fn deserialize_status() {
         let data = "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-            \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
-            \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
+                    \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+                    \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
         let deserialized: Status = from_str(&data).unwrap();
         assert_eq!(&deserialized.api, "0.13");
         let keys: Vec<_> = deserialized.extensions.keys().collect();
@@ -740,12 +783,20 @@ mod test {
                     let serialized = to_string(&$value).unwrap();
                     assert_eq!(serialized, $expected);
                 }
-            }
+            };
         }
 
         test_serialize!(issue_report_channel_email, IssueReportChannel::Email, "\"email\"");
-        test_serialize!(issue_report_channel_issue_mail, IssueReportChannel::IssueMail, "\"issue_mail\"");
-        test_serialize!(issue_report_channel_twitter, IssueReportChannel::Twitter, "\"twitter\"");
+        test_serialize!(
+            issue_report_channel_issue_mail,
+            IssueReportChannel::IssueMail,
+            "\"issue_mail\""
+        );
+        test_serialize!(
+            issue_report_channel_twitter,
+            IssueReportChannel::Twitter,
+            "\"twitter\""
+        );
         test_serialize!(issue_report_channel_ml, IssueReportChannel::Ml, "\"ml\"");
     }
 
@@ -760,12 +811,32 @@ mod test {
                     let deserialized = from_str::<$type>(&$value).unwrap();
                     assert_eq!(deserialized, $expected);
                 }
-            }
+            };
         }
 
-        test_deserialize!(issue_report_channel_email, "\"email\"", IssueReportChannel, IssueReportChannel::Email);
-        test_deserialize!(issue_report_channel_issue_mail, "\"issue_mail\"", IssueReportChannel, IssueReportChannel::IssueMail);
-        test_deserialize!(issue_report_channel_twitter, "\"twitter\"", IssueReportChannel, IssueReportChannel::Twitter);
-        test_deserialize!(issue_report_channel_ml, "\"ml\"", IssueReportChannel, IssueReportChannel::Ml);
+        test_deserialize!(
+            issue_report_channel_email,
+            "\"email\"",
+            IssueReportChannel,
+            IssueReportChannel::Email
+        );
+        test_deserialize!(
+            issue_report_channel_issue_mail,
+            "\"issue_mail\"",
+            IssueReportChannel,
+            IssueReportChannel::IssueMail
+        );
+        test_deserialize!(
+            issue_report_channel_twitter,
+            "\"twitter\"",
+            IssueReportChannel,
+            IssueReportChannel::Twitter
+        );
+        test_deserialize!(
+            issue_report_channel_ml,
+            "\"ml\"",
+            IssueReportChannel,
+            IssueReportChannel::Ml
+        );
     }
 }
