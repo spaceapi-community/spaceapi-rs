@@ -14,8 +14,9 @@ Possible log types:
 ### Unreleased
 
 - [changed] Require Rust 1.31+ (Rust 2018 edition) (#76)
-
-...
+- [changed] Use [serde flatten](https://serde.rs/attr-flatten.html) to
+  implement extensions. This changes the in memory representation of the
+  extensions to include the `ext_` prefix. (#79)
 
 ### v0.6.0 (2018-01-25)
 
