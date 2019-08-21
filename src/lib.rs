@@ -1,7 +1,7 @@
 //! SpaceAPI definitions and serialization.
 //!
 //! This crate contains all data-related definitions that are present in the
-//! [SpaceAPI](https://spacedirectory.org/). It also handles serializing and
+//! [SpaceAPI](https://spaceapi.io/). It also handles serializing and
 //! deserializing of that data from/to JSON by implementing the Serde
 //! [`Serialize`](https://docs.serde.rs/serde/ser/trait.Serialize.html) and
 //! [`Deserialize`](https://docs.serde.rs/serde/de/trait.Deserialize.html)
