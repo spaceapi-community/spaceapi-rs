@@ -147,6 +147,16 @@ pub enum IssueReportChannel {
     Ml,
 }
 
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct Stream {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub m4: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mjpeg: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ustream: Option<String>,
+}
+
 /// The main Space API status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
@@ -165,6 +175,8 @@ pub struct Status {
     pub projects: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cam: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stream: Option<Stream>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub feeds: Option<Feeds>,
     #[serde(skip_serializing_if = "Option::is_none")]
