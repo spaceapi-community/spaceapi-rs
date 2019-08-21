@@ -556,6 +556,35 @@ mod test {
             "\"twitter\""
         );
         test_serialize!(issue_report_channel_ml, IssueReportChannel::Ml, "\"ml\"");
+
+        test_serialize!(stream_default, Stream::default(), "{}");
+
+        test_serialize!(
+            stream_m4,
+            Stream {
+                m4: Some("http://example.org/stream.mpg".to_string()),
+                ..Stream::default()
+            },
+            r#"{"m4":"http://example.org/stream.mpg"}"#
+        );
+
+        test_serialize!(
+            stream_mjpeg,
+            Stream {
+                mjpeg: Some("http://example.org/stream.mjpeg".to_string()),
+                ..Stream::default()
+            },
+            r#"{"mjpeg":"http://example.org/stream.mjpeg"}"#
+        );
+
+        test_serialize!(
+            stream_ustream,
+            Stream {
+                ustream: Some("http://www.ustream.tv/channel/hackspsps".to_string()),
+                ..Stream::default()
+            },
+            r#"{"ustream":"http://www.ustream.tv/channel/hackspsps"}"#
+        );
     }
 
     mod deserialize {
