@@ -9,7 +9,7 @@ authors = [
     "Danilo Bargen <mail@dbrgn.ch>",
     "Stefan Schindler <stefan@estada.ch>",
 ]
-description = "Space API types and serialization/deserialization."
+description = "SpaceAPI types and serialization/deserialization."
 readme = "README.md"
 keywords = ["spaceapi", "hackerspaces", "status", "api"]
 categories = ["api-bindings"]

@@ -1,16 +1,16 @@
-//! Space API definitions and serialization.
+//! SpaceAPI definitions and serialization.
 //!
 //! This crate contains all data-related definitions that are present in the
-//! [Space API](https://spacedirectory.org/). It also handles serializing and
+//! [SpaceAPI](https://spacedirectory.org/). It also handles serializing and
 //! deserializing of that data from/to JSON by implementing the Serde
 //! [`Serialize`](https://docs.serde.rs/serde/ser/trait.Serialize.html) and
 //! [`Deserialize`](https://docs.serde.rs/serde/de/trait.Deserialize.html)
 //! traits for all structs.
 //!
-//! The currently supported Space API version is 0.13. It is not yet fully
+//! The currently supported SpaceAPI version is 0.13. It is not yet fully
 //! implemented.
 //!
-//! If you want to implement a Space API server on top of these types, you
+//! If you want to implement a SpaceAPI server on top of these types, you
 //! might want to take a look at the [`spaceapi_server`
 //! crate](https://github.com/spaceapi-community/spaceapi-server-rs).
 //!
@@ -56,7 +56,7 @@
 //!
 //! ## Deserializing
 //!
-//! You can deserialize any struct of the Space API through Serde:
+//! You can deserialize any struct of the SpaceAPI through Serde:
 //!
 //!     use serde_json;
 //!     use spaceapi::Location;

@@ -157,7 +157,7 @@ pub struct Stream {
     pub ustream: Option<String>,
 }
 
-/// The main Space API status object.
+/// The main SpaceAPI status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
     // Hackerspace properties
