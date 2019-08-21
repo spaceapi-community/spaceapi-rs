@@ -52,7 +52,7 @@ jobs:
           keys:
             - v1-cargo-fmt-cache
       - run: rustup component add rustfmt
-      - run: cargo fmt --check
+      - run: cargo fmt -- --check
       - save_cache:
           key: v1-cargo-lint-cache
           paths:
