@@ -1,15 +1,15 @@
-# Rust Space API Implementation
+# Rust SpaceAPI Implementation
 
 [![CircleCI](https://circleci.com/gh/spaceapi-community/spaceapi-server-rs/tree/master.svg?style=shield)](https://circleci.com/gh/spaceapi-community/spaceapi-server-rs/tree/master)
 [![Crates.io Version](https://img.shields.io/crates/v/spaceapi.svg)](https://crates.io/crates/spaceapi)
 [![Crates.io Downloads](https://img.shields.io/crates/d/spaceapi.svg)](https://crates.io/crates/spaceapi)
 
-This is an implementation of the [SpaceAPI](https://spacedirectory.org/) v0.13
+This is an implementation of the [SpaceAPI](https://spaceapi.io/) v0.13
 in Rust. It contains both the type definitions as well as tools for
 serialization and deserialization to/from JSON using Serde.
 
 - Crate Documentation: https://docs.rs/spaceapi/
-- Space API Documentation: https://spaceapi.io/pages/docs.html
+- SpaceAPI Documentation: https://spaceapi.io/pages/docs.html
 
 This library requires Rust 1.31.0 or newer.
 

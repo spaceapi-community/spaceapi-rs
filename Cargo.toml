@@ -1,7 +1,6 @@
 [package]
 name = "spaceapi"
-version = "0.6.0"
-documentation = "https://docs.rs/spaceapi/0.6.0/"
+version = "0.7.0"
 repository = "https://github.com/spaceapi-community/spaceapi-rs/"
 license = "MIT OR Apache-2.0"
 authors = [
@@ -9,7 +8,7 @@ authors = [
     "Danilo Bargen <mail@dbrgn.ch>",
     "Stefan Schindler <stefan@estada.ch>",
 ]
-description = "Space API types and serialization/deserialization."
+description = "SpaceAPI types and serialization/deserialization."
 readme = "README.md"
 keywords = ["spaceapi", "hackerspaces", "status", "api"]
 categories = ["api-bindings"]

@@ -13,6 +13,8 @@ Possible log types:
 
 ### Unreleased
 
+### v0.7.0 (2019-08-22)
+
 - [changed] Require Rust 1.31+ (Rust 2018 edition) (#76)
 - [changed] Use [serde flatten](https://serde.rs/attr-flatten.html) to
   implement extensions. This changes the in memory representation of the
