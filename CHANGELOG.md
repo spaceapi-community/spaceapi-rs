@@ -17,6 +17,7 @@ Possible log types:
 - [changed] Use [serde flatten](https://serde.rs/attr-flatten.html) to
   implement extensions. This changes the in memory representation of the
   extensions to include the `ext_` prefix. (#79)
+- [added] Add missing stream field (#80)
 
 ### v0.6.0 (2018-01-25)
 
