@@ -147,6 +147,16 @@ pub enum IssueReportChannel {
     Ml,
 }
 
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct Stream {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub m4: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mjpeg: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ustream: Option<String>,
+}
+
 /// The main Space API status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
@@ -165,6 +175,8 @@ pub struct Status {
     pub projects: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cam: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stream: Option<Stream>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub feeds: Option<Feeds>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -544,6 +556,35 @@ mod test {
             "\"twitter\""
         );
         test_serialize!(issue_report_channel_ml, IssueReportChannel::Ml, "\"ml\"");
+
+        test_serialize!(stream_default, Stream::default(), "{}");
+
+        test_serialize!(
+            stream_m4,
+            Stream {
+                m4: Some("http://example.org/stream.mpg".to_string()),
+                ..Stream::default()
+            },
+            r#"{"m4":"http://example.org/stream.mpg"}"#
+        );
+
+        test_serialize!(
+            stream_mjpeg,
+            Stream {
+                mjpeg: Some("http://example.org/stream.mjpeg".to_string()),
+                ..Stream::default()
+            },
+            r#"{"mjpeg":"http://example.org/stream.mjpeg"}"#
+        );
+
+        test_serialize!(
+            stream_ustream,
+            Stream {
+                ustream: Some("http://www.ustream.tv/channel/hackspsps".to_string()),
+                ..Stream::default()
+            },
+            r#"{"ustream":"http://www.ustream.tv/channel/hackspsps"}"#
+        );
     }
 
     mod deserialize {
