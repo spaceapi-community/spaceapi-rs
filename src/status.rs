@@ -161,7 +161,9 @@ pub struct Stream {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
     // Hackerspace properties
-    pub api: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub api: Option<String>,
+
     pub space: String,
     pub logo: String,
     pub url: String,
@@ -214,7 +216,7 @@ impl Status {
         issue_report_channels: Vec<IssueReportChannel>,
     ) -> Status {
         Status {
-            api: "0.13".into(),
+            api: Some("0.13".into()),
             space: space.into(),
             logo: logo.into(),
             url: url.into(),
@@ -321,7 +323,7 @@ impl StatusBuilder {
 
     pub fn build(self) -> Result<Status, String> {
         Ok(Status {
-            api: "0.13".into(), // TODO: Deduplicate
+            api: Some("0.13".into()), // TODO: Deduplicate
             space: self.space,
             logo: self.logo.ok_or("logo missing")?,
             url: self.url.ok_or("url missing")?,
@@ -392,7 +394,7 @@ mod test {
             .add_issue_report_channel(IssueReportChannel::Email)
             .build()
             .unwrap();
-        assert_eq!(status.api, "0.13");
+        assert_eq!(status.api, Some("0.13".into()));
         assert_eq!(status.space, "foo");
         assert_eq!(status.logo, "bar");
         assert_eq!(status.url, "foobar");
@@ -525,7 +527,7 @@ mod test {
                     \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
                     \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
         let deserialized: Status = from_str(&data).unwrap();
-        assert_eq!(&deserialized.api, "0.13");
+        assert_eq!(deserialized.api, Some("0.13".into()));
         let keys: Vec<_> = deserialized.extensions.keys().collect();
         assert_eq!(keys.len(), 2)
     }
