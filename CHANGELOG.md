@@ -13,6 +13,9 @@ Possible log types:
 
 ### Unreleased
 
+- [added] The `Sensors`, `PeopleNowPresentSensor` and `TemperatureSensor`
+  structs now derive `Default` (#84)
+
 ### v0.7.0 (2019-08-22)
 
 - [changed] Require Rust 1.31+ (Rust 2018 edition) (#76)

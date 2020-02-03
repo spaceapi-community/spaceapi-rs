@@ -69,7 +69,7 @@ impl SensorTemplate for TemperatureSensorTemplate {
 
 //--- Structures ---//
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct PeopleNowPresentSensor {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<String>,
@@ -82,7 +82,7 @@ pub struct PeopleNowPresentSensor {
     pub value: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct TemperatureSensor {
     pub unit: String,
     pub location: String,
@@ -93,7 +93,7 @@ pub struct TemperatureSensor {
     pub value: f64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Sensors {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub people_now_present: Vec<PeopleNowPresentSensor>,
