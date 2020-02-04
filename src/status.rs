@@ -157,12 +157,21 @@ pub struct Stream {
     pub ustream: Option<String>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum ApiVersion {
+    #[serde(rename = "14")]
+    V14,
+}
+
 /// The main SpaceAPI status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
     // Hackerspace properties
     #[serde(skip_serializing_if = "Option::is_none")]
     pub api: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub api_compatibility: Option<Vec<ApiVersion>>,
 
     pub space: String,
     pub logo: String,
