@@ -237,9 +237,23 @@ impl Status {
     }
 }
 
+#[derive(Debug, Clone)]
+enum StatusBuilderVersion {
+    V0_13,
+    V14,
+    Mixed,
+}
+
+impl Default for StatusBuilderVersion {
+    fn default() -> StatusBuilderVersion {
+        StatusBuilderVersion::V0_13
+    }
+}
+
 /// Builder for the `Status` object.
 #[derive(Default, Debug, Clone)]
 pub struct StatusBuilder {
+    version: StatusBuilderVersion,
     space: String,
     logo: Option<String>,
     url: Option<String>,
@@ -259,6 +273,30 @@ impl StatusBuilder {
     pub fn new<S: Into<String>>(space_name: S) -> StatusBuilder {
         StatusBuilder {
             space: space_name.into(),
+            ..Default::default()
+        }
+    }
+
+    pub fn v0_13<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            version: StatusBuilderVersion::V0_13,
+            ..Default::default()
+        }
+    }
+
+    pub fn v14<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            version: StatusBuilderVersion::V14,
+            ..Default::default()
+        }
+    }
+
+    pub fn mixed<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            version: StatusBuilderVersion::Mixed,
             ..Default::default()
         }
     }
@@ -331,8 +369,17 @@ impl StatusBuilder {
     }
 
     pub fn build(self) -> Result<Status, String> {
+        let api = match self.version {
+            StatusBuilderVersion::V0_13 | StatusBuilderVersion::Mixed => Some("0.13".to_owned()),
+            _ => None,
+        };
+        let api_compatibility = match self.version {
+            StatusBuilderVersion::V14 | StatusBuilderVersion::Mixed => Some(vec![ApiVersion::V14]),
+            _ => None,
+        };
         Ok(Status {
-            api: Some("0.13".into()), // TODO: Deduplicate
+            api,
+            api_compatibility,
             space: self.space,
             logo: self.logo.ok_or("logo missing")?,
             url: self.url.ok_or("url missing")?,
