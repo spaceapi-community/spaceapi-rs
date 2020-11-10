@@ -4,7 +4,7 @@
 [![Crates.io Version](https://img.shields.io/crates/v/spaceapi.svg)](https://crates.io/crates/spaceapi)
 [![Crates.io Downloads](https://img.shields.io/crates/d/spaceapi.svg)](https://crates.io/crates/spaceapi)
 
-This is an implementation of the [SpaceAPI](https://spaceapi.io/) v0.13
+This is an implementation of the [SpaceAPI](https://spaceapi.io/) v0.13 and v14
 in Rust. It contains both the type definitions as well as tools for
 serialization and deserialization to/from JSON using Serde.
 
@@ -19,7 +19,7 @@ This library requires Rust 1.31.0 or newer.
 Add `spaceapi` to your `Cargo.toml`:
 
     [dependencies]
-    spaceapi = "^0.5"
+    spaceapi = "^0.7"
 
 
 ## Docs
