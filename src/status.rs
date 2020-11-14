@@ -435,6 +435,54 @@ mod test {
     }
 
     #[test]
+    fn test_builder_v14() {
+        let status = StatusBuilder::v14("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .build()
+            .unwrap();
+        assert_eq!(
+            status,
+            Status {
+                api: None,
+                api_compatibility: Some(vec![ApiVersion::V14]),
+                space: "foo".into(),
+                logo: "bar".into(),
+                url: "foobar".into(),
+                issue_report_channels: vec![IssueReportChannel::Email],
+                ..Status::default()
+            }
+        );
+    }
+
+    #[test]
+    fn test_builder_mixed() {
+        let status = StatusBuilder::mixed("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .build()
+            .unwrap();
+        assert_eq!(
+            status,
+            Status {
+                api: Some("0.13".into()),
+                api_compatibility: Some(vec![ApiVersion::V14]),
+                space: "foo".into(),
+                logo: "bar".into(),
+                url: "foobar".into(),
+                issue_report_channels: vec![IssueReportChannel::Email],
+                ..Status::default()
+            }
+        );
+    }
+
+    #[test]
     fn test_builder() {
         let status = StatusBuilder::new("foo")
             .logo("bar")
