@@ -15,6 +15,8 @@ Possible log types:
 
 - [added] The `Sensors`, `PeopleNowPresentSensor` and `TemperatureSensor`
   structs now derive `Default` (#84)
+- [added] Basic support for the new v14 API (#85) This is a breaking change since
+  it changes the `api` field of `Status` to `Option<String>`.
 
 ### v0.7.0 (2019-08-22)
 

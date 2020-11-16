@@ -157,11 +157,22 @@ pub struct Stream {
     pub ustream: Option<String>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum ApiVersion {
+    #[serde(rename = "14")]
+    V14,
+}
+
 /// The main SpaceAPI status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
     // Hackerspace properties
-    pub api: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub api: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub api_compatibility: Option<Vec<ApiVersion>>,
+
     pub space: String,
     pub logo: String,
     pub url: String,
@@ -214,7 +225,7 @@ impl Status {
         issue_report_channels: Vec<IssueReportChannel>,
     ) -> Status {
         Status {
-            api: "0.13".into(),
+            api: Some("0.13".into()),
             space: space.into(),
             logo: logo.into(),
             url: url.into(),
@@ -226,9 +237,23 @@ impl Status {
     }
 }
 
+#[derive(Debug, Clone)]
+enum StatusBuilderVersion {
+    V0_13,
+    V14,
+    Mixed,
+}
+
+impl Default for StatusBuilderVersion {
+    fn default() -> StatusBuilderVersion {
+        StatusBuilderVersion::V0_13
+    }
+}
+
 /// Builder for the `Status` object.
 #[derive(Default, Debug, Clone)]
 pub struct StatusBuilder {
+    version: StatusBuilderVersion,
     space: String,
     logo: Option<String>,
     url: Option<String>,
@@ -248,6 +273,30 @@ impl StatusBuilder {
     pub fn new<S: Into<String>>(space_name: S) -> StatusBuilder {
         StatusBuilder {
             space: space_name.into(),
+            ..Default::default()
+        }
+    }
+
+    pub fn v0_13<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            version: StatusBuilderVersion::V0_13,
+            ..Default::default()
+        }
+    }
+
+    pub fn v14<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            version: StatusBuilderVersion::V14,
+            ..Default::default()
+        }
+    }
+
+    pub fn mixed<S: Into<String>>(space_name: S) -> StatusBuilder {
+        StatusBuilder {
+            space: space_name.into(),
+            version: StatusBuilderVersion::Mixed,
             ..Default::default()
         }
     }
@@ -320,8 +369,17 @@ impl StatusBuilder {
     }
 
     pub fn build(self) -> Result<Status, String> {
+        let api = match self.version {
+            StatusBuilderVersion::V0_13 | StatusBuilderVersion::Mixed => Some("0.13".to_owned()),
+            _ => None,
+        };
+        let api_compatibility = match self.version {
+            StatusBuilderVersion::V14 | StatusBuilderVersion::Mixed => Some(vec![ApiVersion::V14]),
+            _ => None,
+        };
         Ok(Status {
-            api: "0.13".into(), // TODO: Deduplicate
+            api,
+            api_compatibility,
             space: self.space,
             logo: self.logo.ok_or("logo missing")?,
             url: self.url.ok_or("url missing")?,
@@ -377,6 +435,54 @@ mod test {
     }
 
     #[test]
+    fn test_builder_v14() {
+        let status = StatusBuilder::v14("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .build()
+            .unwrap();
+        assert_eq!(
+            status,
+            Status {
+                api: None,
+                api_compatibility: Some(vec![ApiVersion::V14]),
+                space: "foo".into(),
+                logo: "bar".into(),
+                url: "foobar".into(),
+                issue_report_channels: vec![IssueReportChannel::Email],
+                ..Status::default()
+            }
+        );
+    }
+
+    #[test]
+    fn test_builder_mixed() {
+        let status = StatusBuilder::mixed("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .build()
+            .unwrap();
+        assert_eq!(
+            status,
+            Status {
+                api: Some("0.13".into()),
+                api_compatibility: Some(vec![ApiVersion::V14]),
+                space: "foo".into(),
+                logo: "bar".into(),
+                url: "foobar".into(),
+                issue_report_channels: vec![IssueReportChannel::Email],
+                ..Status::default()
+            }
+        );
+    }
+
+    #[test]
     fn test_builder() {
         let status = StatusBuilder::new("foo")
             .logo("bar")
@@ -392,7 +498,7 @@ mod test {
             .add_issue_report_channel(IssueReportChannel::Email)
             .build()
             .unwrap();
-        assert_eq!(status.api, "0.13");
+        assert_eq!(status.api, Some("0.13".into()));
         assert_eq!(status.space, "foo");
         assert_eq!(status.logo, "bar");
         assert_eq!(status.url, "foobar");
@@ -525,7 +631,7 @@ mod test {
                     \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
                     \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
         let deserialized: Status = from_str(&data).unwrap();
-        assert_eq!(&deserialized.api, "0.13");
+        assert_eq!(deserialized.api, Some("0.13".into()));
         let keys: Vec<_> = deserialized.extensions.keys().collect();
         assert_eq!(keys.len(), 2)
     }

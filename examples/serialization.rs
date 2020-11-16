@@ -3,7 +3,7 @@ use serde_json;
 use spaceapi::{Contact, IssueReportChannel, Location, StatusBuilder};
 
 fn main() {
-    let status = StatusBuilder::new("coredump")
+    let status = StatusBuilder::mixed("coredump")
         .logo("https://www.coredump.ch/logo.png")
         .url("https://www.coredump.ch/")
         .location(Location {
