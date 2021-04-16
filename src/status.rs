@@ -392,6 +392,9 @@ impl StatusBuilder {
             if contact.google.is_some() {
                 return Err("google key under contact was removed".into());
             }
+            if self.radio_show.is_some() {
+                return Err("radio_show key was removed".into());
+            }
 
             if !self.issue_report_channels.is_empty() {
                 return Err("issue_report_channels key was removed".into());
@@ -505,6 +508,18 @@ mod test {
                 google: Some(GoogleContact::default()),
                 ..Contact::default()
             })
+            .build();
+        assert!(status.is_err());
+    }
+
+    #[test]
+    fn test_builder_v14_fail_on_radio_show() {
+        let status = StatusBuilder::v14("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .add_radio_show(RadioShow::default())
             .build();
         assert!(status.is_err());
     }
