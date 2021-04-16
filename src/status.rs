@@ -22,7 +22,20 @@ pub struct Location {
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
-    pub spacephone: bool,
+    pub spacephone: Option<bool>,
+}
+
+impl Spacefed {
+    fn verify(&self, version: StatusBuilderVersion) -> Result<(), String> {
+        if version == StatusBuilderVersion::V14 {
+            if self.spacephone.is_some() {
+                return Err("spacefed.spacephone key was removed".into());
+            }
+        } else if self.spacephone.is_none() {
+            return Err("spacefed.spacephone must be present".into());
+        }
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -242,7 +255,7 @@ impl Status {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 enum StatusBuilderVersion {
     V0_13,
     V14,
@@ -384,6 +397,9 @@ impl StatusBuilder {
         };
 
         let contact = self.contact.ok_or("contact missing")?;
+        if let Some(spacefed) = &self.spacefed {
+            spacefed.verify(self.version)?;
+        }
 
         if self.version == StatusBuilderVersion::V14 {
             if contact.jabber.is_some() {
@@ -525,6 +541,21 @@ mod test {
     }
 
     #[test]
+    fn test_builder_v14_fail_on_spacephone() {
+        let status = StatusBuilder::v14("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact::default())
+            .spacefed(Spacefed {
+                spacephone: Some(true),
+                ..Spacefed::default()
+            })
+            .build();
+        assert!(status.is_err());
+    }
+
+    #[test]
     fn test_builder_mixed() {
         let status = StatusBuilder::mixed("foo")
             .logo("bar")
@@ -555,7 +586,10 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
-            .spacefed(Spacefed::default())
+            .spacefed(Spacefed {
+                spacephone: Some(false),
+                ..Spacefed::default()
+            })
             .feeds(Feeds::default())
             .add_project("spaceapi-rs")
             .add_cam("cam1")
@@ -570,7 +604,13 @@ mod test {
         assert_eq!(status.url, "foobar");
         assert_eq!(status.location, Location::default());
         assert_eq!(status.contact, Contact::default());
-        assert_eq!(status.spacefed, Some(Spacefed::default()));
+        assert_eq!(
+            status.spacefed,
+            Some(Spacefed {
+                spacephone: Some(false),
+                ..Spacefed::default()
+            })
+        );
         assert_eq!(status.feeds, Some(Feeds::default()));
         assert_eq!(status.projects, Some(vec!["spaceapi-rs".to_string()]));
         assert_eq!(status.cam, Some(vec!["cam1".to_string(), "cam2".to_string()]));
