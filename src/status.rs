@@ -384,8 +384,13 @@ impl StatusBuilder {
 
         let contact = self.contact.ok_or("contact missing")?;
 
-        if self.version == StatusBuilderVersion::V14 && contact.jabber.is_some() {
-            return Err("Jabber key under contact was renamed to xmpp".into());
+        if self.version == StatusBuilderVersion::V14 {
+            if contact.jabber.is_some() {
+                return Err("jabber key under contact was renamed to xmpp".into());
+            }
+            if contact.google.is_some() {
+                return Err("google key under contact was removed".into());
+            }
         }
 
         Ok(Status {
@@ -478,6 +483,21 @@ mod test {
             .location(Location::default())
             .contact(Contact {
                 jabber: Some("jabber".into()),
+                ..Contact::default()
+            })
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .build();
+        assert!(status.is_err());
+    }
+
+    #[test]
+    fn test_builder_v14_fail_on_google() {
+        let status = StatusBuilder::v14("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact {
+                google: Some(GoogleContact::default()),
                 ..Contact::default()
             })
             .add_issue_report_channel(IssueReportChannel::Email)
