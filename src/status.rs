@@ -202,6 +202,7 @@ pub struct Status {
     // SpaceAPI internal usage
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cache: Option<Cache>,
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub issue_report_channels: Vec<IssueReportChannel>,
 
     // Mutable data
@@ -391,6 +392,12 @@ impl StatusBuilder {
             if contact.google.is_some() {
                 return Err("google key under contact was removed".into());
             }
+
+            if !self.issue_report_channels.is_empty() {
+                return Err("issue_report_channels key was removed".into());
+            }
+        } else if self.issue_report_channels.is_empty() {
+            return Err("issue_report_channels must not be empty".into());
         }
 
         Ok(Status {
@@ -458,7 +465,6 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
-            .add_issue_report_channel(IssueReportChannel::Email)
             .build()
             .unwrap();
         assert_eq!(
@@ -469,7 +475,7 @@ mod test {
                 space: "foo".into(),
                 logo: "bar".into(),
                 url: "foobar".into(),
-                issue_report_channels: vec![IssueReportChannel::Email],
+                issue_report_channels: vec![],
                 ..Status::default()
             }
         );
@@ -485,7 +491,6 @@ mod test {
                 jabber: Some("jabber".into()),
                 ..Contact::default()
             })
-            .add_issue_report_channel(IssueReportChannel::Email)
             .build();
         assert!(status.is_err());
     }
@@ -500,7 +505,6 @@ mod test {
                 google: Some(GoogleContact::default()),
                 ..Contact::default()
             })
-            .add_issue_report_channel(IssueReportChannel::Email)
             .build();
         assert!(status.is_err());
     }
@@ -587,6 +591,7 @@ mod test {
             .location(Location::default())
             .contact(Contact::default())
             .add_extension("aaa", Value::Array(vec![Value::Null, Value::from(42)]))
+            .add_issue_report_channel(IssueReportChannel::Email)
             .build()
             .unwrap();
         let serialized = to_string(&status).unwrap();
@@ -601,12 +606,13 @@ mod test {
             .url("c")
             .location(Location::default())
             .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
             .build();
         assert!(status.is_ok());
         assert_eq!(
             &to_string(&status.unwrap()).unwrap(),
             "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[\"email\"],\
              \"state\":{\"open\":null}}"
         );
     }
@@ -618,6 +624,7 @@ mod test {
             .url("c")
             .location(Location::default())
             .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
             .add_extension("aaa", Value::String("xxx".into()))
             .add_extension("bbb", Value::Array(vec![Value::Null, Value::from(42)]))
             .build();
@@ -625,7 +632,7 @@ mod test {
         assert_eq!(
             &to_string(&status.unwrap()).unwrap(),
             "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
+             \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[\"email\"],\
              \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
         );
     }
@@ -637,6 +644,7 @@ mod test {
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
             .build()
             .unwrap();
         status.spacefed = Some(Spacefed::default());
@@ -660,6 +668,7 @@ mod test {
             .url("c")
             .location(Location::default())
             .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
             .add_extension("aaa", Value::String("xxx".into()))
             .add_extension("ext_aaa", Value::String("yyy".into()))
             .add_extension("bbb", Value::Null)
