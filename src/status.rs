@@ -66,6 +66,8 @@ pub struct Keymaster {
     pub email: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub twitter: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub xmpp: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -100,6 +102,8 @@ pub struct Contact {
     pub ml: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub jabber: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub xmpp: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub issue_mail: Option<String>,
 }
@@ -237,7 +241,7 @@ impl Status {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 enum StatusBuilderVersion {
     V0_13,
     V14,
@@ -377,6 +381,13 @@ impl StatusBuilder {
             StatusBuilderVersion::V14 | StatusBuilderVersion::Mixed => Some(vec![ApiVersion::V14]),
             _ => None,
         };
+
+        let contact = self.contact.ok_or("contact missing")?;
+
+        if self.version == StatusBuilderVersion::V14 && contact.jabber.is_some() {
+            return Err("Jabber key under contact was renamed to xmpp".into());
+        }
+
         Ok(Status {
             api,
             api_compatibility,
@@ -384,7 +395,7 @@ impl StatusBuilder {
             logo: self.logo.ok_or("logo missing")?,
             url: self.url.ok_or("url missing")?,
             location: self.location.ok_or("location missing")?,
-            contact: self.contact.ok_or("contact missing")?,
+            contact,
             spacefed: self.spacefed,
             projects: self.projects,
             cam: self.cam,
@@ -421,6 +432,7 @@ mod test {
                 phone: None,
                 email: Some("joe@example.com".into()),
                 twitter: None,
+                xmpp: None,
             }]),
             irc: Some("bla".into()),
             google: Some(GoogleContact {
@@ -456,6 +468,21 @@ mod test {
                 ..Status::default()
             }
         );
+    }
+
+    #[test]
+    fn test_builder_v14_fail_on_jabber() {
+        let status = StatusBuilder::v14("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location::default())
+            .contact(Contact {
+                jabber: Some("jabber".into()),
+                ..Contact::default()
+            })
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .build();
+        assert!(status.is_err());
     }
 
     #[test]
