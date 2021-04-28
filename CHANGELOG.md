@@ -19,6 +19,10 @@ Possible log types:
   it changes the `api` field of `Status` to `Option<String>`. Includes
   * Add `xmpp` field in `Contact` struct and deprecate the `jabber` field
   * Add `xmpp` field to `Keymaster`
+  * Rename jabber to xmpp in contact field
+  * Add xmpp to contact/keymasters
+  * Deprecate contacts.google, issue\_report\_channels, radio\_show,
+    spacefed.spacephone and stream keys
 
 
 ### v0.7.0 (2019-08-22)
