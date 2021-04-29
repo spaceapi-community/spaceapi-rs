@@ -23,6 +23,8 @@ Possible log types:
   * Add xmpp to contact/keymasters
   * Deprecate contacts.google, issue\_report\_channels, radio\_show,
     spacefed.spacephone and stream keys
+  * Add `mumble`, `matrix`, `mastodon` and `gopher` to `Contact`
+  * Add `mastodon` field to `Keymaster`
 
 
 ### v0.7.0 (2019-08-22)
