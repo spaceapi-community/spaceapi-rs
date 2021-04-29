@@ -15,8 +15,9 @@ Possible log types:
 
 - [added] The `Sensors`, `PeopleNowPresentSensor` and `TemperatureSensor`
   structs now derive `Default` (#84)
-- [added] Basic support for the new v14 API (#85) This is a breaking change since
-  it changes the `api` field of `Status` to `Option<String>`. Includes
+- [added] Basic support for the new v14 API (#85, #87, #89, #90, #91) This is a
+  breaking change since it changes the `api` field of `Status` to
+  `Option<String>` and the `state` field to `Option<State>`. Includes
   * Add `xmpp` field in `Contact` struct and deprecate the `jabber` field
   * Add `xmpp` field to `Keymaster`
   * Rename jabber to xmpp in contact field
@@ -25,6 +26,7 @@ Possible log types:
     spacefed.spacephone and stream keys
   * Add `mumble`, `matrix`, `mastodon` and `gopher` to `Contact`
   * Add `mastodon` field to `Keymaster`
+  * Make `state` field optional and disallow `null` for `state.open`
 
 
 ### v0.7.0 (2019-08-22)
