@@ -81,6 +81,8 @@ pub struct Keymaster {
     pub twitter: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub xmpp: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mastodon: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -119,6 +121,14 @@ pub struct Contact {
     pub xmpp: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub issue_mail: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mumble: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub matrix: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mastodon: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gopher: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -459,11 +469,8 @@ mod test {
         let a: Contact = Contact {
             keymasters: Some(vec![Keymaster {
                 name: Some("Joe".into()),
-                irc_nick: None,
-                phone: None,
                 email: Some("joe@example.com".into()),
-                twitter: None,
-                xmpp: None,
+                ..Keymaster::default()
             }]),
             irc: Some("bla".into()),
             google: Some(GoogleContact {
