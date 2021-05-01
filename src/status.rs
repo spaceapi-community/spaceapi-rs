@@ -46,6 +46,7 @@ pub struct Icon {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct State {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub open: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lastchange: Option<u64>,
@@ -55,6 +56,15 @@ pub struct State {
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<Icon>,
+}
+
+impl State {
+    fn verify(&self, version: StatusBuilderVersion) -> Result<(), String> {
+        if version != StatusBuilderVersion::V14 && self.open.is_none() {
+            return Err("state.open must be present".into());
+        }
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -229,7 +239,8 @@ pub struct Status {
     pub issue_report_channels: Vec<IssueReportChannel>,
 
     // Mutable data
-    pub state: State,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub state: Option<State>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sensors: Option<Sensors>,
 
@@ -295,6 +306,7 @@ pub struct StatusBuilder {
     radio_show: Option<Vec<RadioShow>>,
     issue_report_channels: Vec<IssueReportChannel>,
     extensions: Extensions,
+    state: Option<State>,
 }
 
 impl StatusBuilder {
@@ -327,6 +339,11 @@ impl StatusBuilder {
             version: StatusBuilderVersion::Mixed,
             ..Default::default()
         }
+    }
+
+    pub fn state(mut self, state: State) -> Self {
+        self.state = Some(state);
+        self
     }
 
     pub fn logo<S: Into<String>>(mut self, logo: S) -> Self {
@@ -410,6 +427,9 @@ impl StatusBuilder {
         if let Some(spacefed) = &self.spacefed {
             spacefed.verify(self.version)?;
         }
+        if let Some(state) = &self.state {
+            state.verify(self.version)?;
+        }
 
         if self.version == StatusBuilderVersion::V14 {
             if contact.jabber.is_some() {
@@ -425,8 +445,13 @@ impl StatusBuilder {
             if !self.issue_report_channels.is_empty() {
                 return Err("issue_report_channels key was removed".into());
             }
-        } else if self.issue_report_channels.is_empty() {
-            return Err("issue_report_channels must not be empty".into());
+        } else {
+            if self.issue_report_channels.is_empty() {
+                return Err("issue_report_channels must not be empty".into());
+            }
+            if self.state.is_none() {
+                return Err("state must be present in v0.13".into());
+            }
         }
 
         Ok(Status {
@@ -444,6 +469,7 @@ impl StatusBuilder {
             events: self.events,
             radio_show: self.radio_show,
             issue_report_channels: self.issue_report_channels,
+            state: self.state,
             extensions: self.extensions,
             ..Default::default()
         })
@@ -567,6 +593,10 @@ mod test {
         let status = StatusBuilder::mixed("foo")
             .logo("bar")
             .url("foobar")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .add_issue_report_channel(IssueReportChannel::Email)
@@ -580,6 +610,10 @@ mod test {
                 space: "foo".into(),
                 logo: "bar".into(),
                 url: "foobar".into(),
+                state: Some(State {
+                    open: Some(false),
+                    ..State::default()
+                }),
                 issue_report_channels: vec![IssueReportChannel::Email],
                 ..Status::default()
             }
@@ -591,6 +625,10 @@ mod test {
         let status = StatusBuilder::new("foo")
             .logo("bar")
             .url("foobar")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .spacefed(Spacefed {
@@ -650,6 +688,10 @@ mod test {
         let status = StatusBuilder::new("foo")
             .logo("bar")
             .url("foobar")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .add_extension("aaa", Value::Array(vec![Value::Null, Value::from(42)]))
@@ -666,6 +708,10 @@ mod test {
         let status = StatusBuilder::new("a")
             .logo("b")
             .url("c")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .add_issue_report_channel(IssueReportChannel::Email)
@@ -675,7 +721,7 @@ mod test {
             &to_string(&status.unwrap()).unwrap(),
             "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
              \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[\"email\"],\
-             \"state\":{\"open\":null}}"
+             \"state\":{\"open\":false}}"
         );
     }
 
@@ -684,6 +730,10 @@ mod test {
         let status = StatusBuilder::new("a")
             .logo("b")
             .url("c")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .add_issue_report_channel(IssueReportChannel::Email)
@@ -695,7 +745,7 @@ mod test {
             &to_string(&status.unwrap()).unwrap(),
             "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
              \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[\"email\"],\
-             \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
+             \"state\":{\"open\":false},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}"
         );
     }
 
@@ -704,6 +754,10 @@ mod test {
         let mut status = StatusBuilder::new("foo")
             .logo("bar")
             .url("foobar")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .add_issue_report_channel(IssueReportChannel::Email)
@@ -728,6 +782,10 @@ mod test {
         let status = StatusBuilder::new("a")
             .logo("b")
             .url("c")
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
             .location(Location::default())
             .contact(Contact::default())
             .add_issue_report_channel(IssueReportChannel::Email)

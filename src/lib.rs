@@ -23,12 +23,16 @@
 //! You can create a new `Status` instance by using the `StatusBuilder`.
 //!
 //!     use serde_json;
-//!     use spaceapi::{Status, StatusBuilder, Location, Contact, IssueReportChannel};
+//!     use spaceapi::{State, Status, StatusBuilder, Location, Contact, IssueReportChannel};
 //!
 //!     # fn main() {
 //!     let status = StatusBuilder::new("coredump")
 //!         .logo("https://www.coredump.ch/logo.png")
 //!         .url("https://www.coredump.ch/")
+//!         .state(State{
+//!             open: Some(false),
+//!             ..State::default()
+//!         })
 //!         .location(
 //!             Location {
 //!                 address: None,
