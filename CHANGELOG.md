@@ -11,7 +11,7 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
-### Unreleased
+### v0.8.0 (2021-05-09)
 
 - [added] The `Sensors`, `PeopleNowPresentSensor` and `TemperatureSensor`
   structs now derive `Default` (#84)
