@@ -1,6 +1,6 @@
 use serde_json;
 
-use spaceapi::{Contact, IssueReportChannel, Location, StatusBuilder};
+use spaceapi::{Contact, IssueReportChannel, Location, State, StatusBuilder};
 
 fn main() {
     let status = StatusBuilder::mixed("coredump")
@@ -21,6 +21,7 @@ fn main() {
         .add_issue_report_channel(IssueReportChannel::Email)
         .add_issue_report_channel(IssueReportChannel::Twitter)
         .add_extension("ccc", "chaostreff")
+        .state(State::default())
         .build()
         .expect("Creating status failed");
     let stringstatus = serde_json::to_string(&status).unwrap();

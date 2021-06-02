@@ -46,7 +46,6 @@ pub struct Icon {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct State {
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub open: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lastchange: Option<u64>,
@@ -59,10 +58,7 @@ pub struct State {
 }
 
 impl State {
-    fn verify(&self, version: StatusBuilderVersion) -> Result<(), String> {
-        if version != StatusBuilderVersion::V14 && self.open.is_none() {
-            return Err("state.open must be present".into());
-        }
+    fn verify(&self, _version: StatusBuilderVersion) -> Result<(), String> {
         Ok(())
     }
 }
@@ -593,10 +589,7 @@ mod test {
         let status = StatusBuilder::mixed("foo")
             .logo("bar")
             .url("foobar")
-            .state(State {
-                open: Some(false),
-                ..State::default()
-            })
+            .state(State::default())
             .location(Location::default())
             .contact(Contact::default())
             .add_issue_report_channel(IssueReportChannel::Email)
@@ -611,7 +604,7 @@ mod test {
                 logo: "bar".into(),
                 url: "foobar".into(),
                 state: Some(State {
-                    open: Some(false),
+                    open: None,
                     ..State::default()
                 }),
                 issue_report_channels: vec![IssueReportChannel::Email],
