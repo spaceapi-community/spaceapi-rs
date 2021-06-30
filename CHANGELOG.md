@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### v0.8.1 (2021-06-30)
+
+ - [changed] Allow `state.open` to be `null` again
+
 ### v0.8.0 (2021-05-09)
 
 - [added] The `Sensors`, `PeopleNowPresentSensor` and `TemperatureSensor`
