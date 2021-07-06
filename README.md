@@ -19,7 +19,7 @@ This library requires Rust 1.31.0 or newer.
 Add `spaceapi` to your `Cargo.toml`:
 
     [dependencies]
-    spaceapi = "^0.8"
+    spaceapi = "^0.8.1"
 
 
 ## Docs
