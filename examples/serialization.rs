@@ -1,5 +1,3 @@
-use serde_json;
-
 use spaceapi::{Contact, IssueReportChannel, Location, State, StatusBuilder};
 
 fn main() {
