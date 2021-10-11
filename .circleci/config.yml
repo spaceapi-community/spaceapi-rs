@@ -31,30 +31,30 @@ jobs:
             - /usr/local/cargo
   lint:
     docker:
-      - image: rust:1.31
+      - image: rust:1.55
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-cargo-lint-cache
+            - v2-cargo-lint-cache
       - run: rustup component add clippy
       - run: cargo clippy --all-targets --all-features -- -D warnings
       - save_cache:
-          key: v1-cargo-lint-cache
+          key: v2-cargo-lint-cache
           paths:
             - /usr/local/cargo
   fmt:
     docker:
-      - image: rust:1.31
+      - image: rust:1.55
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-cargo-fmt-cache
+            - v2-cargo-fmt-cache
       - run: rustup component add rustfmt
       - run: cargo fmt -- --check
       - save_cache:
-          key: v1-cargo-fmt-cache
+          key: v2-cargo-fmt-cache
           paths:
             - /usr/local/cargo
   audit:
