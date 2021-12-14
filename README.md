@@ -1,6 +1,6 @@
 # Rust SpaceAPI Implementation
 
-[![CircleCI](https://circleci.com/gh/spaceapi-community/spaceapi-server-rs/tree/master.svg?style=shield)](https://circleci.com/gh/spaceapi-community/spaceapi-server-rs/tree/master)
+[![CircleCI](https://circleci.com/gh/spaceapi-community/spaceapi-rs/tree/master.svg?style=shield)](https://circleci.com/gh/spaceapi-community/spaceapi-rs/tree/master)
 [![Crates.io Version](https://img.shields.io/crates/v/spaceapi.svg)](https://crates.io/crates/spaceapi)
 [![Crates.io Downloads](https://img.shields.io/crates/d/spaceapi.svg)](https://crates.io/crates/spaceapi)
 
