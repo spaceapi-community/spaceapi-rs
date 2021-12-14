@@ -3,7 +3,7 @@ jobs:
 
   test:
     docker:
-      - image: rust:1.31
+      - image: rust:1.36
     steps:
       - checkout
       - restore_cache:
