@@ -117,27 +117,32 @@ impl SensorTemplate for TemperatureSensorTemplate {
 
 #[derive(Debug, Clone)]
 pub struct HumiditySensorTemplate {
+    pub metadata: SensorMetadata,
     pub unit: String,
-    pub location: String,
-    pub name: Option<String>,
-    pub description: Option<String>,
+}
+
+impl TryInto<HumiditySensor> for HumiditySensorTemplate {
+    type Error = Box<dyn std::error::Error>;
+
+    fn try_into(self) -> Result<HumiditySensor, Self::Error> {
+        Ok(HumiditySensor {
+            metadata: self.metadata.try_into()?,
+            unit: self.unit,
+            ..HumiditySensor::default()
+        })
+    }
 }
 
 impl SensorTemplate for HumiditySensorTemplate {
-    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        let parse_result = value_str.parse::<f64>().map(|value| {
-            let sensor = HumiditySensor {
-                unit: self.unit.clone(),
-                location: self.location.clone(),
-                name: self.name.clone(),
-                description: self.description.clone(),
-                value,
-            };
-            sensors.humidity.push(sensor);
-        });
-        if parse_result.is_err() {
-            warn!("Could not parse value '{}', omiting HumiditySensor", value_str);
-        }
+    fn try_to_sensor(
+        &self,
+        value_str: &str,
+        sensors: &mut Sensors,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut sensor: HumiditySensor = self.clone().try_into()?;
+        sensor.value = value_str.parse::<f64>()?;
+        sensors.humidity.push(sensor);
+        Ok(())
     }
 }
 
@@ -191,12 +196,9 @@ pub struct TemperatureSensor {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct HumiditySensor {
+    #[serde(flatten)]
+    pub metadata: LocalisedSensorMetadata,
     pub unit: String,
-    pub location: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
     pub value: f64,
 }
 
