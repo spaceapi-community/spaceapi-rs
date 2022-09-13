@@ -46,7 +46,14 @@ pub struct LocalisedSensorMetadata {
 /// A sensor template is like a sensor struct, but without the actual data in it.
 /// A `SensorTemplate` is capable of registering itself in a `Sensors` struct.
 pub trait SensorTemplate: Send + Sync {
-    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors);
+    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
+        if let Err(e) = self.try_to_sensor(value_str, sensors) {
+            warn!("Omitting sensor. Reason: {}", e);
+        }
+    }
+
+    fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors)
+        -> Result<(), Box<dyn std::error::Error>>;
 }
 
 #[derive(Debug, Clone)]
