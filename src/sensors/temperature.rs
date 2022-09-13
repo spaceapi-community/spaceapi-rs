@@ -35,3 +35,49 @@ impl SensorTemplate for TemperatureSensorTemplate {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_template() {
+        let template = TemperatureSensorTemplate {
+            metadata: LocalisedSensorMetadata {
+                location: "Main Room".into(),
+                description: Some("Centre of main room on ground floor".into()),
+                ..Default::default()
+            },
+            unit: "C".into(),
+        };
+
+        let mut sensors = Sensors::default();
+        template.to_sensor("24.1", &mut sensors);
+
+        assert_eq!(
+            "[{\"location\":\"Main Room\",\"description\":\"Centre of main room on ground floor\",\"unit\":\"C\",\"value\":24.1}]",
+            serde_json::to_string(&sensors.temperature).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_template_bad_float() {
+        let template = TemperatureSensorTemplate {
+            metadata: LocalisedSensorMetadata {
+                location: "Main Room".into(),
+                description: Some("Centre of main room on ground floor".into()),
+                ..Default::default()
+            },
+            unit: "C".into(),
+        };
+
+        let mut sensors = Sensors::default();
+        let result = template.try_to_sensor("twenty four point one", &mut sensors);
+
+        assert!(result.is_err());
+        assert_eq!(
+            "sensor float value cannot be parsed",
+            result.err().unwrap().to_string()
+        );
+    }
+}
