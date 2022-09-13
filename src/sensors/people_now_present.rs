@@ -35,3 +35,41 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_template() {
+        let template = PeopleNowPresentSensorTemplate {
+            metadata: SensorMetadata::default(),
+            names: None,
+        };
+
+        let mut sensors = Sensors::default();
+        template.to_sensor("8", &mut sensors);
+
+        assert_eq!(
+            "[{\"value\":8}]",
+            serde_json::to_string(&sensors.people_now_present).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_template_bad_integer() {
+        let template = PeopleNowPresentSensorTemplate {
+            metadata: SensorMetadata::default(),
+            names: None,
+        };
+
+        let mut sensors = Sensors::default();
+        let result = template.try_to_sensor("two", &mut sensors);
+
+        assert!(result.is_err());
+        assert_eq!(
+            "sensor integer value cannot be parsed",
+            result.err().unwrap().to_string()
+        );
+    }
+}
