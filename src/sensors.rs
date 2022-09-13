@@ -86,27 +86,32 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
 
 #[derive(Debug, Clone)]
 pub struct TemperatureSensorTemplate {
+    pub metadata: SensorMetadata,
     pub unit: String,
-    pub location: String,
-    pub name: Option<String>,
-    pub description: Option<String>,
+}
+
+impl TryInto<TemperatureSensor> for TemperatureSensorTemplate {
+    type Error = Box<dyn std::error::Error>;
+
+    fn try_into(self) -> Result<TemperatureSensor, Self::Error> {
+        Ok(TemperatureSensor {
+            metadata: self.metadata.try_into()?,
+            unit: self.unit,
+            ..TemperatureSensor::default()
+        })
+    }
 }
 
 impl SensorTemplate for TemperatureSensorTemplate {
-    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        let parse_result = value_str.parse::<f64>().map(|value| {
-            let sensor = TemperatureSensor {
-                unit: self.unit.clone(),
-                location: self.location.clone(),
-                name: self.name.clone(),
-                description: self.description.clone(),
-                value,
-            };
-            sensors.temperature.push(sensor);
-        });
-        if parse_result.is_err() {
-            warn!("Could not parse value '{}', omiting TemperatureSensor", value_str);
-        }
+    fn try_to_sensor(
+        &self,
+        value_str: &str,
+        sensors: &mut Sensors,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut sensor: TemperatureSensor = self.clone().try_into()?;
+        sensor.value = value_str.parse::<f64>()?;
+        sensors.temperature.push(sensor);
+        Ok(())
     }
 }
 
@@ -178,12 +183,9 @@ pub struct PeopleNowPresentSensor {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct TemperatureSensor {
+    #[serde(flatten)]
+    pub metadata: LocalisedSensorMetadata,
     pub unit: String,
-    pub location: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
     pub value: f64,
 }
 
