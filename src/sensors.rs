@@ -58,30 +58,29 @@ pub trait SensorTemplate: Send + Sync {
 
 #[derive(Debug, Clone)]
 pub struct PeopleNowPresentSensorTemplate {
-    pub location: Option<String>,
-    pub name: Option<String>,
+    pub metadata: SensorMetadata,
     pub names: Option<Vec<String>>,
-    pub description: Option<String>,
+}
+
+impl Into<PeopleNowPresentSensor> for PeopleNowPresentSensorTemplate {
+    fn into(self) -> PeopleNowPresentSensor {
+        PeopleNowPresentSensor {
+            metadata: self.metadata,
+            ..PeopleNowPresentSensor::default()
+        }
+    }
 }
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
-    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        let parse_result = value_str.parse::<u64>().map(|value| {
-            let sensor = PeopleNowPresentSensor {
-                location: self.location.clone(),
-                name: self.name.clone(),
-                names: self.names.clone(),
-                description: self.description.clone(),
-                value,
-            };
-            sensors.people_now_present.push(sensor);
-        });
-        if parse_result.is_err() {
-            warn!(
-                "Could not parse value '{}', omiting PeopleNowPresentSensor",
-                value_str
-            );
-        }
+    fn try_to_sensor(
+        &self,
+        value_str: &str,
+        sensors: &mut Sensors,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut sensor: PeopleNowPresentSensor = self.clone().into();
+        sensor.value = value_str.parse::<u64>()?;
+        sensors.people_now_present.push(sensor);
+        Ok(())
     }
 }
 
@@ -170,14 +169,10 @@ impl SensorTemplate for PowerConsumptionSensor {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct PeopleNowPresentSensor {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub location: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
+    #[serde(flatten)]
+    pub metadata: SensorMetadata,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub names: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
     pub value: u64,
 }
 
