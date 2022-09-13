@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### Unreleased
+
+- [added] Added the `HumitidySensor` and `PowerConsumptionSensor` sensor types.
+
 ### v0.8.1 (2021-07-06)
 
  - [changed] Allow `state.open` to be `null` again
