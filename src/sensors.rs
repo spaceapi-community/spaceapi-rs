@@ -148,30 +148,32 @@ impl SensorTemplate for HumiditySensorTemplate {
 
 #[derive(Debug, Clone)]
 pub struct PowerConsumptionSensorTemplate {
+    pub metadata: SensorMetadata,
     pub unit: String,
-    pub location: String,
-    pub name: Option<String>,
-    pub description: Option<String>,
 }
 
-impl SensorTemplate for PowerConsumptionSensor {
-    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
-        let parse_result = value_str.parse::<f64>().map(|value| {
-            let sensor = PowerConsumptionSensor {
-                unit: self.unit.clone(),
-                location: self.location.clone(),
-                name: self.name.clone(),
-                description: self.description.clone(),
-                value,
-            };
-            sensors.power_consumption.push(sensor);
-        });
-        if parse_result.is_err() {
-            warn!(
-                "Could not parse value '{}', omiting PowerConsumptionSensor",
-                value_str
-            );
-        }
+impl TryInto<PowerConsumptionSensor> for PowerConsumptionSensorTemplate {
+    type Error = Box<dyn std::error::Error>;
+
+    fn try_into(self) -> Result<PowerConsumptionSensor, Self::Error> {
+        Ok(PowerConsumptionSensor {
+            metadata: self.metadata.try_into()?,
+            unit: self.unit,
+            ..PowerConsumptionSensor::default()
+        })
+    }
+}
+
+impl SensorTemplate for PowerConsumptionSensorTemplate {
+    fn try_to_sensor(
+        &self,
+        value_str: &str,
+        sensors: &mut Sensors,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut sensor: PowerConsumptionSensor = self.clone().try_into()?;
+        sensor.value = value_str.parse::<f64>()?;
+        sensors.power_consumption.push(sensor);
+        Ok(())
     }
 }
 
@@ -204,12 +206,9 @@ pub struct HumiditySensor {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct PowerConsumptionSensor {
+    #[serde(flatten)]
+    pub metadata: LocalisedSensorMetadata,
     pub unit: String,
-    pub location: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
     pub value: f64,
 }
 
