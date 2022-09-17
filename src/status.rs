@@ -16,6 +16,8 @@ pub struct Location {
     pub address: Option<String>,
     pub lat: f64,
     pub lon: f64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub timezone: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -448,6 +450,11 @@ impl StatusBuilder {
             if self.state.is_none() {
                 return Err("state must be present in v0.13".into());
             }
+            if let Some(ref location) = self.location {
+                if location.timezone.is_some() {
+                    return Err("location.timezone is only present in v0.14 and above".into());
+                }
+            }
         }
 
         Ok(Status {
@@ -504,6 +511,29 @@ mod test {
         let b: Contact = from_str(&to_string(&a).unwrap()).unwrap();
 
         assert_eq!(a, b);
+    }
+
+    #[test]
+    fn test_builder_v13_fail_on_location_timezone() {
+        let status = StatusBuilder::v0_13("foo")
+            .logo("bar")
+            .url("foobar")
+            .location(Location {
+                timezone: Some("Europe/London".into()),
+                ..Default::default()
+            })
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
+            .build();
+        assert!(status.is_err());
+        assert_eq!(
+            status.err().unwrap(),
+            "location.timezone is only present in v0.14 and above"
+        );
     }
 
     #[test]

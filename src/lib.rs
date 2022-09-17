@@ -38,6 +38,7 @@
 //!                 address: None,
 //!                 lat: 47.22936,
 //!                 lon: 8.82949,
+//!                 ..Default::default()
 //!             })
 //!         .contact(
 //!             Contact {
@@ -71,7 +72,7 @@
 //!     println!("{:?}", decoded);
 //!
 //!     // Output:
-//!     // Location { address: None, lat: 47.22936000000001, lon: 8.829490000000002 }
+//!     // Location { address: None, lat: 47.22936000000001, lon: 8.829490000000002, timezone: None }
 //!     # }
 
 pub mod sensors;
