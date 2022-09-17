@@ -192,6 +192,14 @@ pub struct Stream {
     pub ustream: Option<String>,
 }
 
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct Link {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub url: String,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum ApiVersion {
     #[serde(rename = "14")]
@@ -229,6 +237,8 @@ pub struct Status {
     pub events: Option<Vec<Event>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub radio_show: Option<Vec<RadioShow>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub links: Option<Vec<Link>>,
 
     // SpaceAPI internal usage
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -302,6 +312,7 @@ pub struct StatusBuilder {
     feeds: Option<Feeds>,
     events: Option<Vec<Event>>,
     radio_show: Option<Vec<RadioShow>>,
+    links: Option<Vec<Link>>,
     issue_report_channels: Vec<IssueReportChannel>,
     extensions: Extensions,
     state: Option<State>,
@@ -389,6 +400,11 @@ impl StatusBuilder {
         self
     }
 
+    pub fn add_link(mut self, link: Link) -> Self {
+        self.links.get_or_insert(vec![]).push(link);
+        self
+    }
+
     pub fn add_project<S: Into<String>>(mut self, project: S) -> Self {
         self.projects.get_or_insert(vec![]).push(project.into());
         self
@@ -455,6 +471,9 @@ impl StatusBuilder {
                     return Err("location.timezone is only present in v0.14 and above".into());
                 }
             }
+            if self.links.is_some() {
+                return Err("links is only present in v0.14 and above".into());
+            }
         }
 
         Ok(Status {
@@ -471,6 +490,7 @@ impl StatusBuilder {
             feeds: self.feeds,
             events: self.events,
             radio_show: self.radio_show,
+            links: self.links,
             issue_report_channels: self.issue_report_channels,
             state: self.state,
             extensions: self.extensions,
@@ -537,12 +557,30 @@ mod test {
     }
 
     #[test]
+    fn test_builder_v13_fail_on_links() {
+        let status = StatusBuilder::v0_13("foo")
+            .logo("bar")
+            .url("foobar")
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
+            .add_link(Link::default())
+            .build();
+        assert!(status.is_err());
+        assert_eq!(status.err().unwrap(), "links is only present in v0.14 and above");
+    }
+
+    #[test]
     fn test_builder_v14() {
         let status = StatusBuilder::v14("foo")
             .logo("bar")
             .url("foobar")
             .location(Location::default())
             .contact(Contact::default())
+            .add_link(Link::default())
             .build()
             .unwrap();
         assert_eq!(
@@ -554,6 +592,7 @@ mod test {
                 logo: "bar".into(),
                 url: "foobar".into(),
                 issue_report_channels: vec![],
+                links: Some(vec![Link::default()]),
                 ..Status::default()
             }
         );
