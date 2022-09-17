@@ -201,6 +201,33 @@ pub struct Link {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum BillingInterval {
+    Yearly,
+    Monthly,
+    Weekly,
+    Daily,
+    Hourly,
+    Other,
+}
+
+impl Default for BillingInterval {
+    fn default() -> Self {
+        BillingInterval::Monthly
+    }
+}
+
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct MembershipPlan {
+    pub name: String,
+    pub value: f64,
+    pub currency: String,
+    pub billing_interval: BillingInterval,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum ApiVersion {
     #[serde(rename = "14")]
     V14,
@@ -239,6 +266,8 @@ pub struct Status {
     pub radio_show: Option<Vec<RadioShow>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub links: Option<Vec<Link>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub membership_plans: Option<Vec<MembershipPlan>>,
 
     // SpaceAPI internal usage
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -313,6 +342,7 @@ pub struct StatusBuilder {
     events: Option<Vec<Event>>,
     radio_show: Option<Vec<RadioShow>>,
     links: Option<Vec<Link>>,
+    membership_plans: Option<Vec<MembershipPlan>>,
     issue_report_channels: Vec<IssueReportChannel>,
     extensions: Extensions,
     state: Option<State>,
@@ -405,6 +435,11 @@ impl StatusBuilder {
         self
     }
 
+    pub fn add_membership_plan(mut self, membership_plan: MembershipPlan) -> Self {
+        self.membership_plans.get_or_insert(vec![]).push(membership_plan);
+        self
+    }
+
     pub fn add_project<S: Into<String>>(mut self, project: S) -> Self {
         self.projects.get_or_insert(vec![]).push(project.into());
         self
@@ -474,6 +509,9 @@ impl StatusBuilder {
             if self.links.is_some() {
                 return Err("links is only present in v0.14 and above".into());
             }
+            if self.membership_plans.is_some() {
+                return Err("membership_plans is only present in v0.14 and above".into());
+            }
         }
 
         Ok(Status {
@@ -491,6 +529,7 @@ impl StatusBuilder {
             events: self.events,
             radio_show: self.radio_show,
             links: self.links,
+            membership_plans: self.membership_plans,
             issue_report_channels: self.issue_report_channels,
             state: self.state,
             extensions: self.extensions,
@@ -574,6 +613,26 @@ mod test {
     }
 
     #[test]
+    fn test_builder_v13_fail_on_membership_plans() {
+        let status = StatusBuilder::v0_13("foo")
+            .logo("bar")
+            .url("foobar")
+            .contact(Contact::default())
+            .add_issue_report_channel(IssueReportChannel::Email)
+            .state(State {
+                open: Some(false),
+                ..State::default()
+            })
+            .add_membership_plan(MembershipPlan::default())
+            .build();
+        assert!(status.is_err());
+        assert_eq!(
+            status.err().unwrap(),
+            "membership_plans is only present in v0.14 and above"
+        );
+    }
+
+    #[test]
     fn test_builder_v14() {
         let status = StatusBuilder::v14("foo")
             .logo("bar")
@@ -581,6 +640,7 @@ mod test {
             .location(Location::default())
             .contact(Contact::default())
             .add_link(Link::default())
+            .add_membership_plan(MembershipPlan::default())
             .build()
             .unwrap();
         assert_eq!(
@@ -593,6 +653,7 @@ mod test {
                 url: "foobar".into(),
                 issue_report_channels: vec![],
                 links: Some(vec![Link::default()]),
+                membership_plans: Some(vec![MembershipPlan::default()]),
                 ..Status::default()
             }
         );
