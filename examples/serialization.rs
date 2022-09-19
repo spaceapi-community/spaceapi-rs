@@ -8,6 +8,7 @@ fn main() {
             address: None,
             lat: 47.22936,
             lon: 8.82949,
+            ..Default::default()
         })
         .contact(Contact {
             irc: Some("irc://freenode.net/#coredump".into()),

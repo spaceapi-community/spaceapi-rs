@@ -14,6 +14,9 @@ Possible log types:
 ### Unreleased
 
 - [added] Added the `HumitidySensor` and `PowerConsumptionSensor` sensor types.
+- [added] Added the `timezone` key under `location` section.
+- [added] Added the `links` section.
+- [added] Added the `membership_plans` section.
 
 ### v0.8.1 (2021-07-06)
 
