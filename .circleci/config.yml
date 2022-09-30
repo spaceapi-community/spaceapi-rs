@@ -79,13 +79,11 @@ jobs:
 workflows:
   version: 2
 
-  # Build on push
-  on_push:
-    jobs:
-      - test
-      - lint
-      - fmt
-      - audit
+  jobs:
+    - test
+    - lint
+    - fmt
+    - audit
 
   # Build master every week on Monday at 04:00 am
   weekly:
