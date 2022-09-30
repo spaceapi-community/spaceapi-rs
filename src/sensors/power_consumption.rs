@@ -1,6 +1,6 @@
 //! Module providing power consumption sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorMetadata, SensorTemplate, Sensors};
+use super::{LocalisedSensorMetadata, SensorTemplate, Sensors};
 use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 
@@ -14,19 +14,17 @@ pub struct PowerConsumptionSensor {
 
 #[derive(Debug, Clone)]
 pub struct PowerConsumptionSensorTemplate {
-    pub metadata: SensorMetadata,
+    pub metadata: LocalisedSensorMetadata,
     pub unit: String,
 }
 
-impl TryInto<PowerConsumptionSensor> for PowerConsumptionSensorTemplate {
-    type Error = Box<dyn std::error::Error>;
-
-    fn try_into(self) -> Result<PowerConsumptionSensor, Self::Error> {
-        Ok(PowerConsumptionSensor {
-            metadata: self.metadata.try_into()?,
-            unit: self.unit,
-            ..PowerConsumptionSensor::default()
-        })
+impl From<PowerConsumptionSensorTemplate> for PowerConsumptionSensor {
+    fn from(template: PowerConsumptionSensorTemplate) -> Self {
+        Self {
+            metadata: template.metadata,
+            unit: template.unit,
+            ..Default::default()
+        }
     }
 }
 

@@ -18,11 +18,11 @@ pub struct PeopleNowPresentSensorTemplate {
     pub names: Option<Vec<String>>,
 }
 
-impl Into<PeopleNowPresentSensor> for PeopleNowPresentSensorTemplate {
-    fn into(self) -> PeopleNowPresentSensor {
-        PeopleNowPresentSensor {
-            metadata: self.metadata,
-            ..PeopleNowPresentSensor::default()
+impl From<PeopleNowPresentSensorTemplate> for PeopleNowPresentSensor {
+    fn from(template: PeopleNowPresentSensorTemplate) -> Self {
+        Self {
+            metadata: template.metadata,
+            ..Default::default()
         }
     }
 }

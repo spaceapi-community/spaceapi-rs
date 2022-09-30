@@ -1,8 +1,7 @@
 //! Module providing humidity sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorMetadata, SensorTemplate, Sensors};
+use super::{LocalisedSensorMetadata, SensorTemplate, Sensors};
 use serde::{Deserialize, Serialize};
-use std::convert::TryInto;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct HumiditySensor {
@@ -14,19 +13,17 @@ pub struct HumiditySensor {
 
 #[derive(Debug, Clone)]
 pub struct HumiditySensorTemplate {
-    pub metadata: SensorMetadata,
+    pub metadata: LocalisedSensorMetadata,
     pub unit: String,
 }
 
-impl TryInto<HumiditySensor> for HumiditySensorTemplate {
-    type Error = Box<dyn std::error::Error>;
-
-    fn try_into(self) -> Result<HumiditySensor, Self::Error> {
-        Ok(HumiditySensor {
-            metadata: self.metadata.try_into()?,
-            unit: self.unit,
-            ..HumiditySensor::default()
-        })
+impl From<HumiditySensorTemplate> for HumiditySensor {
+    fn from(st: HumiditySensorTemplate) -> Self {
+        Self {
+            metadata: st.metadata,
+            unit: st.unit,
+            ..Default::default()
+        }
     }
 }
 
@@ -36,7 +33,7 @@ impl SensorTemplate for HumiditySensorTemplate {
         value_str: &str,
         sensors: &mut Sensors,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let mut sensor: HumiditySensor = self.clone().try_into()?;
+        let mut sensor: HumiditySensor = self.clone().into();
         sensor.value = value_str.parse::<f64>()?;
         sensors.humidity.push(sensor);
         Ok(())

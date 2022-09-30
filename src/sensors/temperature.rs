@@ -1,6 +1,6 @@
 //! Module providing temperature sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorMetadata, SensorTemplate, Sensors};
+use super::{LocalisedSensorMetadata, SensorTemplate, Sensors};
 use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 
@@ -14,19 +14,17 @@ pub struct TemperatureSensor {
 
 #[derive(Debug, Clone)]
 pub struct TemperatureSensorTemplate {
-    pub metadata: SensorMetadata,
+    pub metadata: LocalisedSensorMetadata,
     pub unit: String,
 }
 
-impl TryInto<TemperatureSensor> for TemperatureSensorTemplate {
-    type Error = Box<dyn std::error::Error>;
-
-    fn try_into(self) -> Result<TemperatureSensor, Self::Error> {
-        Ok(TemperatureSensor {
-            metadata: self.metadata.try_into()?,
-            unit: self.unit,
-            ..TemperatureSensor::default()
-        })
+impl From<TemperatureSensorTemplate> for TemperatureSensor {
+    fn from(template: TemperatureSensorTemplate) -> Self {
+        Self {
+            metadata: template.metadata,
+            unit: template.unit,
+            ..Default::default()
+        }
     }
 }
 

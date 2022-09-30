@@ -12,7 +12,6 @@ pub use temperature::{TemperatureSensor, TemperatureSensorTemplate};
 
 use log::warn;
 use serde::{Deserialize, Serialize};
-use std::convert::TryInto;
 
 /// Common information describing any sensor.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -23,21 +22,6 @@ pub struct SensorMetadata {
     pub location: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-}
-
-impl TryInto<LocalisedSensorMetadata> for SensorMetadata {
-    type Error = &'static str;
-
-    fn try_into(self) -> Result<LocalisedSensorMetadata, Self::Error> {
-        match self.location {
-            Some(location) => Ok(LocalisedSensorMetadata {
-                name: self.name,
-                location,
-                description: self.description,
-            }),
-            None => Err("No location specified when one is required"),
-        }
-    }
 }
 
 /// Common information describing any sensor which requires a specified location.
