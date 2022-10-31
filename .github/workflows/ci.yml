@@ -1,0 +1,27 @@
+name: CI
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-22.04
+    container: rust:1.36
+    steps:
+      - uses: actions/checkout@v3
+      - run: cargo build
+      - run: cargo test
+
+  lint:
+    runs-on: ubuntu-22.04
+    container: rust:1.55
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup component add clippy
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+
+  fmt:
+    runs-on: ubuntu-22.04
+    container: rust:1.55
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup component add rustfmt
+      - run: cargo fmt -- --check
