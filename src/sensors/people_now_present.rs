@@ -1,6 +1,6 @@
 //! Module providing people present sensor functionality.
 
-use super::{SensorMetadata, SensorTemplate, Sensors};
+use super::{SensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -28,11 +28,7 @@ impl From<PeopleNowPresentSensorTemplate> for PeopleNowPresentSensor {
 }
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
-    fn try_to_sensor(
-        &self,
-        value_str: &str,
-        sensors: &mut Sensors,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         let mut sensor: PeopleNowPresentSensor = self.clone().into();
         sensor.value = value_str.parse::<u64>()?;
         sensors.people_now_present.push(sensor);

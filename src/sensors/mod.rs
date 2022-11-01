@@ -12,6 +12,7 @@ pub use temperature::{TemperatureSensor, TemperatureSensorTemplate};
 
 use log::warn;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 /// Common information describing any sensor.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -34,6 +35,18 @@ pub struct LocalisedSensorMetadata {
     pub description: Option<String>,
 }
 
+/// Describes an error occurring when building a sensor from a `SensorTemplate`.
+#[derive(Error, Debug)]
+pub enum SensorTemplateError {
+    /// Failed when parsing an integer value from the provided value string
+    #[error("sensor integer value cannot be parsed")]
+    BadInteger(#[from] std::num::ParseIntError),
+
+    /// Failed when parsing a floating point value from the provided value string
+    #[error("sensor float value cannot be parsed")]
+    BadFloat(#[from] std::num::ParseFloatError),
+}
+
 /// A trait for all possible sensor templates.
 ///
 /// A sensor template is like a sensor struct, but without the actual data in it.
@@ -45,8 +58,7 @@ pub trait SensorTemplate: Send + Sync {
         }
     }
 
-    fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors)
-        -> Result<(), Box<dyn std::error::Error>>;
+    fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError>;
 }
 
 /// Container for instances of all sensor types.

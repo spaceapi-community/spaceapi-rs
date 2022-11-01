@@ -1,6 +1,6 @@
 //! Module providing humidity sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorTemplate, Sensors};
+use super::{LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -28,11 +28,7 @@ impl From<HumiditySensorTemplate> for HumiditySensor {
 }
 
 impl SensorTemplate for HumiditySensorTemplate {
-    fn try_to_sensor(
-        &self,
-        value_str: &str,
-        sensors: &mut Sensors,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         let mut sensor: HumiditySensor = self.clone().into();
         sensor.value = value_str.parse::<f64>()?;
         sensors.humidity.push(sensor);

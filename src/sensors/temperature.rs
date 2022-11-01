@@ -1,8 +1,7 @@
 //! Module providing temperature sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorTemplate, Sensors};
+use super::{LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
-use std::convert::TryInto;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct TemperatureSensor {
@@ -29,12 +28,8 @@ impl From<TemperatureSensorTemplate> for TemperatureSensor {
 }
 
 impl SensorTemplate for TemperatureSensorTemplate {
-    fn try_to_sensor(
-        &self,
-        value_str: &str,
-        sensors: &mut Sensors,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let mut sensor: TemperatureSensor = self.clone().try_into()?;
+    fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
+        let mut sensor: TemperatureSensor = self.clone().into();
         sensor.value = value_str.parse::<f64>()?;
         sensors.temperature.push(sensor);
         Ok(())
