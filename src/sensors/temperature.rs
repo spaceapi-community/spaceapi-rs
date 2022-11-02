@@ -1,6 +1,6 @@
 //! Module providing temperature sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
+use super::{FromSensorTemplate, LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -17,21 +17,21 @@ pub struct TemperatureSensorTemplate {
     pub unit: String,
 }
 
-impl From<TemperatureSensorTemplate> for TemperatureSensor {
-    fn from(template: TemperatureSensorTemplate) -> Self {
-        Self {
-            metadata: template.metadata,
-            unit: template.unit,
-            ..Default::default()
-        }
+impl FromSensorTemplate<TemperatureSensorTemplate> for TemperatureSensor {
+    fn try_from(template: &TemperatureSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+        Ok(Self {
+            metadata: template.metadata.clone(),
+            unit: template.unit.clone(),
+            value: value.parse()?,
+        })
     }
 }
 
 impl SensorTemplate for TemperatureSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
-        let mut sensor: TemperatureSensor = self.clone().into();
-        sensor.value = value_str.parse::<f64>()?;
-        sensors.temperature.push(sensor);
+        sensors
+            .temperature
+            .push(TemperatureSensor::try_from(self, value_str)?);
         Ok(())
     }
 }

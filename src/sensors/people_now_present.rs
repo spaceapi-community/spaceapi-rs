@@ -1,6 +1,6 @@
 //! Module providing people present sensor functionality.
 
-use super::{SensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
+use super::{FromSensorTemplate, SensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -18,20 +18,21 @@ pub struct PeopleNowPresentSensorTemplate {
     pub names: Option<Vec<String>>,
 }
 
-impl From<PeopleNowPresentSensorTemplate> for PeopleNowPresentSensor {
-    fn from(template: PeopleNowPresentSensorTemplate) -> Self {
-        Self {
-            metadata: template.metadata,
+impl FromSensorTemplate<PeopleNowPresentSensorTemplate> for PeopleNowPresentSensor {
+    fn try_from(template: &PeopleNowPresentSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+        Ok(Self {
+            metadata: template.metadata.clone(),
+            value: value.parse()?,
             ..Default::default()
-        }
+        })
     }
 }
 
 impl SensorTemplate for PeopleNowPresentSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
-        let mut sensor: PeopleNowPresentSensor = self.clone().into();
-        sensor.value = value_str.parse::<u64>()?;
-        sensors.people_now_present.push(sensor);
+        sensors
+            .people_now_present
+            .push(PeopleNowPresentSensor::try_from(self, value_str)?);
         Ok(())
     }
 }

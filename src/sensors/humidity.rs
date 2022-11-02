@@ -1,6 +1,6 @@
 //! Module providing humidity sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
+use super::{FromSensorTemplate, LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -17,21 +17,19 @@ pub struct HumiditySensorTemplate {
     pub unit: String,
 }
 
-impl From<HumiditySensorTemplate> for HumiditySensor {
-    fn from(st: HumiditySensorTemplate) -> Self {
-        Self {
-            metadata: st.metadata,
-            unit: st.unit,
-            ..Default::default()
-        }
+impl FromSensorTemplate<HumiditySensorTemplate> for HumiditySensor {
+    fn try_from(template: &HumiditySensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+        Ok(Self {
+            metadata: template.metadata.clone(),
+            unit: template.unit.clone(),
+            value: value.parse()?,
+        })
     }
 }
 
 impl SensorTemplate for HumiditySensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
-        let mut sensor: HumiditySensor = self.clone().into();
-        sensor.value = value_str.parse::<f64>()?;
-        sensors.humidity.push(sensor);
+        sensors.humidity.push(HumiditySensor::try_from(self, value_str)?);
         Ok(())
     }
 }

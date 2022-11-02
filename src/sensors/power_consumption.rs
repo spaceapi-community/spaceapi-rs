@@ -1,6 +1,6 @@
 //! Module providing power consumption sensor functionality.
 
-use super::{LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
+use super::{FromSensorTemplate, LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -17,21 +17,21 @@ pub struct PowerConsumptionSensorTemplate {
     pub unit: String,
 }
 
-impl From<PowerConsumptionSensorTemplate> for PowerConsumptionSensor {
-    fn from(template: PowerConsumptionSensorTemplate) -> Self {
-        Self {
-            metadata: template.metadata,
-            unit: template.unit,
-            ..Default::default()
-        }
+impl FromSensorTemplate<PowerConsumptionSensorTemplate> for PowerConsumptionSensor {
+    fn try_from(template: &PowerConsumptionSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+        Ok(Self {
+            metadata: template.metadata.clone(),
+            unit: template.unit.clone(),
+            value: value.parse()?,
+        })
     }
 }
 
 impl SensorTemplate for PowerConsumptionSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
-        let mut sensor: PowerConsumptionSensor = self.clone().into();
-        sensor.value = value_str.parse::<f64>()?;
-        sensors.power_consumption.push(sensor);
+        sensors
+            .power_consumption
+            .push(PowerConsumptionSensor::try_from(self, value_str)?);
         Ok(())
     }
 }

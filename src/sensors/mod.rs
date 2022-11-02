@@ -47,6 +47,13 @@ pub enum SensorTemplateError {
     BadFloat(#[from] std::num::ParseFloatError),
 }
 
+/// Trait that allows sensors to be created from a template and string value.
+pub trait FromSensorTemplate<T> {
+    fn try_from(template: &T, value: &str) -> Result<Self, SensorTemplateError>
+    where
+        Self: Sized;
+}
+
 /// A trait for all possible sensor templates.
 ///
 /// A sensor template is like a sensor struct, but without the actual data in it.
