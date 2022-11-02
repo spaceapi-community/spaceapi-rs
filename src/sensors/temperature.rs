@@ -1,19 +1,19 @@
 //! Module providing temperature sensor functionality.
 
-use super::{FromSensorTemplate, LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
+use super::{FromSensorTemplate, SensorMetadataWithLocation, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct TemperatureSensor {
     #[serde(flatten)]
-    pub metadata: LocalisedSensorMetadata,
+    pub metadata: SensorMetadataWithLocation,
     pub unit: String,
     pub value: f64,
 }
 
 #[derive(Debug, Clone)]
 pub struct TemperatureSensorTemplate {
-    pub metadata: LocalisedSensorMetadata,
+    pub metadata: SensorMetadataWithLocation,
     pub unit: String,
 }
 
@@ -43,7 +43,7 @@ mod test {
     #[test]
     fn test_template() {
         let template = TemperatureSensorTemplate {
-            metadata: LocalisedSensorMetadata {
+            metadata: SensorMetadataWithLocation {
                 location: "Main Room".into(),
                 description: Some("Centre of main room on ground floor".into()),
                 ..Default::default()
@@ -63,7 +63,7 @@ mod test {
     #[test]
     fn test_template_bad_float() {
         let template = TemperatureSensorTemplate {
-            metadata: LocalisedSensorMetadata {
+            metadata: SensorMetadataWithLocation {
                 location: "Main Room".into(),
                 description: Some("Centre of main room on ground floor".into()),
                 ..Default::default()

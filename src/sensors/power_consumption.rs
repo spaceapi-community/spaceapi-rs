@@ -1,19 +1,19 @@
 //! Module providing power consumption sensor functionality.
 
-use super::{FromSensorTemplate, LocalisedSensorMetadata, SensorTemplate, SensorTemplateError, Sensors};
+use super::{FromSensorTemplate, SensorMetadataWithLocation, SensorTemplate, SensorTemplateError, Sensors};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct PowerConsumptionSensor {
     #[serde(flatten)]
-    pub metadata: LocalisedSensorMetadata,
+    pub metadata: SensorMetadataWithLocation,
     pub unit: String,
     pub value: f64,
 }
 
 #[derive(Debug, Clone)]
 pub struct PowerConsumptionSensorTemplate {
-    pub metadata: LocalisedSensorMetadata,
+    pub metadata: SensorMetadataWithLocation,
     pub unit: String,
 }
 

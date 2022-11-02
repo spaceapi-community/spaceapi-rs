@@ -27,7 +27,7 @@ pub struct SensorMetadata {
 
 /// Common information describing any sensor which requires a specified location.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
-pub struct LocalisedSensorMetadata {
+pub struct SensorMetadataWithLocation {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     pub location: String,
