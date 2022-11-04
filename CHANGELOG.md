@@ -13,7 +13,10 @@ Possible log types:
 
 ### Unreleased
 
+- [changed] Rewrite parts of the sensor implementation.
+  This is a breaking change as it changes the way sensor templates are constructed for `PeopleNowPresentSensor` and `TemperatureSensor`.
 - [added] Added the `HumitidySensor` and `PowerConsumptionSensor` sensor types.
+  This is a breaking change as it adds the `humidity` and `power_consumption` fields to the `Sensors` struct.
 - [added] Added the `timezone` key under `location` section.
 - [added] Added the `links` section.
 - [added] Added the `membership_plans` section.
