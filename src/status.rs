@@ -20,7 +20,7 @@ pub struct Location {
     pub timezone: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Spacefed {
     pub spacenet: bool,
     pub spacesaml: bool,
@@ -40,13 +40,13 @@ impl Spacefed {
     }
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Icon {
     pub open: String,
     pub close: String,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct State {
     pub open: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -65,7 +65,7 @@ impl State {
     }
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Event {
     pub name: String,
     #[serde(rename = "type")]
@@ -75,7 +75,7 @@ pub struct Event {
     pub extra: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Keymaster {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -93,13 +93,13 @@ pub struct Keymaster {
     pub mastodon: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct GoogleContact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub plus: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Contact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub phone: Option<String>,
@@ -139,14 +139,14 @@ pub struct Contact {
     pub gopher: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Feed {
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub type_: Option<String>,
     pub url: String,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Feeds {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub blog: Option<Feed>,
@@ -158,12 +158,12 @@ pub struct Feeds {
     pub flickr: Option<Feed>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Cache {
     pub schedule: String,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct RadioShow {
     pub name: String,
     pub url: String,
@@ -182,7 +182,7 @@ pub enum IssueReportChannel {
     Ml,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Stream {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub m4: Option<String>,
@@ -192,7 +192,7 @@ pub struct Stream {
     pub ustream: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Link {
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -200,7 +200,7 @@ pub struct Link {
     pub url: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum BillingInterval {
     Yearly,
@@ -227,7 +227,7 @@ pub struct MembershipPlan {
     pub description: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum ApiVersion {
     #[serde(rename = "14")]
     V14,
