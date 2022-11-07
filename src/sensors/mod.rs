@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Common information describing any sensor.
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct SensorMetadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -26,7 +26,7 @@ pub struct SensorMetadata {
 }
 
 /// Common information describing any sensor which requires a specified location.
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct SensorMetadataWithLocation {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,

@@ -20,6 +20,7 @@ Possible log types:
 - [added] Added the `timezone` key under `location` section.
 - [added] Added the `links` section.
 - [added] Added the `membership_plans` section.
+- [added] Derive `Eq` as well and not just `PartialEq` where possible.
 
 ### v0.8.1 (2021-07-06)
 
