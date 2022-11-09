@@ -6,6 +6,7 @@ mod humidity;
 mod people_now_present;
 mod power_consumption;
 mod temperature;
+mod total_member_count;
 
 pub use barometer::{BarometerSensor, BarometerSensorTemplate};
 pub use door_locked::{DoorLockedSensor, DoorLockedSensorTemplate};
@@ -13,6 +14,7 @@ pub use humidity::{HumiditySensor, HumiditySensorTemplate};
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
 pub use power_consumption::{PowerConsumptionSensor, PowerConsumptionSensorTemplate};
 pub use temperature::{TemperatureSensor, TemperatureSensorTemplate};
+pub use total_member_count::{TotalMemberCountSensor, TotalMemberCountSensorTemplate};
 
 use log::warn;
 use serde::{Deserialize, Serialize};
@@ -91,6 +93,8 @@ pub struct Sensors {
     pub door_locked: Vec<DoorLockedSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub barometer: Vec<BarometerSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub total_member_count: Vec<TotalMemberCountSensor>,
 }
 
 #[cfg(test)]
@@ -107,6 +111,7 @@ mod test {
             power_consumption: vec![],
             door_locked: vec![],
             barometer: vec![],
+            total_member_count: vec![],
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
