@@ -2,9 +2,11 @@
 
 mod humidity;
 mod people_now_present;
+mod door_locked;
 mod power_consumption;
 mod temperature;
 
+pub use door_locked::{DoorLockedSensor, DoorLockedSensorTemplate};
 pub use humidity::{HumiditySensor, HumiditySensorTemplate};
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
 pub use power_consumption::{PowerConsumptionSensor, PowerConsumptionSensorTemplate};
@@ -45,6 +47,10 @@ pub enum SensorTemplateError {
     /// Failed when parsing a floating point value from the provided value string
     #[error("sensor float value cannot be parsed")]
     BadFloat(#[from] std::num::ParseFloatError),
+
+    /// Failed when parsing a boolean value from the provided value string
+    #[error("sensor boolean value cannot be parsed")]
+    BadBool(#[from] std::str::ParseBoolError),
 }
 
 /// Trait that allows sensors to be created from a template and string value.
@@ -79,6 +85,8 @@ pub struct Sensors {
     pub humidity: Vec<HumiditySensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub power_consumption: Vec<PowerConsumptionSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub door_locked: Vec<DoorLockedSensor>,
 }
 
 #[cfg(test)]
@@ -93,6 +101,7 @@ mod test {
             temperature: vec![],
             humidity: vec![],
             power_consumption: vec![],
+            door_locked: vec![],
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
