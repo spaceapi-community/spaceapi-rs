@@ -1,11 +1,13 @@
 //! Module defining common sensor functionality.
 
+mod barometer;
+mod door_locked;
 mod humidity;
 mod people_now_present;
-mod door_locked;
 mod power_consumption;
 mod temperature;
 
+pub use barometer::{BarometerSensor, BarometerSensorTemplate};
 pub use door_locked::{DoorLockedSensor, DoorLockedSensorTemplate};
 pub use humidity::{HumiditySensor, HumiditySensorTemplate};
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
@@ -87,6 +89,8 @@ pub struct Sensors {
     pub power_consumption: Vec<PowerConsumptionSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub door_locked: Vec<DoorLockedSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub barometer: Vec<BarometerSensor>,
 }
 
 #[cfg(test)]
@@ -102,6 +106,7 @@ mod test {
             humidity: vec![],
             power_consumption: vec![],
             door_locked: vec![],
+            barometer: vec![],
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
