@@ -5,6 +5,7 @@ mod barometer;
 mod beverage_supply;
 mod door_locked;
 mod humidity;
+mod network_connections;
 mod people_now_present;
 mod power_consumption;
 mod temperature;
@@ -16,6 +17,10 @@ pub use barometer::{BarometerSensor, BarometerSensorTemplate};
 pub use beverage_supply::{BeverageSupplySensor, BeverageSupplySensorTemplate};
 pub use door_locked::{DoorLockedSensor, DoorLockedSensorTemplate};
 pub use humidity::{HumiditySensor, HumiditySensorTemplate};
+pub use network_connections::{
+    NetworkConnectionKind, NetworkConnectionMachine, NetworkConnectionsSensor,
+    NetworkConnectionsSensorTemplate,
+};
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
 pub use power_consumption::{PowerConsumptionSensor, PowerConsumptionSensorTemplate};
 pub use temperature::{TemperatureSensor, TemperatureSensorTemplate};
@@ -107,6 +112,8 @@ pub struct Sensors {
     pub beverage_supply: Vec<BeverageSupplySensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub account_balance: Vec<AccountBalanceSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub network_connections: Vec<NetworkConnectionsSensor>,
 }
 
 #[cfg(test)]
@@ -127,6 +134,7 @@ mod test {
             wind: vec![],
             beverage_supply: vec![],
             account_balance: vec![],
+            network_connections: vec![],
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
