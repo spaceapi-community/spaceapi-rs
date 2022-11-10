@@ -100,31 +100,31 @@ pub trait SensorTemplate: Send + Sync {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Sensors {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub people_now_present: Vec<PeopleNowPresentSensor>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub temperature: Vec<TemperatureSensor>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub humidity: Vec<HumiditySensor>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub power_consumption: Vec<PowerConsumptionSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub door_locked: Vec<DoorLockedSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub barometer: Vec<BarometerSensor>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub radiation: Option<RadiationSensors>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub total_member_count: Vec<TotalMemberCountSensor>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub wind: Vec<WindSensor>,
+    pub humidity: Vec<HumiditySensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub beverage_supply: Vec<BeverageSupplySensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub account_balance: Vec<AccountBalanceSensor>,
+    pub power_consumption: Vec<PowerConsumptionSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub wind: Vec<WindSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub network_connections: Vec<NetworkConnectionsSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub account_balance: Vec<AccountBalanceSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub total_member_count: Vec<TotalMemberCountSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub people_now_present: Vec<PeopleNowPresentSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub network_traffic: Vec<NetworkTrafficSensor>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub radiation: Option<RadiationSensors>,
 }
 
 #[cfg(test)]
@@ -134,21 +134,7 @@ mod test {
 
     #[test]
     fn serialize_deserialize_sensors() {
-        let a = Sensors {
-            people_now_present: vec![],
-            temperature: vec![],
-            humidity: vec![],
-            power_consumption: vec![],
-            door_locked: vec![],
-            barometer: vec![],
-            total_member_count: vec![],
-            wind: vec![],
-            beverage_supply: vec![],
-            account_balance: vec![],
-            network_connections: vec![],
-            network_traffic: vec![],
-            radiation: None,
-        };
+        let a = Sensors::default();
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
     }
