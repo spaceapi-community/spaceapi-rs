@@ -3,10 +3,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use serde_json::value::Value;
 
-pub use crate::sensors::PeopleNowPresentSensor;
-pub use crate::sensors::SensorTemplate;
-pub use crate::sensors::Sensors;
-pub use crate::sensors::TemperatureSensor;
+use crate::sensors::Sensors;
 
 type Extensions = BTreeMap<String, Value>;
 
