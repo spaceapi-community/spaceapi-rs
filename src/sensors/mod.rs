@@ -9,6 +9,7 @@ mod network_connections;
 mod network_traffic;
 mod people_now_present;
 mod power_consumption;
+mod radiation;
 mod temperature;
 mod total_member_count;
 mod wind;
@@ -28,6 +29,7 @@ pub use network_traffic::{
 };
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
 pub use power_consumption::{PowerConsumptionSensor, PowerConsumptionSensorTemplate};
+pub use radiation::{RadiationSensor, RadiationSensorUnit, RadiationSensors};
 pub use temperature::{TemperatureSensor, TemperatureSensorTemplate};
 pub use total_member_count::{TotalMemberCountSensor, TotalMemberCountSensorTemplate};
 pub use wind::{WindSensor, WindSensorMeasurement, WindSensorProperties};
@@ -121,6 +123,8 @@ pub struct Sensors {
     pub network_connections: Vec<NetworkConnectionsSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub network_traffic: Vec<NetworkTrafficSensor>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub radiation: Option<RadiationSensors>,
 }
 
 #[cfg(test)]
@@ -143,6 +147,7 @@ mod test {
             account_balance: vec![],
             network_connections: vec![],
             network_traffic: vec![],
+            radiation: None,
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
