@@ -1,6 +1,7 @@
 //! Module defining common sensor functionality.
 
 mod barometer;
+mod beverage_supply;
 mod door_locked;
 mod humidity;
 mod people_now_present;
@@ -10,6 +11,7 @@ mod total_member_count;
 mod wind;
 
 pub use barometer::{BarometerSensor, BarometerSensorTemplate};
+pub use beverage_supply::{BeverageSupplySensor, BeverageSupplySensorTemplate};
 pub use door_locked::{DoorLockedSensor, DoorLockedSensorTemplate};
 pub use humidity::{HumiditySensor, HumiditySensorTemplate};
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
@@ -99,6 +101,8 @@ pub struct Sensors {
     pub total_member_count: Vec<TotalMemberCountSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub wind: Vec<WindSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub beverage_supply: Vec<BeverageSupplySensor>,
 }
 
 #[cfg(test)]
@@ -117,6 +121,7 @@ mod test {
             barometer: vec![],
             total_member_count: vec![],
             wind: vec![],
+            beverage_supply: vec![],
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
