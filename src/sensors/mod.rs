@@ -6,6 +6,7 @@ mod beverage_supply;
 mod door_locked;
 mod humidity;
 mod network_connections;
+mod network_traffic;
 mod people_now_present;
 mod power_consumption;
 mod temperature;
@@ -20,6 +21,10 @@ pub use humidity::{HumiditySensor, HumiditySensorTemplate};
 pub use network_connections::{
     NetworkConnectionKind, NetworkConnectionMachine, NetworkConnectionsSensor,
     NetworkConnectionsSensorTemplate,
+};
+pub use network_traffic::{
+    NetworkTrafficBitsPerSecond, NetworkTrafficPacketsPerSecond, NetworkTrafficSensor,
+    NetworkTrafficSensorProperties,
 };
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
 pub use power_consumption::{PowerConsumptionSensor, PowerConsumptionSensorTemplate};
@@ -114,6 +119,8 @@ pub struct Sensors {
     pub account_balance: Vec<AccountBalanceSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub network_connections: Vec<NetworkConnectionsSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub network_traffic: Vec<NetworkTrafficSensor>,
 }
 
 #[cfg(test)]
@@ -135,6 +142,7 @@ mod test {
             beverage_supply: vec![],
             account_balance: vec![],
             network_connections: vec![],
+            network_traffic: vec![],
         };
         let b: Sensors = from_str(&to_string(&a).unwrap()).unwrap();
         assert_eq!(a, b);
