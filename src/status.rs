@@ -40,7 +40,7 @@ impl Spacefed {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Icon {
     pub open: String,
-    pub close: String,
+    pub closed: String,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
