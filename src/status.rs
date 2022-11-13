@@ -40,7 +40,7 @@ impl Spacefed {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 pub struct Icon {
     pub open: String,
-    pub close: String,
+    pub closed: String,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
@@ -923,9 +923,27 @@ mod test {
 
     #[test]
     fn deserialize_status() {
-        let data = "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-                    \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
-                    \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
+        let data = r#"{
+            "api": "0.13",
+            "space": "a",
+            "logo": "b",
+            "url": "c",
+            "location": {
+                "lat": 0.0,
+                "lon": 0.0
+            },
+            "contact": {},
+            "issue_report_channels": [],
+            "state": {
+                "open": null,
+                "icon": {
+                    "open": "d",
+                    "closed": "e"
+                }
+            },
+            "ext_aaa": "xxx",
+            "ext_bbb": [null,42]
+        }"#;
         let deserialized: Status = from_str(data).unwrap();
         assert_eq!(deserialized.api, Some("0.13".into()));
         let keys = deserialized.extensions.keys();

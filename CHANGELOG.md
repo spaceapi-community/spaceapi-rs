@@ -23,6 +23,7 @@ Possible log types:
 - [added] Added the `links` section.
 - [added] Added the `membership_plans` section.
 - [added] Derive `Eq` as well and not just `PartialEq` where possible.
+- [fixed] The name for the "closed icon" field has been corrected to `state.icon.closed` (was `state.icon.close`).
 
 ### v0.8.1 (2021-07-06)
 
