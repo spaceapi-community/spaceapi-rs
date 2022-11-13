@@ -923,9 +923,23 @@ mod test {
 
     #[test]
     fn deserialize_status() {
-        let data = "{\"api\":\"0.13\",\"space\":\"a\",\"logo\":\"b\",\"url\":\"c\",\
-                    \"location\":{\"lat\":0.0,\"lon\":0.0},\"contact\":{},\"issue_report_channels\":[],\
-                    \"state\":{\"open\":null},\"ext_aaa\":\"xxx\",\"ext_bbb\":[null,42]}";
+        let data = r#"{
+            "api": "0.13",
+            "space": "a",
+            "logo": "b",
+            "url": "c",
+            "location": {
+                "lat": 0.0,
+                "lon": 0.0
+            },
+            "contact": {},
+            "issue_report_channels": [],
+            "state": {
+                "open": null
+            },
+            "ext_aaa": "xxx",
+            "ext_bbb": [null,42]
+        }"#;
         let deserialized: Status = from_str(data).unwrap();
         assert_eq!(deserialized.api, Some("0.13".into()));
         let keys = deserialized.extensions.keys();
