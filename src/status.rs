@@ -935,7 +935,11 @@ mod test {
             "contact": {},
             "issue_report_channels": [],
             "state": {
-                "open": null
+                "open": null,
+                "icon": {
+                    "open": "d",
+                    "closed": "e"
+                }
             },
             "ext_aaa": "xxx",
             "ext_bbb": [null,42]
