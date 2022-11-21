@@ -15,7 +15,6 @@ pub struct PeopleNowPresentSensor {
 #[derive(Debug, Clone)]
 pub struct PeopleNowPresentSensorTemplate {
     pub metadata: SensorMetadata,
-    pub names: Option<Vec<String>>,
 }
 
 impl FromSensorTemplate<PeopleNowPresentSensorTemplate> for PeopleNowPresentSensor {
@@ -45,7 +44,6 @@ mod test {
     fn test_template() {
         let template = PeopleNowPresentSensorTemplate {
             metadata: SensorMetadata::default(),
-            names: None,
         };
 
         let mut sensors = Sensors::default();
@@ -61,7 +59,6 @@ mod test {
     fn test_template_bad_integer() {
         let template = PeopleNowPresentSensorTemplate {
             metadata: SensorMetadata::default(),
-            names: None,
         };
 
         let mut sensors = Sensors::default();

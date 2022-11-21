@@ -15,6 +15,7 @@ Possible log types:
 
 - [changed] Changed the way sensor types are exported.
   Some sensor types that were previously exported in the `spaceapi` module now need to be imported from the `spaceapi::sensors` module.
+- [changed] The `names` field is no longer part of `PeopleNowPresentSensor`.
 - [changed] Rewrite parts of the sensor implementation.
   This is a breaking change as it changes the way sensor templates are constructed for `PeopleNowPresentSensor` and `TemperatureSensor`.
 - [added] Added the `HumitidySensor` and `PowerConsumptionSensor` sensor types.
