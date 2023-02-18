@@ -11,6 +11,7 @@ type Extensions = BTreeMap<String, Value>;
 pub struct Location {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<String>,
+    pub osm_link: Option<String>,
     pub lat: f64,
     pub lon: f64,
     #[serde(skip_serializing_if = "Option::is_none")]
