@@ -6,6 +6,7 @@ fn main() {
         .url("https://www.coredump.ch/")
         .location(Location {
             address: None,
+            osm_link: None,
             lat: 47.22936,
             lon: 8.82949,
             ..Default::default()
