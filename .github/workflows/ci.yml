@@ -16,7 +16,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-22.04
-    container: rust:1.65
+    container: rust:1.69
     steps:
       - uses: actions/checkout@v3
       - run: rustup component add clippy
@@ -24,7 +24,7 @@ jobs:
 
   fmt:
     runs-on: ubuntu-22.04
-    container: rust:1.65
+    container: rust:1.69
     steps:
       - uses: actions/checkout@v3
       - run: rustup component add rustfmt
