@@ -11,7 +11,7 @@ serialization and deserialization to/from JSON using Serde.
 - Crate Documentation: https://docs.rs/spaceapi/
 - SpaceAPI Documentation: https://spaceapi.io/pages/docs.html
 
-This library requires Rust 1.36.0 or newer.
+This library requires Rust 1.56.0 or newer.
 
 
 ## Usage
