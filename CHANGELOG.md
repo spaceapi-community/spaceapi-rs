@@ -15,18 +15,17 @@ Possible log types:
 
 - [changed] Changed the way sensor types are exported.
   Some sensor types that were previously exported in the `spaceapi` module now need to be imported from the `spaceapi::sensors` module.
-- [changed] The `names` field is no longer part of `PeopleNowPresentSensor`.
+- [changed] The `names` field is no longer part of `PeopleNowPresentSensorTemplate`.
 - [added] Added all missing sensor types.
 - [changed] Rewrite parts of the sensor implementation.
   This is a breaking change as it changes the way sensor templates are constructed for `PeopleNowPresentSensor` and `TemperatureSensor`.
-- [added] Added the `HumitidySensor` and `PowerConsumptionSensor` sensor types.
+- [added] Added the `HumiditySensor` and `PowerConsumptionSensor` sensor types.
   This is a breaking change as it adds the `humidity` and `power_consumption` fields to the `Sensors` struct.
 - [added] Added the `timezone` key under `location` section.
 - [added] Added the `links` section.
 - [added] Added the `membership_plans` section.
 - [added] Derive `Eq` as well and not just `PartialEq` where possible.
 - [fixed] The name for the "closed icon" field has been corrected to `state.icon.closed` (was `state.icon.close`).
-- [changed] Bump MSRV to 1.56
 - [changed] Require at least Rust 1.56.
 
 ### v0.8.1 (2021-07-06)
