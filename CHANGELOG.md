@@ -27,6 +27,7 @@ Possible log types:
 - [added] Derive `Eq` as well and not just `PartialEq` where possible.
 - [fixed] The name for the "closed icon" field has been corrected to `state.icon.closed` (was `state.icon.close`).
 - [changed] Bump MSRV to 1.56
+- [changed] Require at least Rust 1.56.
 
 ### v0.8.1 (2021-07-06)
 
