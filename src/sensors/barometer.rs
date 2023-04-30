@@ -18,7 +18,10 @@ pub struct BarometerSensorTemplate {
 }
 
 impl FromSensorTemplate<BarometerSensorTemplate> for BarometerSensor {
-    fn try_from(template: &BarometerSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+    fn try_from_template(
+        template: &BarometerSensorTemplate,
+        value: &str,
+    ) -> Result<Self, SensorTemplateError> {
         Ok(Self {
             metadata: template.metadata.clone(),
             unit: template.unit.clone(),
@@ -31,7 +34,7 @@ impl SensorTemplate for BarometerSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .barometer
-            .push(BarometerSensor::try_from(self, value_str)?);
+            .push(BarometerSensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }

@@ -36,7 +36,7 @@ pub struct NetworkConnectionsSensorTemplate {
 }
 
 impl FromSensorTemplate<NetworkConnectionsSensorTemplate> for NetworkConnectionsSensor {
-    fn try_from(
+    fn try_from_template(
         template: &NetworkConnectionsSensorTemplate,
         value: &str,
     ) -> Result<Self, SensorTemplateError> {
@@ -53,7 +53,7 @@ impl SensorTemplate for NetworkConnectionsSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .network_connections
-            .push(NetworkConnectionsSensor::try_from(self, value_str)?);
+            .push(NetworkConnectionsSensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }
