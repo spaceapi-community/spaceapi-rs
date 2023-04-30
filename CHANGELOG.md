@@ -11,7 +11,7 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
-### Unreleased
+### V0.9.0 (2023-05-07)
 
 - [changed] Changed the way sensor types are exported.
   Some sensor types that were previously exported in the `spaceapi` module now need to be imported from the `spaceapi::sensors` module.
