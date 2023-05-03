@@ -18,7 +18,10 @@ pub struct PowerConsumptionSensorTemplate {
 }
 
 impl FromSensorTemplate<PowerConsumptionSensorTemplate> for PowerConsumptionSensor {
-    fn try_from(template: &PowerConsumptionSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+    fn try_from_template(
+        template: &PowerConsumptionSensorTemplate,
+        value: &str,
+    ) -> Result<Self, SensorTemplateError> {
         Ok(Self {
             metadata: template.metadata.clone(),
             unit: template.unit.clone(),
@@ -31,7 +34,7 @@ impl SensorTemplate for PowerConsumptionSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .power_consumption
-            .push(PowerConsumptionSensor::try_from(self, value_str)?);
+            .push(PowerConsumptionSensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }

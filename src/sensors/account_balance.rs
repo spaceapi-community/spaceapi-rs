@@ -18,7 +18,10 @@ pub struct AccountBalanceSensorTemplate {
 }
 
 impl FromSensorTemplate<AccountBalanceSensorTemplate> for AccountBalanceSensor {
-    fn try_from(template: &AccountBalanceSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+    fn try_from_template(
+        template: &AccountBalanceSensorTemplate,
+        value: &str,
+    ) -> Result<Self, SensorTemplateError> {
         Ok(Self {
             metadata: template.metadata.clone(),
             unit: template.unit.clone(),
@@ -31,7 +34,7 @@ impl SensorTemplate for AccountBalanceSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .account_balance
-            .push(AccountBalanceSensor::try_from(self, value_str)?);
+            .push(AccountBalanceSensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }

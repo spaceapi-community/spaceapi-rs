@@ -77,7 +77,7 @@ pub enum SensorTemplateError {
 
 /// Trait that allows sensors to be created from a template and string value.
 pub trait FromSensorTemplate<T> {
-    fn try_from(template: &T, value: &str) -> Result<Self, SensorTemplateError>
+    fn try_from_template(template: &T, value: &str) -> Result<Self, SensorTemplateError>
     where
         Self: Sized;
 }

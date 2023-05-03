@@ -18,7 +18,10 @@ pub struct BeverageSupplySensorTemplate {
 }
 
 impl FromSensorTemplate<BeverageSupplySensorTemplate> for BeverageSupplySensor {
-    fn try_from(template: &BeverageSupplySensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+    fn try_from_template(
+        template: &BeverageSupplySensorTemplate,
+        value: &str,
+    ) -> Result<Self, SensorTemplateError> {
         Ok(Self {
             metadata: template.metadata.clone(),
             unit: template.unit.clone(),
@@ -31,7 +34,7 @@ impl SensorTemplate for BeverageSupplySensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .beverage_supply
-            .push(BeverageSupplySensor::try_from(self, value_str)?);
+            .push(BeverageSupplySensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }

@@ -18,7 +18,10 @@ pub struct PeopleNowPresentSensorTemplate {
 }
 
 impl FromSensorTemplate<PeopleNowPresentSensorTemplate> for PeopleNowPresentSensor {
-    fn try_from(template: &PeopleNowPresentSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+    fn try_from_template(
+        template: &PeopleNowPresentSensorTemplate,
+        value: &str,
+    ) -> Result<Self, SensorTemplateError> {
         Ok(Self {
             metadata: template.metadata.clone(),
             value: value.parse()?,
@@ -31,7 +34,7 @@ impl SensorTemplate for PeopleNowPresentSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .people_now_present
-            .push(PeopleNowPresentSensor::try_from(self, value_str)?);
+            .push(PeopleNowPresentSensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }

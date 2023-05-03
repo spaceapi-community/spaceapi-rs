@@ -20,7 +20,8 @@ include = [
     "LICENSE-APACHE",
     "AUTHORS.md",
 ]
-edition = "2018"
+edition = "2021"
+rust_version = "1.56"
 
 [dependencies]
 log = "^0.4"

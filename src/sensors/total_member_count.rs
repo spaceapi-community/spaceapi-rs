@@ -16,7 +16,10 @@ pub struct TotalMemberCountSensorTemplate {
 }
 
 impl FromSensorTemplate<TotalMemberCountSensorTemplate> for TotalMemberCountSensor {
-    fn try_from(template: &TotalMemberCountSensorTemplate, value: &str) -> Result<Self, SensorTemplateError> {
+    fn try_from_template(
+        template: &TotalMemberCountSensorTemplate,
+        value: &str,
+    ) -> Result<Self, SensorTemplateError> {
         Ok(Self {
             metadata: template.metadata.clone(),
             value: value.parse()?,
@@ -28,7 +31,7 @@ impl SensorTemplate for TotalMemberCountSensorTemplate {
     fn try_to_sensor(&self, value_str: &str, sensors: &mut Sensors) -> Result<(), SensorTemplateError> {
         sensors
             .total_member_count
-            .push(TotalMemberCountSensor::try_from(self, value_str)?);
+            .push(TotalMemberCountSensor::try_from_template(self, value_str)?);
         Ok(())
     }
 }
