@@ -1,6 +1,6 @@
 [package]
 name = "spaceapi"
-version = "0.8.1"
+version = "0.9.0"
 repository = "https://github.com/spaceapi-community/spaceapi-rs/"
 license = "MIT OR Apache-2.0"
 authors = [
@@ -21,7 +21,7 @@ include = [
     "AUTHORS.md",
 ]
 edition = "2021"
-rust_version = "1.56"
+rust-version = "1.56"
 
 [dependencies]
 log = "^0.4"
