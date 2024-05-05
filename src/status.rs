@@ -8,6 +8,15 @@ use crate::sensors::Sensors;
 type Extensions = BTreeMap<String, Value>;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct Area {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
+    square_meters: f64,
+}
+
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<String>,
@@ -15,6 +24,12 @@ pub struct Location {
     pub lon: f64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub country_code: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hint: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub areas: Option<Vec<Area>>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
