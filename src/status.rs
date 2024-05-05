@@ -230,6 +230,12 @@ pub enum ApiVersion {
     V14,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct LinkedSpace {
+    endpoint: String,
+    website: String,
+}
+
 /// The main SpaceAPI status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
@@ -265,6 +271,8 @@ pub struct Status {
     pub links: Option<Vec<Link>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub membership_plans: Option<Vec<MembershipPlan>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub linked_spaces: Option<Vec<LinkedSpace>>,
 
     // SpaceAPI internal usage
     #[serde(skip_serializing_if = "Option::is_none")]
