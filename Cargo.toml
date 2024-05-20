@@ -21,7 +21,7 @@ include = [
     "AUTHORS.md",
 ]
 edition = "2021"
-rust-version = "1.56"
+rust-version = "1.60"
 
 [dependencies]
 log = "^0.4"

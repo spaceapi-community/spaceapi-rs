@@ -11,6 +11,10 @@ Possible log types:
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
+### Unreleased
+
+- [changed] Require at least Rust 1.60
+
 ### V0.9.0 (2023-05-07)
 
 - [changed] Changed the way sensor types are exported.
