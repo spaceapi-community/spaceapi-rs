@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     container: rust:1.60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: cargo build
       - run: cargo test
 
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
     container: rust:1.78
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: rustup component add clippy
       - run: cargo clippy --all-targets --all-features -- -D warnings
 
@@ -26,6 +26,6 @@ jobs:
     runs-on: ubuntu-22.04
     container: rust:1.78
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: rustup component add rustfmt
       - run: cargo fmt -- --check
