@@ -13,7 +13,7 @@ Possible log types:
 
 ### Unreleased
 
-- [changed] Require at least Rust 1.60
+- [changed] Require at least Rust 1.75
 
 ### V0.9.0 (2023-05-07)
 
