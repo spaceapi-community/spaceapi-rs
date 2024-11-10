@@ -278,33 +278,6 @@ pub struct Status {
     pub extensions: Extensions,
 }
 
-impl Status {
-    /// Create a new Status object with only the absolutely required fields.
-    #[deprecated(
-        since = "0.5.0",
-        note = "Please use the `StatusBuilder` or a struct expression instead"
-    )]
-    pub fn new<S: Into<String>>(
-        space: S,
-        logo: S,
-        url: S,
-        location: Location,
-        contact: Contact,
-        issue_report_channels: Vec<IssueReportChannel>,
-    ) -> Status {
-        Status {
-            api: Some("0.13".into()),
-            space: space.into(),
-            logo: logo.into(),
-            url: url.into(),
-            location,
-            contact,
-            issue_report_channels,
-            ..Default::default()
-        }
-    }
-}
-
 #[derive(Default, Debug, Copy, Clone, Eq, PartialEq)]
 enum StatusBuilderVersion {
     #[default]
