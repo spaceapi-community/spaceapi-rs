@@ -197,21 +197,16 @@ pub struct Link {
     pub url: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum BillingInterval {
     Yearly,
+    #[default]
     Monthly,
     Weekly,
     Daily,
     Hourly,
     Other,
-}
-
-impl Default for BillingInterval {
-    fn default() -> Self {
-        BillingInterval::Monthly
-    }
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -310,17 +305,12 @@ impl Status {
     }
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Default, Debug, Copy, Clone, Eq, PartialEq)]
 enum StatusBuilderVersion {
+    #[default]
     V0_13,
     V14,
     Mixed,
-}
-
-impl Default for StatusBuilderVersion {
-    fn default() -> StatusBuilderVersion {
-        StatusBuilderVersion::V0_13
-    }
 }
 
 /// Builder for the `Status` object.
