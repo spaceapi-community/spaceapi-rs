@@ -14,6 +14,7 @@ Possible log types:
 ### Unreleased
 
 - [changed] Require at least Rust 1.75
+- [changed] Remove deprecated `Status::new` constructor method
 
 ### V0.9.0 (2023-05-07)
 
