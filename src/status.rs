@@ -8,6 +8,15 @@ use crate::sensors::Sensors;
 type Extensions = BTreeMap<String, Value>;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct Area {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
+    square_meters: f64,
+}
+
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Location {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<String>,
@@ -15,6 +24,12 @@ pub struct Location {
     pub lon: f64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub country_code: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hint: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub areas: Option<Vec<Area>>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]
@@ -225,6 +240,12 @@ pub enum ApiVersion {
     V14,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct LinkedSpace {
+    endpoint: String,
+    website: String,
+}
+
 /// The main SpaceAPI status object.
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct Status {
@@ -260,6 +281,8 @@ pub struct Status {
     pub links: Option<Vec<Link>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub membership_plans: Option<Vec<MembershipPlan>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub linked_spaces: Option<Vec<LinkedSpace>>,
 
     // SpaceAPI internal usage
     #[serde(skip_serializing_if = "Option::is_none")]
