@@ -3,6 +3,7 @@
 mod account_balance;
 mod barometer;
 mod beverage_supply;
+mod carbondioxide;
 mod door_locked;
 mod humidity;
 mod network_connections;
@@ -17,6 +18,7 @@ mod wind;
 pub use account_balance::{AccountBalanceSensor, AccountBalanceSensorTemplate};
 pub use barometer::{BarometerSensor, BarometerSensorTemplate};
 pub use beverage_supply::{BeverageSupplySensor, BeverageSupplySensorTemplate};
+pub use carbondioxide::{CarbondioxideSensor, CarbondioxideSensorTemplate};
 pub use door_locked::{DoorLockedSensor, DoorLockedSensorTemplate};
 pub use humidity::{HumiditySensor, HumiditySensorTemplate};
 pub use network_connections::{
@@ -125,6 +127,8 @@ pub struct Sensors {
     pub people_now_present: Vec<PeopleNowPresentSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub network_traffic: Vec<NetworkTrafficSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub carbondioxide: Vec<CarbondioxideSensor>,
 }
 
 #[cfg(test)]
