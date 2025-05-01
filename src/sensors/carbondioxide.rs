@@ -58,7 +58,7 @@ mod test {
         template.to_sensor("1234", &mut sensors);
 
         assert_eq!(
-            "[{\"location\":\"Main Room\",\"description\":\"Centre of main room on ground floor\",\"unit\":\"ppm\",\"value\":1234}]",
+            r#"[{"location":"Main Room","description":"Centre of main room on ground floor","unit":"ppm","value":1234}]"#,
             serde_json::to_string(&sensors.carbondioxide).unwrap()
         );
     }
