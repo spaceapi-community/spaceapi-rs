@@ -49,6 +49,8 @@ pub struct SensorMetadata {
     pub location: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lastchange: Option<u64>,
 }
 
 /// Common information describing any sensor which requires a specified location.
@@ -59,6 +61,8 @@ pub struct SensorMetadataWithLocation {
     pub location: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lastchange: Option<u64>,
 }
 
 /// Describes an error occurring when building a sensor from a `SensorTemplate`.
