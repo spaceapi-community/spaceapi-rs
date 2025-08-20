@@ -10,6 +10,7 @@ mod network_connections;
 mod network_traffic;
 mod people_now_present;
 mod power_consumption;
+mod power_generation;
 mod radiation;
 mod temperature;
 mod total_member_count;
@@ -31,6 +32,7 @@ pub use network_traffic::{
 };
 pub use people_now_present::{PeopleNowPresentSensor, PeopleNowPresentSensorTemplate};
 pub use power_consumption::{PowerConsumptionSensor, PowerConsumptionSensorTemplate};
+pub use power_generation::{PowerGenerationSensor, PowerGenerationSensorTemplate};
 pub use radiation::{RadiationSensor, RadiationSensorUnit, RadiationSensors};
 pub use temperature::{TemperatureSensor, TemperatureSensorTemplate};
 pub use total_member_count::{TotalMemberCountSensor, TotalMemberCountSensorTemplate};
@@ -119,6 +121,8 @@ pub struct Sensors {
     pub beverage_supply: Vec<BeverageSupplySensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub power_consumption: Vec<PowerConsumptionSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub power_generation: Vec<PowerGenerationSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub wind: Vec<WindSensor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
